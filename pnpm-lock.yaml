@@ -11,6 +11,9 @@ importers:
       '@primoui/utils':
         specifier: ^1.1.8
         version: 1.1.8(@sindresorhus/slugify@2.2.1)
+      '@prisma/client':
+        specifier: 6.10.1
+        version: 6.10.1(prisma@6.10.1(typescript@5.8.3))(typescript@5.8.3)
       '@radix-ui/react-avatar':
         specifier: ^1.1.7
         version: 1.1.7(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -387,6 +390,18 @@ packages:
     resolution: {integrity: sha512-5bB7G+okQawLtZz60a5/U83xROwecDfkDL1ZoHodte66ScVP/0kjSDmwAYBu3n1SRDgqAkKO0+Qgsq+fOW5IgQ==}
     peerDependencies:
       '@sindresorhus/slugify': ^2.2.1
+
+  '@prisma/client@6.10.1':
+    resolution: {integrity: sha512-Re4pMlcUsQsUTAYMK7EJ4Bw2kg3WfZAAlr8GjORJaK4VOP6LxRQUQ1TuLnxcF42XqGkWQ36q5CQF1yVadANQ6w==}
+    engines: {node: '>=18.18'}
+    peerDependencies:
+      prisma: '*'
+      typescript: '>=5.1.0'
+    peerDependenciesMeta:
+      prisma:
+        optional: true
+      typescript:
+        optional: true
 
   '@prisma/config@6.10.1':
     resolution: {integrity: sha512-kz4/bnqrOrzWo8KzYguN0cden4CzLJJ+2VSpKtF8utHS3l1JS0Lhv6BLwpOX6X9yNreTbZQZwewb+/BMPDCIYQ==}
@@ -3255,6 +3270,11 @@ snapshots:
   '@primoui/utils@1.1.8(@sindresorhus/slugify@2.2.1)':
     dependencies:
       '@sindresorhus/slugify': 2.2.1
+
+  '@prisma/client@6.10.1(prisma@6.10.1(typescript@5.8.3))(typescript@5.8.3)':
+    optionalDependencies:
+      prisma: 6.10.1(typescript@5.8.3)
+      typescript: 5.8.3
 
   '@prisma/config@6.10.1':
     dependencies:
