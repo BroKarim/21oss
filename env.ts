@@ -8,10 +8,12 @@ export const env = createEnv({
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     VERCEL_ENV: z.enum(["development", "preview", "production"]).default("development"),
+    BETTER_AUTH_SECRET: z.string().min(1),
+    BETTER_AUTH_URL: z.string().min(1).url(),
   },
   client: {
-    // NEXT_PUBLIC_SITE_URL: z.string().url().min(1),
-    // NEXT_PUBLIC_SITE_EMAIL: z.string().email().min(1),
+    NEXT_PUBLIC_SITE_URL: z.string().url().min(1),
+    NEXT_PUBLIC_SITE_EMAIL: z.string().email().min(1),
     NEXT_PUBLIC_POSTHOG_HOST: z.string().url().min(1),
     NEXT_PUBLIC_POSTHOG_API_KEY: z.string().min(1),
   },
@@ -20,8 +22,8 @@ export const env = createEnv({
    */
   experimental__runtimeEnv: {
     PORT: process.env.PORT,
-    // NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
-    // NEXT_PUBLIC_SITE_EMAIL: process.env.NEXT_PUBLIC_SITE_EMAIL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
+    NEXT_PUBLIC_SITE_EMAIL: process.env.NEXT_PUBLIC_SITE_EMAIL,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
     NEXT_PUBLIC_POSTHOG_API_KEY: process.env.NEXT_PUBLIC_POSTHOG_API_KEY,
   },
