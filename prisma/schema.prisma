@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ReportType {
+  BrokenLink
+  WrongCategory
+  WrongAlternative
+  Outdated
+  Other
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  role          String    @default("user")
+  banned        Boolean?  @default(false)
+  banReason     String?
+  banExpires    DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts Account[]
+  sessions Session[]
+  likes    Like[]
+  reports  Report[]
+
+  // Indexes
+  @@index([id])
+}
+
+model Session {
+  id             String   @id @default(cuid())
+  token          String   @unique
+  expiresAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  impersonatedBy String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Indexes
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  // Indexes
+  @@index([userId])
+}
+
+model Report {
+  id        String     @id @default(cuid())
+  type      ReportType
+  message   String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+  // tool   Tool?   @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  toolId String?
+
+  // Indexes
+  @@index([toolId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  // tool   Tool   @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  toolId String
+
+  // Indexes
+  @@unique([userId, toolId])
+  @@index([userId])
+  @@index([toolId])
+}

@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { fontDisplay, fontSans } from "@/lib/fonts";
+import { fontSans } from "@/lib/fonts";
 import { SearchProvider } from "@/contexts/search-context";
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fontSans.variable} ${fontDisplay.variable} scroll-smooth`} suppressHydrationWarning>
+    <html lang="en" className={`${fontSans.variable}  scroll-smooth`} suppressHydrationWarning>
       <body className="min-h-dvh flex flex-col bg-background text-foreground">
         <NuqsAdapter>
           <TooltipProvider delayDuration={250}>

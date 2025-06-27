@@ -14,7 +14,7 @@ export const cx = cn;
 
 export const { cva, compose } = defineConfig({
   hooks: {
-    onComplete: (className) => customTwMerge(className),
+    onComplete: (className: string) => customTwMerge(className),
   },
 });
 

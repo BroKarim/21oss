@@ -1,9 +1,7 @@
 import { type PropsWithChildren } from "react";
-import { config } from "@/config";
 import Providers from "./providers";
 import { Container } from "@/components/ui/container";
 export default async function RootLayout({ children }: PropsWithChildren) {
-  const url = config.site.url;
   return (
     <>
       <Providers>

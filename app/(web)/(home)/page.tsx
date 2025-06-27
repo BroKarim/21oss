@@ -1,12 +1,12 @@
-import type { SearchParams } from "nuqs/server";
-import { Suspense } from "react";
+// import type { SearchParams } from "nuqs/server";
+// import { Suspense } from "react";
 import { config } from "@/config";
 import { Intro, IntroDescription, IntroTitle } from "@/components/ui/intro";
 
-type PageProps = {
-  searchParams: Promise<SearchParams>;
-};
-export default function Home(props: PageProps) {
+// type PageProps = {
+//   searchParams: Promise<SearchParams>;
+// };
+export default function Home() {
   return (
     <>
       <section className="relative flex flex-col justify-center gap-y-6 pb-18">
