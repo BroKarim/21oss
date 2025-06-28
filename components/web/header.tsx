@@ -11,16 +11,16 @@ import { Container } from "../ui/container";
 import { Hamburger } from "../ui/hamburger";
 import { Logo } from "../ui/logo";
 import { NavLink, navLinkVariants } from "./nav-link";
-import { UserMenu } from "~/components/web/user-menu";
-import { useSearch } from "~/contexts/search-context";
-import type { auth } from "~/lib/auth";
-import { cx } from "~/utils/cva";
+import { UserMenu } from "./user-menu";
+import { useSearch } from "@/contexts/search-context";
+import type { auth } from "@/lib/auth";
+import { cn } from "@/lib/utils";
 
 type HeaderProps = ComponentProps<"div"> & {
   session: typeof auth.$Infer.Session | null;
 };
 
-const Header = ({ children, className, session, ...props }: HeaderProps) => {
+const Header = ({ className, session, ...props }: HeaderProps) => {
   const pathname = usePathname();
   const search = useSearch();
   const [isNavOpen, setNavOpen] = useState(false);
@@ -40,7 +40,7 @@ const Header = ({ children, className, session, ...props }: HeaderProps) => {
   }, [pathname]);
 
   return (
-    <div className={cx("fixed top-(--header-top) inset-x-0 z-50 bg-background", className)} id="header" role="banner" data-state={isNavOpen ? "open" : "close"} {...props}>
+    <div className={cn("fixed top-(--header-top) inset-x-0 z-50 bg-background", className)} id="header" role="banner" data-state={isNavOpen ? "open" : "close"} {...props}>
       <Container>
         <div className="flex items-center py-3.5 gap-4 text-sm h-(--header-height) md:gap-6">
           <Stack size="sm" wrap={false} className="mr-auto">
@@ -53,7 +53,7 @@ const Header = ({ children, className, session, ...props }: HeaderProps) => {
 
           <nav className="flex flex-wrap gap-4 max-md:hidden">
             <DropdownMenu>
-              <DropdownMenuTrigger className={cx(navLinkVariants({ className: "gap-1" }))}>
+              <DropdownMenuTrigger className={cn(navLinkVariants({ className: "gap-1" }))}>
                 Browse <Icon name="lucide/chevron-down" className="group-data-[state=open]:-rotate-180 duration-200" />
               </DropdownMenuTrigger>
 
@@ -116,7 +116,7 @@ const Header = ({ children, className, session, ...props }: HeaderProps) => {
         </div>
 
         <nav
-          className={cx(
+          className={cn(
             "absolute top-full inset-x-0 h-[calc(100dvh-var(--header-top)-var(--header-height))] -mt-px py-4 px-6 grid grid-cols-2 place-items-start place-content-start gap-x-4 gap-y-6 bg-background/90 backdrop-blur-lg transition-opacity lg:hidden",
             isNavOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           )}

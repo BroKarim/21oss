@@ -7,6 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "db:generate": "prisma generate --no-hints",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:push": "prisma db push --skip-generate",
+    "db:reset": "prisma migrate reset",
     "email": "cp .env ../../node_modules/react-email/dist/preview && email dev"
   },
   "dependencies": {
@@ -29,13 +34,16 @@
     "framer-motion": "^12.9.2",
     "lucide-react": "^0.503.0",
     "next": "15.3.1",
+    "next-themes": "^0.4.6",
     "nuqs": "^2.4.3",
     "posthog-js": "^1.255.1",
     "radix-ui": "^1.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-email": "^4.0.17",
+    "resend": "^4.6.0",
     "satori": "^0.15.2",
+    "sonner": "^2.0.5",
     "tailwind-merge": "^3.2.0",
     "zod": "^3.25.67"
   },

@@ -10,6 +10,12 @@ export const env = createEnv({
     VERCEL_ENV: z.enum(["development", "preview", "production"]).default("development"),
     BETTER_AUTH_SECRET: z.string().min(1),
     BETTER_AUTH_URL: z.string().min(1).url(),
+    AUTH_GOOGLE_ID: z.string().min(1),
+    AUTH_GOOGLE_SECRET: z.string().min(1),
+    AUTH_GITHUB_ID: z.string().min(1),
+    AUTH_GITHUB_SECRET: z.string().min(1),
+    RESEND_API_KEY: z.string().min(1),
+    RESEND_SENDER_EMAIL: z.string().min(1).email(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.string().url().min(1),

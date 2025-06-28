@@ -8,8 +8,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Icon } from "../ui/icon";
 import Link from "next/link";
 import { NavLink } from "./nav-link";
-import { UserLogout } from "~/components/web/user-logout";
-import type { auth } from "~/lib/auth";
+import { UserLogout } from "./user-logout";
+import type { auth } from "@/lib/auth";
 import { useSession } from "@/lib/auth-client";
 
 const UserMenu = (props: { session: typeof auth.$Infer.Session | null }) => {

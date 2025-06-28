@@ -10,8 +10,8 @@ import { claimsConfig } from "@/config/claims";
 import EmailMagicLink from "@/email/magic-link";
 import EmailWelcome from "@/email/welcome";
 import { env } from "@/env";
-import { sendEmail } from "~/lib/email";
-import { db } from "~/services/db";
+import { sendEmail } from "./email";
+import { db } from "@/services/db";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
