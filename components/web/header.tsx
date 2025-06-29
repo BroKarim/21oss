@@ -40,7 +40,7 @@ const Header = ({ className, session, ...props }: HeaderProps) => {
   }, [pathname]);
 
   return (
-    <div className={cn("fixed top-(--header-top) inset-x-0 z-50 bg-background", className)} id="header" role="banner" data-state={isNavOpen ? "open" : "close"} {...props}>
+    <div className={cn("md:mb-4 inset-x-0 z-50 bg-background", className)} id="header" role="banner" data-state={isNavOpen ? "open" : "close"} {...props}>
       <Container>
         <div className="flex items-center py-3.5 gap-4 text-sm h-(--header-height) md:gap-6">
           <Stack size="sm" wrap={false} className="mr-auto">
