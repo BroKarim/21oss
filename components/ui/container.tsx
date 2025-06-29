@@ -1,21 +1,33 @@
-import { Slot } from "radix-ui";
-import type { ComponentProps } from "react";
+"use client";
 
-import { cn, VariantProps, cva } from "@/lib/utils";
+import * as React from "react";
+import { cn } from "@/lib/utils";
+import { useAtom } from "jotai";
+import { sidebarOpenAtom } from "../web/main-page/main-layout";
+import { useIsMobile } from "@/hooks/use-media-query";
 
-const containerVariants = cva({
-  base: "relative w-full max-w-272 mx-auto px-6 lg:px-8",
-});
+export function Container({ children, className }: { children: React.ReactNode; className?: string }) {
+  const [open] = useAtom(sidebarOpenAtom);
+  const isMobile = useIsMobile();
 
-type ContainerProps = ComponentProps<"div"> &
-  VariantProps<typeof containerVariants> & {
-    asChild?: boolean;
-  };
+  const [mounted, setMounted] = React.useState(false);
 
-const Container = ({ className, asChild, ...props }: ContainerProps) => {
-  const Comp = asChild ? Slot.Root : "div";
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  return <Comp className={cn(containerVariants({ className }))} {...props} />;
-};
+  // Always use mobile layout before hydration is complete
+  const shouldAdjustForSidebar = mounted && !isMobile && open;
 
-export { Container, containerVariants };
+  return (
+    <div
+      className={cn("relative mx-auto w-full transition-all duration-200", className)}
+      style={{
+        width: "min(100%, 3680px)",
+        maxWidth: shouldAdjustForSidebar ? "calc(100vw - 256px)" : "100vw",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
