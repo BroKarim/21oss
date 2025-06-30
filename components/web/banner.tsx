@@ -1,19 +1,35 @@
 "use client";
 
 import { memo } from "react";
+import { AnimatedGridPattern } from "./background/grid-pattern";
 
+const floatingElements = [
+  { label: "Video", count: "67+", position: "top-20 left-20", color: "bg-blue-600" },
+  { label: "Libraries", count: "269+", position: "top-32 left-40", color: "bg-blue-700" },
+  { label: "Startup", count: "81+", position: "top-40 right-80", color: "bg-blue-500" },
+  { label: "Design", count: "244+", position: "top-60 left-32", color: "bg-blue-600" },
+  { label: "Marketing", count: "104+", position: "top-16 right-40", color: "bg-blue-700" },
+  { label: "AI", count: "115+", position: "top-48 right-20", color: "bg-blue-500" },
+  { label: "Coding", count: "76+", position: "bottom-20 right-32", color: "bg-blue-600" },
+];
 //from 21
 const BoltBannerContent = memo(function BoltBannerContent() {
   return (
-    <a href="https://hackathon.dev" target="_blank" className="h-[110px] rounded-lg z-50 border-b border-border bg-muted transition-[left] duration-200 ease-in-out">
-      <div className="flex items-center justify-center relative h-[100px]">
-        <img
-          className="w-full h-[110px] rounded-lg object-cover absolute top-0 left-0"
-          src="https://images.unsplash.com/photo-1750072167202-b54f7a2c6bc7?q=80&w=2013&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Bolt Banner"
-        />
+    <section className="relative min-h-[200px] border  rounded-md overflow-hidden bg-black">
+      <AnimatedGridPattern />
+      {/* Floating Elements */}
+
+      {/* Main Content */}
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-[200px] px-8 text-center">
+        <h1 className="text-6xl font-bold mb-6 max-w-4xl">
+          All the Tools You Need
+          <br />
+          <span className="text-white">in one place.</span>
+        </h1>
+
+        <p className="text-xl text-gray-300 mb-8 max-w-2xl">Tools, Resources & Products. Delivered weekly</p>
       </div>
-    </a>
+    </section>
   );
 });
 

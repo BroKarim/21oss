@@ -1,6 +1,6 @@
 "use client";
 
-import { Bookmark, Eye } from "lucide-react";
+import { GitFork, Star } from "lucide-react";
 
 import { ComponentCardSkeleton } from "@/components/ui/skeletons";
 
@@ -18,7 +18,7 @@ export function ComponentCard({ isLoading }: { isLoading?: boolean; hideUser?: b
           <div className="relative w-full h-full rounded-lg shadow-base overflow-hidden">
             <div className="absolute inset-0">
               <ComponentPreviewImage
-                src="https://images.unsplash.com/photo-1750072167202-b54f7a2c6bc7?q=80&w=2013&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src="https://images.unsplash.com/photo-1750779940698-f24b28d76fd9?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="tes"
                 fallbackSrc="/placeholder.svg"
                 className="rounded-lg"
@@ -38,12 +38,12 @@ export function ComponentCard({ isLoading }: { isLoading?: boolean; hideUser?: b
           {/* TODO : GANTI GITHUB KET */}
           <div className="flex items-center gap-3">
             <div className="flex items-center text-xs text-muted-foreground whitespace-nowrap shrink-0 gap-1">
-              <Eye size={14} />
+              <Star size={14} />
               <span>10</span>
             </div>
 
             <div className="flex items-center text-xs text-muted-foreground whitespace-nowrap shrink-0 gap-1">
-              <Bookmark size={14} className="text-muted-foreground" />
+              <GitFork size={14} className="text-muted-foreground" />
               <span>40</span>
             </div>
           </div>
