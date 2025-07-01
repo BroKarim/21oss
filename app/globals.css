@@ -3,6 +3,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+:root {
+
+  --font-geist-sans: "GeistSans", "GeistSans Fallback", system-ui, sans-serif;
+  --font-geist-mono: "GeistMono", "GeistMono Fallback", "SF Mono", monospace;
+}
+
 @theme {
   --header-height: 3.125rem;
   --header-top: 0rem;
@@ -43,7 +49,8 @@
 
   --tracking-micro: -0.0125em;
 
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
   --font-display: var(--font-display);
 
   --text-5xl: 2.75rem;

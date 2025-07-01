@@ -9,19 +9,49 @@ generator client {
   previewFeatures = ["driverAdapters", "postgresqlExtensions"]
 }
 
-
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
   directUrl  = env("DATABASE_URL_UNPOOLED")
   extensions = [citext]
 }
+
 enum ReportType {
   BrokenLink
   WrongCategory
   WrongAlternative
   Outdated
   Other
+}
+
+enum AdType {
+  Banner
+  Alternatives
+  AlternativePage
+  Tools
+  ToolPage
+  SelfHosted
+  BlogPost
+  All
+}
+
+enum StackType {
+  Tool
+  SaaS
+  Cloud
+  ETL
+  Analytics
+  Language
+  DB
+  CI
+  Framework
+  Hosting
+  API
+  Storage
+  Monitoring
+  Messaging
+  App
+  Network
 }
 
 model User {
@@ -45,6 +75,131 @@ model User {
 
   // Indexes
   @@index([id])
+}
+
+model Content {
+  id              String    @id @default(cuid())
+  name            String    @db.Citext
+  slug            String    @unique
+  websiteUrl      String?   @unique // Made optional to avoid constraint issues
+  repositoryUrl   String?   @unique // Made optional to avoid constraint issues
+  demoUrl         String?
+  affiliateUrl    String?
+  tagline         String?
+  description     String?
+  stars           Int       @default(0)
+  forks           Int       @default(0)
+  faviconUrl      String?
+  screenshotUrl   String?
+  discountCode    String?
+  discountAmount  String?
+  firstCommitDate DateTime?
+  lastCommitDate  DateTime?
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Foreign Keys
+  licenseId    String?
+  inspiredById String?
+
+  // Relations
+  license    License?    @relation(fields: [licenseId], references: [id], onDelete: SetNull)
+  inspiredBy InspiredBy? @relation(fields: [inspiredById], references: [id], onDelete: SetNull)
+  categories Category[]  @relation("ContentCategories")
+  platforms  Platform[]  @relation("ContentPlatforms")
+  stacks     Stack[]     @relation("ContentStacks")
+  likes      Like[]
+  reports    Report[]
+
+  // Indexes
+  @@index([slug])
+  @@index([licenseId])
+  @@index([inspiredById])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String   @db.Citext
+  slug        String   @unique
+  fullPath    String   @unique @default("")
+  label       String?
+  description String?  @db.Text
+  parentId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  contents      Content[]  @relation("ContentCategories")
+  parent        Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  subcategories Category[] @relation("CategoryHierarchy")
+
+  // Indexes
+  @@index([slug])
+  @@index([parentId])
+}
+
+model Platform {
+  id        String   @id @default(cuid())
+  name      String   @db.Citext
+  slug      String   @unique
+  iconUrl   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  contents Content[] @relation("ContentPlatforms")
+
+  // Indexes
+  @@index([slug])
+}
+
+model InspiredBy {
+  id        String   @id @default(cuid())
+  name      String   @db.Citext
+  slug      String   @unique
+  iconUrl   String?
+  website   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  contents Content[]
+
+  // Indexes
+  @@index([slug])
+}
+
+model Stack {
+  id          String    @id @default(cuid())
+  name        String    @db.Citext
+  slug        String    @unique
+  type        StackType @default(Language)
+  description String?
+  website     String?
+  faviconUrl  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations  
+  contents Content[] @relation("ContentStacks")
+
+  // Indexes
+  @@index([slug])
+}
+
+model License {
+  id        String   @id @default(cuid())
+  name      String   @unique @db.Citext
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  contents Content[]
+
+  // Indexes
+  @@index([slug])
 }
 
 model Session {
@@ -91,31 +246,32 @@ model Report {
   id        String     @id @default(cuid())
   type      ReportType
   message   String?
+  userId    String?
+  contentId String?
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
   // Relations
-  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String?
-  // tool   Tool?   @relation(fields: [toolId], references: [id], onDelete: Cascade)
-  toolId String?
+  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  content Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   // Indexes
-  @@index([toolId])
+  @@index([contentId])
+  @@index([userId])
 }
 
 model Like {
   id        String   @id @default(cuid())
+  userId    String
+  contentId String
   createdAt DateTime @default(now())
 
   // Relations
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String
-  // tool   Tool   @relation(fields: [toolId], references: [id], onDelete: Cascade)
-  toolId String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content Content @relation(fields: [contentId], references: [id], onDelete: Cascade)
 
   // Indexes
-  @@unique([userId, toolId])
+  @@unique([userId, contentId])
   @@index([userId])
-  @@index([toolId])
+  @@index([contentId])
 }

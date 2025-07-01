@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { AudioWaveform, BookOpen, Bot, Command, Frame, GalleryVerticalEnd, Map, PieChart, Settings2, SquareTerminal } from "lucide-react";
+import { AudioWaveform, BookOpen, Store, Command, Frame, GalleryVerticalEnd, Map, PieChart, LayoutGrid } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
@@ -35,25 +35,20 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Explore",
       url: "#",
-      icon: SquareTerminal,
+      icon: LayoutGrid,
       isActive: true,
     },
     {
-      title: "Models",
+      title: "Marketplace",
       url: "#",
-      icon: Bot,
+      icon: Store,
     },
     {
-      title: "Documentation",
+      title: "Blog",
       url: "#",
       icon: BookOpen,
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
     },
   ],
   projects: [

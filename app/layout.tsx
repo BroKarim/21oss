@@ -2,10 +2,11 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { fontSans } from "@/lib/fonts";
 import { SearchProvider } from "@/contexts/search-context";
 import { cn } from "@/lib/utils";
 import { AppProviders } from "./providers";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -25,9 +26,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
-    <html lang="en" className={`${fontSans.variable}`} suppressHydrationWarning>
-      <body className={cn("font-sans [scrollbar-gutter:stable]")}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(GeistSans.variable, GeistMono.variable, "font-sans [scrollbar-gutter:stable]")}>
         <div className="h-full">
           <NuqsAdapter>
             <TooltipProvider delayDuration={250}>
