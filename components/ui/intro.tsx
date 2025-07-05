@@ -1,5 +1,5 @@
 import type { ComponentProps } from "react";
-import { Heading, type HeadingProps } from "../web/heading";
+import { Heading, type HeadingProps } from "./heading";
 import { type VariantProps, cva, cn } from "@/lib/utils";
 
 const introVariants = cva({

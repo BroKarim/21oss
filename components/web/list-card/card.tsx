@@ -1,15 +1,29 @@
 "use client";
 
 import { GitFork, Star } from "lucide-react";
-
+import { Stack } from "@/components/ui/stack";
+import { Icon } from "@/components/ui/icon";
 import { ComponentCardSkeleton } from "@/components/ui/skeletons";
-
+import { Insights } from "@/components/ui/insights";
 import ComponentPreviewImage from "./card-image";
 
 export function ComponentCard({ isLoading }: { isLoading?: boolean; hideUser?: boolean; onClick?: () => void; onCtrlClick?: (url: string) => void; hideVotes?: boolean; isLeaderboard?: boolean; onVote?: (demoId: number) => Promise<void> }) {
   if (isLoading) {
     return <ComponentCardSkeleton />;
   }
+  const insights = [
+    {
+      label: "Stars",
+      value: 150,
+      icon: <Icon name="lucide/star" />,
+    },
+    {
+      label: "Forks",
+      value: 150,
+      icon: <Icon name="lucide/git-fork" />,
+    },
+    { label: "Last commit", value: 120, icon: <Icon name="lucide/timer" /> },
+  ];
 
   return (
     <div className="block select-none">
@@ -21,8 +35,12 @@ export function ComponentCard({ isLoading }: { isLoading?: boolean; hideUser?: b
                 src="https://images.unsplash.com/photo-1750779940698-f24b28d76fd9?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="tes"
                 fallbackSrc="/placeholder.svg"
-                className="rounded-lg"
+                className="rounded-t-lg"
               />
+            </div>
+            <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-lg flex items-center flex-col justify-center p-4">
+              <p className="text-white text-sm text-center leading-relaxed">Lorem Ipsum is simply dummy text </p>
+              <Insights insights={insights.filter((i) => i.value)} className="mt-auto" />
             </div>
             <div className="absolute inset-0 rounded-lg" />
           </div>
@@ -33,18 +51,6 @@ export function ComponentCard({ isLoading }: { isLoading?: boolean; hideUser?: b
           <div className="block min-w-0 flex-1 mr-3">
             <div className="flex flex-col min-w-0">
               <h2 className="text-sm font-medium text-foreground truncate">Tess card</h2>
-            </div>
-          </div>
-          {/* TODO : GANTI GITHUB KET */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center text-xs text-muted-foreground whitespace-nowrap shrink-0 gap-1">
-              <Star size={14} />
-              <span>10</span>
-            </div>
-
-            <div className="flex items-center text-xs text-muted-foreground whitespace-nowrap shrink-0 gap-1">
-              <GitFork size={14} className="text-muted-foreground" />
-              <span>40</span>
             </div>
           </div>
         </div>

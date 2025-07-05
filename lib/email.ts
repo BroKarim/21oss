@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import type { CreateEmailOptions } from "resend";
 import { config } from "@/config";
 import { env, isProd } from "@/env";
-import { resend } from "@/server/resend";
+import { resend } from "@/services/resend";
 
 export type EmailParams = {
   to: string;
