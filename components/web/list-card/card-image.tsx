@@ -3,20 +3,22 @@
 import { useState, useEffect } from "react";
 
 interface ComponentPreviewImageProps {
-  src: string;
+  src: string | null;
   alt: string;
   fallbackSrc: string;
   className?: string;
 }
 
 export default function ComponentPreviewImage({ src, alt, fallbackSrc, className }: ComponentPreviewImageProps) {
-  const [imgSrc, setImgSrc] = useState(src);
+  const [imgSrc, setImgSrc] = useState(src || fallbackSrc);
   const [isPlaceholder, setIsPlaceholder] = useState(src === fallbackSrc);
 
   useEffect(() => {
-    setImgSrc(src);
-    setIsPlaceholder(src === fallbackSrc);
+    const finalSrc = src || fallbackSrc;
+    setImgSrc(finalSrc);
+    setIsPlaceholder(!src || src === fallbackSrc);
   }, [src, fallbackSrc]);
+
 
   return (
     <img

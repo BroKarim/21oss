@@ -3,13 +3,13 @@ import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "
 import { db } from "@/services/db";
 import { ContentManyPayload } from "./payload";
 
-//nengok sini : https://github.com/piotrkulpinski/openalternative/blob/main/server/web/alternatives/queries.ts
+//nengok sini : https://github.com/piotrkulpinski/openalternative/blob/e47d2d295dc9ae8575fefdc3cfaf6e8baa2ff94c/server/web/tools/queries.ts
 // sederhanya ini fitur fetch data
 // Prisma.ContentFindManyArgs = prisma.content.findMany()
 export const findFeaturedShowcase = async ({ where, ...args }: Prisma.ContentFindManyArgs) => {
   "use cache";
 
-  cacheTag("featured-showcase");
+  cacheTag("showcase");
   cacheLife("max");
   // list berisi slug konten yang dianggap “featured”
   const list = ["monday", "notion", "airtable", "typeform", "teamwork", "todoist", "kissmetrics", "fathom-analytics"];

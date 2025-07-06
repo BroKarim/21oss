@@ -1,8 +1,6 @@
 "use client";
 
-import { GitFork, Star } from "lucide-react";
-import { Stack } from "@/components/ui/stack";
-import { Icon } from "@/components/ui/icon";
+import { GitFork, Star, Timer } from "lucide-react";
 import { ComponentCardSkeleton } from "@/components/ui/skeletons";
 import { Insights } from "@/components/ui/insights";
 import ComponentPreviewImage from "./card-image";
@@ -15,14 +13,14 @@ export function ComponentCard({ isLoading }: { isLoading?: boolean; hideUser?: b
     {
       label: "Stars",
       value: 150,
-      icon: <Icon name="lucide/star" />,
+      icon: <Star />,
     },
     {
       label: "Forks",
       value: 150,
-      icon: <Icon name="lucide/git-fork" />,
+      icon: <GitFork />,
     },
-    { label: "Last commit", value: 120, icon: <Icon name="lucide/timer" /> },
+    { label: "Last commit", value: 120, icon: <Timer /> },
   ];
 
   return (
