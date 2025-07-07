@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence } from "motion/react";
 import React from "react";
 
-import { HomeTabLayout } from "@/components/web/home/home-layout";
+import { HomeTabLayout } from "@/components/web/main-page/home-layout";
 
 import { BoltBanner } from "@/components/web/banner";
 import { SidebarInset } from "@/components/ui/sidebar";

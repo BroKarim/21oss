@@ -70,9 +70,8 @@ export function HorizontalSlider({ className }: HorizontalSliderProps) {
           <ScrollBar orientation="horizontal" className="invisible" />
         </ScrollArea>
       </div>
-      <div className="flex items-center justify-between">
+      {/* <div className="flex items-center justify-between">
         <h2 className="font-semibold">Tess</h2>
-        {/* <div>{rightSide}</div> */}
         <Button variant="link" className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors p-0  cursor-pointer">
           <Link href="/" className="flex items-center gap-1 group">
             View All
@@ -110,7 +109,7 @@ export function HorizontalSlider({ className }: HorizontalSliderProps) {
           </div>
           <ScrollBar orientation="horizontal" className="invisible" />
         </ScrollArea>
-      </div>
+      </div> */}
     </div>
   );
 }

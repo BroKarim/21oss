@@ -7,11 +7,12 @@ import { findFeaturedShowcase } from "@/server/web/showcase/queries";
 
 const ShowCasePreview = async () => {
   const showcases = await findFeaturedShowcase({});
+  console.log("🔥 Showcase data:", showcases);
 
   if (!showcases.length) {
     return null;
   }
-que
+  return (
     <>
       <Listing title="Discover Open Source alternatives to:" button={<Link href="/alternatives">View all alternatives</Link>} separated>
         <ShowcaseList showcases={showcases} />

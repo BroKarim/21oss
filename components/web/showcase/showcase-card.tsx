@@ -17,10 +17,9 @@ type ShowcaseCardProps = ComponentProps<typeof Card> & {
   /**
    * Disables the view transition.
    */
-  isRelated?: boolean;
 };
 
-const ShowCaseCard = ({ showcase, isRelated, ...props }: ShowcaseCardProps) => {
+const ShowCaseCard = ({ showcase, ...props }: ShowcaseCardProps) => {
   const lastCommitDate = showcase.lastCommitDate && formatDistanceToNowStrict(showcase.lastCommitDate, { addSuffix: true });
   const insights = [
     {
@@ -36,9 +35,9 @@ const ShowCaseCard = ({ showcase, isRelated, ...props }: ShowcaseCardProps) => {
     { label: "Last commit", value: lastCommitDate, icon: <Timer /> },
   ];
   return (
-    <Card asChild {...props} className="block select-none">
+    <Card asChild {...props} className="p-0 border-none bg-transparent">
       <Link href="/">
-        <div className="relative aspect-[4/3] mb-3 group">
+        <CardHeader className="relative aspect-[4/3] group p-0">
           <div className="absolute inset-0">
             <div className="relative w-full h-full rounded-lg shadow-base overflow-hidden">
               <div className="absolute inset-0">
@@ -48,18 +47,12 @@ const ShowCaseCard = ({ showcase, isRelated, ...props }: ShowcaseCardProps) => {
                 <p className="text-white text-sm text-center leading-relaxed">{showcase.description}</p>
                 <Insights insights={insights.filter((i) => i.value)} className="mt-auto" />
               </div>
-              <div className="absolute inset-0 rounded-lg" />
             </div>
           </div>
-        </div>
-        <div className="flex space-x-3 items-center">
-          <div className="flex items-center justify-between flex-grow min-w-0">
-            <div className="block min-w-0 flex-1 mr-3">
-              <div className="flex flex-col min-w-0">
-                <h2 className="text-sm font-medium text-foreground truncate">{showcase.name}</h2>
-              </div>
-            </div>
-          </div>
+        </CardHeader>
+
+        <div className="p-0">
+          <h2 className="text-base font-semibold text-foreground">{showcase.name}</h2>
         </div>
       </Link>
     </Card>
