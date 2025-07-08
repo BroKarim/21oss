@@ -81,8 +81,8 @@ model Content {
   id              String    @id @default(cuid())
   name            String    @db.Citext
   slug            String    @unique
-  websiteUrl      String?   @unique // Made optional to avoid constraint issues
-  repositoryUrl   String?   @unique // Made optional to avoid constraint issues
+  websiteUrl      String?   @unique 
+  repositoryUrl   String?   @unique
   demoUrl         String?
   affiliateUrl    String?
   tagline         String?

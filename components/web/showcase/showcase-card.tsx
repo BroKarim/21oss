@@ -36,7 +36,7 @@ const ShowCaseCard = ({ showcase, ...props }: ShowcaseCardProps) => {
   ];
   return (
     <Card asChild {...props} className="p-0 border-none bg-transparent">
-      <Link href="/">
+      <Link href={`/${showcase.slug}`}>
         <CardHeader className="relative aspect-[4/3] group p-0">
           <div className="absolute inset-0">
             <div className="relative w-full h-full rounded-lg shadow-base overflow-hidden">

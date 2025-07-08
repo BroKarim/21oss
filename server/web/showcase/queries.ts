@@ -12,7 +12,7 @@ export const findFeaturedShowcase = async ({ where, ...args }: Prisma.ContentFin
   cacheTag("showcase");
   cacheLife("max");
 
-  return await findShowcase({
+  return await findShowcases({
     where: {
       stars: { gt: 0 },
       ...where,
@@ -43,7 +43,7 @@ export const findShowcases = async ({ where, orderBy, ...args }: Prisma.ContentF
 export const findShowcaseSlugs = async ({ where, orderBy, ...args }: Prisma.ContentFindManyArgs) => {
   "use cache";
 
-  cacheTag("tools");
+  cacheTag("showcases");
   cacheLife("max");
 
   return db.content.findMany({
@@ -57,11 +57,12 @@ export const findShowcaseSlugs = async ({ where, orderBy, ...args }: Prisma.Cont
 export const findShowcase = async ({ where, ...args }: Prisma.ContentFindFirstArgs = {}) => {
   "use cache";
 
-  cacheTag("tool", `tool-${where?.slug}`);
+  cacheTag("showcase", `showcase-${where?.slug}`);
   cacheLife("max");
-
+  console.log("findShowcase args:", args);
   return db.content.findFirst({
     ...args,
+
     where: { ...where },
     select: contentOnePayload,
   });
