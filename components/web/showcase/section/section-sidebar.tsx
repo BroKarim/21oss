@@ -1,7 +1,6 @@
 import * as React from "react";
-import { GalleryVerticalEnd } from "lucide-react";
 
-import { Sidebar, SidebarProvider, SidebarContent, SidebarGroup, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarProvider, SidebarContent, SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, SidebarRail } from "@/components/ui/sidebar";
 
 // This is sample data.
 const data = {

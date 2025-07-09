@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   experimental: {
     useCache: true,
   },
+  images: {
+    domains: ["picsum.photos", "images.unsplash.com"],
+  },
+
   /* config options here */
 };
 

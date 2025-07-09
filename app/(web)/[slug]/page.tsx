@@ -7,11 +7,10 @@ import { Section } from "@/components/ui/section";
 import type { ImageObject } from "schema-dts";
 import { findShowcase, findShowcaseSlugs } from "@/server/web/showcase/queries";
 import { IntroDescription } from "@/components/ui/intro";
-import { FaviconImage } from "@/components/ui/favicon";
-import { SectionSidebar } from "@/components/web/showcase/section/section-sidebar";
+// import { FaviconImage } from "@/components/ui/favicon";
+import { ShowcaseDisplay } from "@/components/web/showcase-display";
+
 import { Note } from "@/components/ui/note";
-import { FilesystemItemDemo } from "@/components/web/filesystem-demo";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { RepositoryDetails } from "@/components/web/repository-detail";
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -33,6 +32,7 @@ export const generateStaticParams = async () => {
   return showcases.map(({ slug }) => ({ slug }));
 };
 
+//TODO : buat dlu schem untuk terima image dan link, bias bs getShowvase
 export default async function ShowcasePage(props: PageProps) {
   const showcase = await getShowcase(props);
 
@@ -62,8 +62,8 @@ export default async function ShowcasePage(props: PageProps) {
 
   return (
     <>
-      <div className="flex w-full flex-col ">
-        <Section className="px-8 py-4">
+      <div className="flex w-full flex-col space-y-4 px-8 py-4">
+        <Section>
           <Section.Content className="max-md:contents">
             <div className="flex flex-1 flex-col items-start gap-6 max-md:order-1 md:gap-8 px">
               <div className="flex w-full flex-col items-start gap-y-4">
@@ -108,11 +108,10 @@ export default async function ShowcasePage(props: PageProps) {
             <RepositoryDetails showcase={showcase} className="max-md:order-5" />
           </Section.Sidebar>
         </Section>
-        <Section>
-          <div className="flex w-full min-h-[500px]">
-            <SectionSidebar />
-          </div>
-        </Section>
+        <div className="w-full flex h-screen min-h-[500px]">
+          <ShowcaseDisplay />
+        </div>
+
         {/* gambar */}
         {/* related */}
       </div>
