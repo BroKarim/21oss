@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { AnimatedGridPattern } from "./background/grid-pattern";
+import { AnimatedGridPattern } from "../background/grid-pattern";
 
 const floatingElements = [
   { label: "Video", count: "67+", position: "top-20 left-20", color: "bg-blue-600" },

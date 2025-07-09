@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
-import { H4 } from "../ui/heading";
-import { Button } from "../ui/button";
-import { Stack } from "../ui/stack";
+import { H4 } from "@/components/ui/heading";
+import { Button } from "@/components/ui/button";
+import { Stack } from "@/components/ui/stack";
 import { cn } from "@/lib/utils";
 
 type ListingProps = ComponentProps<typeof Stack> & {

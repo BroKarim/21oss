@@ -4,8 +4,7 @@ import { AnimatePresence } from "motion/react";
 import React from "react";
 
 import { HomeTabLayout } from "@/components/web/main-page/home-layout";
-
-import { BoltBanner } from "@/components/web/banner";
+import { BoltBanner } from "@/components/web/ui/banner";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { CommandMenu } from "@/components/web/main-page/command-menu";
 // TODO : Agar bs render di halam yg sama, nengok apps/web/app/page.client.tsx (21st.dev)

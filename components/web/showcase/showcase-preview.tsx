@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ShowcaseList, ShowcaseListSkeleton } from "./showcase-list";
-import { Listing } from "../listing";
+import { Listing } from "../ui/listing";
 import { findFeaturedShowcase } from "@/server/web/showcase/queries";
 
 const ShowCasePreview = async () => {

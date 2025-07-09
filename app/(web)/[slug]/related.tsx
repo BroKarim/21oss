@@ -1,4 +1,4 @@
-import { Listing } from "@/components/web/listing";
+import { Listing } from "@/components/web/ui/listing";
 import { ShowcaseList } from "@/components/web/showcase/showcase-list";
 import { findFeaturedShowcase } from "@/server/web/showcase/queries";
 import type { ContentOne } from "@/server/web/showcase/payload";

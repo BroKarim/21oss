@@ -8,7 +8,10 @@ import type { ImageObject } from "schema-dts";
 import { findShowcase, findShowcaseSlugs } from "@/server/web/showcase/queries";
 import { IntroDescription } from "@/components/ui/intro";
 import { FaviconImage } from "@/components/ui/favicon";
+import { SectionSidebar } from "@/components/web/showcase/section/section-sidebar";
 import { Note } from "@/components/ui/note";
+import { FilesystemItemDemo } from "@/components/web/filesystem-demo";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { RepositoryDetails } from "@/components/web/repository-detail";
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -59,7 +62,7 @@ export default async function ShowcasePage(props: PageProps) {
 
   return (
     <>
-      <div className="flex flex-col gap-12">
+      <div className="flex w-full flex-col ">
         <Section className="px-8 py-4">
           <Section.Content className="max-md:contents">
             <div className="flex flex-1 flex-col items-start gap-6 max-md:order-1 md:gap-8 px">
@@ -104,6 +107,11 @@ export default async function ShowcasePage(props: PageProps) {
           <Section.Sidebar className="max-md:contents">
             <RepositoryDetails showcase={showcase} className="max-md:order-5" />
           </Section.Sidebar>
+        </Section>
+        <Section>
+          <div className="flex w-full min-h-[500px]">
+            <SectionSidebar />
+          </div>
         </Section>
         {/* gambar */}
         {/* related */}
