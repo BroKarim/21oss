@@ -1,0 +1,41 @@
+import { type Content } from "@prisma/client";
+import { createSearchParamsCache, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
+import { z } from "zod";
+import { getSortingStateParser } from "@/lib/parsers";
+import { repositorySchema } from "~/server/web/shared/schema";
+
+export const contentsTableParamsSchema = {
+  name: parseAsString.withDefault(""),
+  sort: getSortingStateParser<Content>().withDefault([{ id: "createdAt", desc: true }]),
+  page: parseAsInteger.withDefault(1),
+  perPage: parseAsInteger.withDefault(25),
+  from: parseAsString.withDefault(""),
+  to: parseAsString.withDefault(""),
+  operator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+};
+
+export const contentsTableParamsCache = createSearchParamsCache(contentsTableParamsSchema);
+export type ContentsTableSchema = Awaited<ReturnType<typeof contentsTableParamsCache.parse>>;
+
+export const contentSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "Name is required"),
+  slug: z.string().optional(),
+  websiteUrl: z.string().min(1, "Website is required").url(),
+  affiliateUrl: z.string().url().optional().or(z.literal("")),
+  repositoryUrl: repositorySchema,
+  tagline: z.string().optional(),
+  description: z.string().optional(),
+  content: z.string().optional(),
+  faviconUrl: z.string().optional().or(z.literal("")),
+  screenshotUrl: z.string().optional().or(z.literal("")),
+  submitterName: z.string().optional(),
+  submitterEmail: z.string().email().optional().or(z.literal("")),
+  submitterNote: z.string().optional(),
+  discountCode: z.string().optional(),
+  discountAmount: z.string().optional(),
+  publishedAt: z.coerce.date().nullish(),
+  categories: z.array(z.string()).optional(),
+});
+
+export type ToolSchema = z.infer<typeof toolSchema>;
