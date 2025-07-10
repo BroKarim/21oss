@@ -1,21 +1,23 @@
 "use client";
 
-import { addMonths, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, startOfMonth, startOfWeek, subMonths } from "date-fns";
+import { addMonths, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, startOfMonth, startOfWeek } from "date-fns";
 import { type ComponentProps, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { H5 } from "@/components/ui/heading";
-import { Icon } from "@/components/ui/icon";
 import { Link } from "@/components/ui/link";
 import { Stack } from "@/components/ui/stack";
-import type { findScheduledTools } from "~/server/admin/tools/queries";
 import { cn } from "@/lib/utils";
 
-type Tools = Awaited<ReturnType<typeof findScheduledTools>>;
+type Tool = {
+  slug: string;
+  name: string;
+  publishedAt: Date | null;
+};
 
 type CalendarDayProps = ComponentProps<"td"> & {
   day: Date;
   currentDate: Date;
-  tools: Tools;
+  tools: Tool[];
 };
 
 const CalendarDay = ({ className, day, tools, currentDate, ...props }: CalendarDayProps) => {
@@ -39,12 +41,28 @@ const CalendarDay = ({ className, day, tools, currentDate, ...props }: CalendarD
 };
 
 type CalendarProps = ComponentProps<"div"> & {
-  tools: Tools;
+  tools?: Tool[];
 };
 
-export const Calendar = ({ className, tools, ...props }: CalendarProps) => {
+export const Calendar = ({ className, tools = [], ...props }: CalendarProps) => {
   const today = new Date();
   const [currentDate, setCurrentDate] = useState(today);
+
+  // Data dummy untuk tools
+  const dummyTools: Tool[] = [
+    { slug: "figma", name: "Figma", publishedAt: new Date(2025, 6, 15) },
+    { slug: "notion", name: "Notion", publishedAt: new Date(2025, 6, 18) },
+    { slug: "slack", name: "Slack", publishedAt: new Date(2025, 6, 22) },
+    { slug: "trello", name: "Trello", publishedAt: new Date(2025, 6, 25) },
+    { slug: "discord", name: "Discord", publishedAt: new Date(2025, 6, 28) },
+    { slug: "github", name: "GitHub", publishedAt: new Date(2025, 7, 2) },
+    { slug: "vercel", name: "Vercel", publishedAt: new Date(2025, 7, 5) },
+    { slug: "linear", name: "Linear", publishedAt: new Date(2025, 7, 8) },
+    { slug: "supabase", name: "Supabase", publishedAt: new Date(2025, 7, 12) },
+    { slug: "framer", name: "Framer", publishedAt: new Date(2025, 7, 15) },
+  ];
+
+  const toolsData = tools.length > 0 ? tools : dummyTools;
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(monthStart);
@@ -58,11 +76,11 @@ export const Calendar = ({ className, tools, ...props }: CalendarProps) => {
   return (
     <div className={cn("space-y-2", className)} {...props}>
       <Stack className="justify-between">
-        <Button variant="secondary" size="sm" prefix={<Icon name="lucide/chevron-left" />} onClick={() => setCurrentDate((date) => subMonths(date, 1))} disabled={isSameMonth(currentDate, today)} />
+        <Button variant="secondary" size="sm" />
 
         <H5>{format(currentDate, "MMMM yyyy")}</H5>
 
-        <Button variant="secondary" size="sm" prefix={<Icon name="lucide/chevron-right" />} onClick={() => setCurrentDate((date) => addMonths(date, 1))} />
+        <Button variant="secondary" size="sm" onClick={() => setCurrentDate((date) => addMonths(date, 1))} />
       </Stack>
 
       <table className="w-full table-fixed border-collapse text-sm">
@@ -80,7 +98,7 @@ export const Calendar = ({ className, tools, ...props }: CalendarProps) => {
           {weeks.map((week, weekIndex) => (
             <tr key={weekIndex}>
               {week.map((day) => (
-                <CalendarDay key={day.toISOString()} day={day} tools={tools} currentDate={currentDate} />
+                <CalendarDay key={day.toISOString()} day={day} tools={toolsData} currentDate={currentDate} />
               ))}
             </tr>
           ))}

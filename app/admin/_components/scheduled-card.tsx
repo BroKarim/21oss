@@ -1,16 +1,22 @@
 import type { ComponentProps } from "react";
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
 import { H2 } from "@/components/ui/heading";
-import { Note } from "@/components/ui/note";c
-import { findScheduledTools } from "~/server/admin/tools/queries";
-import { Calendar } from "./calendar";
+import { Note } from "@/components/ui/note";
+import { Calendar } from "./calender";
 
-const ScheduledCard = async ({ ...props }: ComponentProps<typeof Card>) => {
-  const tools = await findScheduledTools();
+const ScheduledCard = ({ ...props }: ComponentProps<typeof Card>) => {
+  // Data dummy untuk scheduled tools
+  const tools = [
+    { slug: "figma", name: "Figma", publishedAt: new Date(2025, 6, 15) },
+    { slug: "notion", name: "Notion", publishedAt: new Date(2025, 6, 18) },
+    { slug: "slack", name: "Slack", publishedAt: new Date(2025, 6, 22) },
+    { slug: "trello", name: "Trello", publishedAt: new Date(2025, 6, 25) },
+    { slug: "discord", name: "Discord", publishedAt: new Date(2025, 6, 28) },
+  ];
 
   return (
-    <Card hover={false} focus={false} {...props}>
-      <CardHeader direction="column">
+    <Card {...props}>
+      <CardHeader>
         <CardDescription>Scheduled Tools</CardDescription>
         <H2>{tools.length}</H2>
       </CardHeader>
