@@ -54,6 +54,7 @@
     "posthog-js": "^1.255.1",
     "radix-ui": "^1.4.2",
     "react": "^19.1.0",
+    "react-day-picker": "^9.8.0",
     "react-dom": "^19.1.0",
     "react-email": "^4.0.17",
     "resend": "^4.6.0",
@@ -63,7 +64,8 @@
     "tailwind-merge": "^3.2.0",
     "wretch": "^2.11.0",
     "zod": "^3.25.67",
-    "zsa": "^0.6.0"
+    "zsa": "^0.6.0",
+    "zsa-react": "^0.2.3"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

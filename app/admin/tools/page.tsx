@@ -1,7 +1,7 @@
 import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
 import { withAdminPage } from "@/components/admin/auth-hoc";
-import { DataTableSkeleton } from "~/components/data-table/data-table-skeleton";
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { findTools } from "~/server/admin/tools/queries";
 import { toolsTableParamsCache } from "~/server/admin/tools/schema";
 import { ToolsTable } from "./_components/tools-table";
