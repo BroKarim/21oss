@@ -25,7 +25,7 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "Content" (
+CREATE TABLE "Tool" (
     "id" TEXT NOT NULL,
     "name" CITEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE "Content" (
     "licenseId" TEXT,
     "inspiredById" TEXT,
 
-    CONSTRAINT "Content_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Tool_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -158,7 +158,7 @@ CREATE TABLE "Report" (
     "type" "ReportType" NOT NULL,
     "message" TEXT,
     "userId" TEXT,
-    "contentId" TEXT,
+    "toolId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -169,34 +169,34 @@ CREATE TABLE "Report" (
 CREATE TABLE "Like" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "contentId" TEXT NOT NULL,
+    "toolId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Like_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "_ContentPlatforms" (
+CREATE TABLE "_ToolCategories" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
 
-    CONSTRAINT "_ContentPlatforms_AB_pkey" PRIMARY KEY ("A","B")
+    CONSTRAINT "_ToolCategories_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateTable
-CREATE TABLE "_ContentStacks" (
+CREATE TABLE "_ToolPlatforms" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
 
-    CONSTRAINT "_ContentStacks_AB_pkey" PRIMARY KEY ("A","B")
+    CONSTRAINT "_ToolPlatforms_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateTable
-CREATE TABLE "_ContentCategories" (
+CREATE TABLE "_ToolStacks" (
     "A" TEXT NOT NULL,
     "B" TEXT NOT NULL,
 
-    CONSTRAINT "_ContentCategories_AB_pkey" PRIMARY KEY ("A","B")
+    CONSTRAINT "_ToolStacks_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
@@ -206,22 +206,22 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE INDEX "User_id_idx" ON "User"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Content_slug_key" ON "Content"("slug");
+CREATE UNIQUE INDEX "Tool_slug_key" ON "Tool"("slug");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Content_websiteUrl_key" ON "Content"("websiteUrl");
+CREATE UNIQUE INDEX "Tool_websiteUrl_key" ON "Tool"("websiteUrl");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Content_repositoryUrl_key" ON "Content"("repositoryUrl");
+CREATE UNIQUE INDEX "Tool_repositoryUrl_key" ON "Tool"("repositoryUrl");
 
 -- CreateIndex
-CREATE INDEX "Content_slug_idx" ON "Content"("slug");
+CREATE INDEX "Tool_slug_idx" ON "Tool"("slug");
 
 -- CreateIndex
-CREATE INDEX "Content_licenseId_idx" ON "Content"("licenseId");
+CREATE INDEX "Tool_licenseId_idx" ON "Tool"("licenseId");
 
 -- CreateIndex
-CREATE INDEX "Content_inspiredById_idx" ON "Content"("inspiredById");
+CREATE INDEX "Tool_inspiredById_idx" ON "Tool"("inspiredById");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
@@ -272,7 +272,7 @@ CREATE INDEX "Session_userId_idx" ON "Session"("userId");
 CREATE INDEX "Account_userId_idx" ON "Account"("userId");
 
 -- CreateIndex
-CREATE INDEX "Report_contentId_idx" ON "Report"("contentId");
+CREATE INDEX "Report_toolId_idx" ON "Report"("toolId");
 
 -- CreateIndex
 CREATE INDEX "Report_userId_idx" ON "Report"("userId");
@@ -281,25 +281,25 @@ CREATE INDEX "Report_userId_idx" ON "Report"("userId");
 CREATE INDEX "Like_userId_idx" ON "Like"("userId");
 
 -- CreateIndex
-CREATE INDEX "Like_contentId_idx" ON "Like"("contentId");
+CREATE INDEX "Like_toolId_idx" ON "Like"("toolId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Like_userId_contentId_key" ON "Like"("userId", "contentId");
+CREATE UNIQUE INDEX "Like_userId_toolId_key" ON "Like"("userId", "toolId");
 
 -- CreateIndex
-CREATE INDEX "_ContentPlatforms_B_index" ON "_ContentPlatforms"("B");
+CREATE INDEX "_ToolCategories_B_index" ON "_ToolCategories"("B");
 
 -- CreateIndex
-CREATE INDEX "_ContentStacks_B_index" ON "_ContentStacks"("B");
+CREATE INDEX "_ToolPlatforms_B_index" ON "_ToolPlatforms"("B");
 
 -- CreateIndex
-CREATE INDEX "_ContentCategories_B_index" ON "_ContentCategories"("B");
+CREATE INDEX "_ToolStacks_B_index" ON "_ToolStacks"("B");
 
 -- AddForeignKey
-ALTER TABLE "Content" ADD CONSTRAINT "Content_licenseId_fkey" FOREIGN KEY ("licenseId") REFERENCES "License"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Tool" ADD CONSTRAINT "Tool_licenseId_fkey" FOREIGN KEY ("licenseId") REFERENCES "License"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Content" ADD CONSTRAINT "Content_inspiredById_fkey" FOREIGN KEY ("inspiredById") REFERENCES "InspiredBy"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Tool" ADD CONSTRAINT "Tool_inspiredById_fkey" FOREIGN KEY ("inspiredById") REFERENCES "InspiredBy"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Category" ADD CONSTRAINT "Category_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -314,28 +314,28 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Report" ADD CONSTRAINT "Report_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Report" ADD CONSTRAINT "Report_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Report" ADD CONSTRAINT "Report_toolId_fkey" FOREIGN KEY ("toolId") REFERENCES "Tool"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Like" ADD CONSTRAINT "Like_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Like" ADD CONSTRAINT "Like_contentId_fkey" FOREIGN KEY ("contentId") REFERENCES "Content"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Like" ADD CONSTRAINT "Like_toolId_fkey" FOREIGN KEY ("toolId") REFERENCES "Tool"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_ContentPlatforms" ADD CONSTRAINT "_ContentPlatforms_A_fkey" FOREIGN KEY ("A") REFERENCES "Content"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_ToolCategories" ADD CONSTRAINT "_ToolCategories_A_fkey" FOREIGN KEY ("A") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_ContentPlatforms" ADD CONSTRAINT "_ContentPlatforms_B_fkey" FOREIGN KEY ("B") REFERENCES "Platform"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_ToolCategories" ADD CONSTRAINT "_ToolCategories_B_fkey" FOREIGN KEY ("B") REFERENCES "Tool"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_ContentStacks" ADD CONSTRAINT "_ContentStacks_A_fkey" FOREIGN KEY ("A") REFERENCES "Content"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_ToolPlatforms" ADD CONSTRAINT "_ToolPlatforms_A_fkey" FOREIGN KEY ("A") REFERENCES "Platform"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_ContentStacks" ADD CONSTRAINT "_ContentStacks_B_fkey" FOREIGN KEY ("B") REFERENCES "Stack"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_ToolPlatforms" ADD CONSTRAINT "_ToolPlatforms_B_fkey" FOREIGN KEY ("B") REFERENCES "Tool"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_ContentCategories" ADD CONSTRAINT "_ContentCategories_A_fkey" FOREIGN KEY ("A") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_ToolStacks" ADD CONSTRAINT "_ToolStacks_A_fkey" FOREIGN KEY ("A") REFERENCES "Stack"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "_ContentCategories" ADD CONSTRAINT "_ContentCategories_B_fkey" FOREIGN KEY ("B") REFERENCES "Content"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "_ToolStacks" ADD CONSTRAINT "_ToolStacks_B_fkey" FOREIGN KEY ("B") REFERENCES "Tool"("id") ON DELETE CASCADE ON UPDATE CASCADE;

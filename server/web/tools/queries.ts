@@ -1,18 +1,17 @@
 import { type Prisma } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
-import { ContentManyPayload, contentOnePayload } from "./payload";
+import { ToolManyPayload, toolOnePayload } from "./payload";
 
-//nengok sini : https://github.com/piotrkulpinski/openalternative/blob/e47d2d295dc9ae8575fefdc3cfaf6e8baa2ff94c/server/web/tools/queries.ts
-// sederhanya ini fitur fetch data
+// sederhanya ini fungsi2 untuk fetch data mirip seperti API GET
 
-export const findFeaturedShowcase = async ({ where, ...args }: Prisma.ContentFindManyArgs = {}) => {
+export const findFeaturedTool = async ({ where, ...args }: Prisma.ToolFindManyArgs = {}) => {
   "use cache";
 
   cacheTag("showcase");
   cacheLife("max");
 
-  return await findShowcases({
+  return await findTools({
     where: {
       stars: { gt: 0 },
       ...where,
@@ -26,27 +25,27 @@ export const findFeaturedShowcase = async ({ where, ...args }: Prisma.ContentFin
 };
 
 // Mengambil semua data dari model content, dengan kondisi dan urutan tertentu.
-export const findShowcases = async ({ where, orderBy, ...args }: Prisma.ContentFindManyArgs) => {
+export const findTools = async ({ where, orderBy, ...args }: Prisma.ToolFindManyArgs) => {
   "use cache";
 
   cacheTag("showcase");
   cacheLife("max");
 
-  return db.content.findMany({
+  return db.tool.findMany({
     ...args,
     orderBy: orderBy ?? { name: "asc" },
     where: { ...where },
-    select: ContentManyPayload, //membatasi hanya field tertentu yang diambil
+    select: ToolManyPayload, //membatasi hanya field tertentu yang diambil
   });
 };
 
-export const findShowcaseSlugs = async ({ where, orderBy, ...args }: Prisma.ContentFindManyArgs) => {
+export const findToolslugs = async ({ where, orderBy, ...args }: Prisma.ToolFindManyArgs) => {
   "use cache";
 
   cacheTag("showcases");
   cacheLife("max");
 
-  return db.content.findMany({
+  return db.tool.findMany({
     ...args,
     orderBy: orderBy ?? { name: "asc" },
     where: { ...where },
@@ -54,16 +53,16 @@ export const findShowcaseSlugs = async ({ where, orderBy, ...args }: Prisma.Cont
   });
 };
 
-export const findShowcase = async ({ where, ...args }: Prisma.ContentFindFirstArgs = {}) => {
+export const findShowcase = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}) => {
   "use cache";
 
   cacheTag("showcase", `showcase-${where?.slug}`);
   cacheLife("max");
   console.log("findShowcase args:", args);
-  return db.content.findFirst({
+  return db.tool.findFirst({
     ...args,
 
     where: { ...where },
-    select: contentOnePayload,
+    select: toolOnePayload,
   });
 };

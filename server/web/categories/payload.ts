@@ -6,5 +6,5 @@ export const categoryManyPayload = Prisma.validator<Prisma.CategorySelect>()({
   slug: true,
   label: true,
   fullPath: true,
-  _count: { select: { contents: true } },
+  _count: { select: { tools: true } },
 });

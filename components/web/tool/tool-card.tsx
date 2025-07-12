@@ -7,44 +7,44 @@ import { Card, CardDescription, CardFooter, CardHeader } from "@/components/ui/c
 import { H4 } from "@/components/ui/heading";
 import { Link } from "@/components/ui/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ContentMany } from "@/server/web/showcase/payload";
+import type { ToolMany } from "@/server/web/tools/payload";
 import ComponentPreviewImage from "../list-card/card-image";
 import { Insights } from "@/components/ui/insights";
 import { formatDistanceToNowStrict } from "date-fns";
 
-type ShowcaseCardProps = ComponentProps<typeof Card> & {
-  showcase: ContentMany;
+type ToolCardProps = ComponentProps<typeof Card> & {
+  tool: ToolMany;
   /**
    * Disables the view transition.
    */
 };
 
-const ShowCaseCard = ({ showcase, ...props }: ShowcaseCardProps) => {
-  const lastCommitDate = showcase.lastCommitDate && formatDistanceToNowStrict(showcase.lastCommitDate, { addSuffix: true });
+const ToolCard = ({ tool, ...props }: ToolCardProps) => {
+  const lastCommitDate = tool.lastCommitDate && formatDistanceToNowStrict(tool.lastCommitDate, { addSuffix: true });
   const insights = [
     {
       label: "Stars",
-      value: formatNumber(showcase.stars, "standard"),
+      value: formatNumber(tool.stars, "standard"),
       icon: <Star />,
     },
     {
       label: "Forks",
-      value: formatNumber(showcase.forks, "standard"),
+      value: formatNumber(tool.forks, "standard"),
       icon: <GitFork />,
     },
     { label: "Last commit", value: lastCommitDate, icon: <Timer /> },
   ];
   return (
     <Card asChild {...props} className="p-0 border-none bg-transparent">
-      <Link href={`/${showcase.slug}`}>
+      <Link href={`/${tool.slug}`}>
         <CardHeader className="relative aspect-[4/3] group p-0">
           <div className="absolute inset-0">
             <div className="relative w-full h-full rounded-lg shadow-base overflow-hidden">
               <div className="absolute inset-0">
-                <ComponentPreviewImage src={showcase.screenshotUrl || "/placeholder.svg"} alt="tes" fallbackSrc="/placeholder.svg" className="rounded-t-lg" />
+                <ComponentPreviewImage src={tool.screenshotUrl || "/placeholder.svg"} alt="tes" fallbackSrc="/placeholder.svg" className="rounded-t-lg" />
               </div>
               <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-lg flex items-center flex-col justify-center p-4">
-                <p className="text-white text-sm text-center leading-relaxed">{showcase.description}</p>
+                <p className="text-white text-sm text-center leading-relaxed">{tool.description}</p>
                 <Insights insights={insights.filter((i) => i.value)} className="mt-auto" />
               </div>
             </div>
@@ -52,14 +52,14 @@ const ShowCaseCard = ({ showcase, ...props }: ShowcaseCardProps) => {
         </CardHeader>
 
         <div className="p-0">
-          <h2 className="text-base font-semibold text-foreground">{showcase.name}</h2>
+          <h2 className="text-base font-semibold text-foreground">{tool.name}</h2>
         </div>
       </Link>
     </Card>
   );
 };
 
-const ShowcaseCardSkeleton = () => {
+const ToolCardSkeleton = () => {
   return (
     <Card className="items-stretch select-none">
       <CardHeader>
@@ -81,4 +81,4 @@ const ShowcaseCardSkeleton = () => {
   );
 };
 
-export { ShowCaseCard, ShowcaseCardSkeleton };
+export { ToolCard, ToolCardSkeleton };

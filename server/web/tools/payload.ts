@@ -1,12 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { categoryManyPayload } from "../categories/payload";
 
-export const contentCategoriesPayload = Prisma.validator<Prisma.Content$categoriesArgs>()({
+export const toolCategoriesPayload = Prisma.validator<Prisma.Tool$categoriesArgs>()({
   select: categoryManyPayload,
-  orderBy: { name: "asc" }, //hasilnya bakal asc
+  orderBy: { name: "asc" },
 });
 
-export const contentOnePayload = Prisma.validator<Prisma.ContentSelect>()({
+//Mendefinisikan field-field yang akan diambil dari satu entitas Tool
+export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   id: true,
   name: true,
   slug: true,
@@ -26,7 +27,7 @@ export const contentOnePayload = Prisma.validator<Prisma.ContentSelect>()({
   publishedAt: true,
   updatedAt: true,
   license: true,
-  categories: contentCategoriesPayload,
+  categories: toolCategoriesPayload,
   inspiredBy: {
     select: {
       name: true,
@@ -36,7 +37,8 @@ export const contentOnePayload = Prisma.validator<Prisma.ContentSelect>()({
   },
 });
 
-export const ContentManyPayload = Prisma.validator<Prisma.ContentSelect>()({
+//Mendefinisikan field yang lebih ringkas untuk list banyak Tool
+export const ToolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   id: true,
   name: true,
   slug: true,
@@ -57,7 +59,7 @@ export const ContentManyPayload = Prisma.validator<Prisma.ContentSelect>()({
   updatedAt: true,
 });
 
-export type ContentOne = Prisma.ContentGetPayload<{ select: typeof contentOnePayload }>;
-export type ContentMany = Prisma.ContentGetPayload<{
-  select: typeof ContentManyPayload;
+export type ToolOne = Prisma.ToolGetPayload<{ select: typeof toolOnePayload }>;
+export type ToolMany = Prisma.ToolGetPayload<{
+  select: typeof ToolManyPayload;
 }>;

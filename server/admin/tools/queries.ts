@@ -1,5 +1,5 @@
 import { isTruthy } from "@primoui/utils";
-import { type Prisma, ContentStatus } from "@prisma/client";
+import { type Prisma, ToolStatus } from "@prisma/client";
 import { endOfDay, startOfDay } from "date-fns";
 import { db } from "@/services/db";
 import type { ToolsTableSchema } from "./schema";
@@ -35,14 +35,14 @@ export const findTools = async (search: ToolsTableSchema, where?: Prisma.ToolWhe
 
   // Transaction is used to ensure both queries are executed in a single transaction
   const [tools, toolsTotal] = await db.$transaction([
-    db.content.findMany({
+    db.tool.findMany({
       where: { ...whereQuery, ...where },
       orderBy,
       take: perPage,
       skip: offset,
     }),
 
-    db.content.count({
+    db.tool.count({
       where: { ...whereQuery, ...where },
     }),
   ]);
@@ -52,15 +52,15 @@ export const findTools = async (search: ToolsTableSchema, where?: Prisma.ToolWhe
 };
 
 export const findScheduledTools = async () => {
-  return db.content.findMany({
-    where: { status: ContentStatus.Scheduled },
+  return db.tool.findMany({
+    where: { status: ToolStatus.Scheduled },
     select: { slug: true, name: true, publishedAt: true },
     orderBy: { publishedAt: "asc" },
   });
 };
 
 export const findToolList = async () => {
-  return db.content.findMany({
+  return db.tool.findMany({
     select: { id: true, name: true },
     orderBy: { name: "asc" },
   });

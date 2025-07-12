@@ -1,28 +1,28 @@
 //ToolList
 
 import { Fragment } from "react";
-import { ShowCaseCard, ShowcaseCardSkeleton } from "./showcase-card";
-import type { ContentMany } from "@/server/web/showcase/payload";
+import { ToolCard, ToolCardSkeleton } from "./tool-card";
+import type { ToolMany } from "@/server/web/tools/payload";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-type ShowcaseListProps = {
-  showcases: ContentMany[];
+type ToolListProps = {
+  tools: ToolMany[];
   //   adType?: AdType;
   //   enableAds?: boolean;
 };
 
 //TODO : Pending AddCard
 
-const ShowcaseList = ({ showcases }: ShowcaseListProps) => {
+const ToolList = ({ tools }: ToolListProps) => {
   return (
     <>
       <div className="relative">
         <ScrollArea className="w-full -mx-1 px-1">
           <div className="flex space-x-4" style={{ minWidth: "100%", paddingLeft: "1px", paddingRight: "1px" }}>
-            {showcases.map((showcase, order) => (
-              <Fragment key={showcase.slug}>
-                <div key={showcase.id} className="min-w-[280px] max-w-[280px]">
-                  <ShowCaseCard showcase={showcase} style={{ order }} />
+            {tools.map((tool, order) => (
+              <Fragment key={tool.slug}>
+                <div key={tool.id} className="min-w-[280px] max-w-[280px]">
+                  <ToolCard tool={tool} style={{ order }} />
                 </div>
               </Fragment>
             ))}
@@ -34,13 +34,13 @@ const ShowcaseList = ({ showcases }: ShowcaseListProps) => {
   );
 };
 
-const ShowcaseListSkeleton = ({ count = 6 }: { count?: number }) => {
+const ToolListSkeleton = ({ count = 6 }: { count?: number }) => {
   return (
     <div className="relative">
       <ScrollArea className="w-full -mx-1 px-1">
         <div className="flex space-x-4" style={{ minWidth: "100%", paddingLeft: "1px", paddingRight: "1px" }}>
           {[...Array(count)].map((_, index) => (
-            <ShowcaseCardSkeleton key={index} />
+            <ToolCardSkeleton key={index} />
           ))}
         </div>
       </ScrollArea>
@@ -48,4 +48,4 @@ const ShowcaseListSkeleton = ({ count = 6 }: { count?: number }) => {
   );
 };
 
-export { ShowcaseList, ShowcaseListSkeleton, type ShowcaseListProps };
+export { ToolList, ToolListSkeleton, type ToolListProps };

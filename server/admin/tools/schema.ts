@@ -1,12 +1,12 @@
-import { type Content } from "@prisma/client";
+import { type Tool } from "@prisma/client";
 import { createSearchParamsCache, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
 import { z } from "zod";
 import { getSortingStateParser } from "@/lib/parsers";
 import { repositorySchema } from "~/server/web/shared/schema";
 
-export const contentsTableParamsSchema = {
+export const toolsTableParamsSchema = {
   name: parseAsString.withDefault(""),
-  sort: getSortingStateParser<Content>().withDefault([{ id: "createdAt", desc: true }]),
+  sort: getSortingStateParser<Tool>().withDefault([{ id: "createdAt", desc: true }]),
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(25),
   from: parseAsString.withDefault(""),
@@ -14,10 +14,10 @@ export const contentsTableParamsSchema = {
   operator: parseAsStringEnum(["and", "or"]).withDefault("and"),
 };
 
-export const contentsTableParamsCache = createSearchParamsCache(contentsTableParamsSchema);
-export type ContentsTableSchema = Awaited<ReturnType<typeof contentsTableParamsCache.parse>>;
+export const toolsTableParamsCache = createSearchParamsCache(toolsTableParamsSchema);
+export type toolsTableSchema = Awaited<ReturnType<typeof toolsTableParamsCache.parse>>;
 
-export const contentSchema = z.object({
+export const toolSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   slug: z.string().optional(),

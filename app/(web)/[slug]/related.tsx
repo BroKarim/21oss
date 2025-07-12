@@ -1,7 +1,7 @@
 import { Listing } from "@/components/web/ui/listing";
-import { ShowcaseList } from "@/components/web/showcase/showcase-list";
-import { findFeaturedShowcase } from "@/server/web/showcase/queries";
-import type { ContentOne } from "@/server/web/showcase/payload";
+import { ShowcaseList } from "@/components/web/tool/tool-list";
+import { findFeaturedShowcase } from "@/server/web/tools/queries";
+import type { ContentOne } from "@/server/web/tools/payload";
 
 export const RelatedTools = async ({ showcase }: { showcase: ContentOne }) => {
   const showcases = await findFeaturedShowcase({ id: showcase.id });
@@ -12,7 +12,7 @@ export const RelatedTools = async ({ showcase }: { showcase: ContentOne }) => {
 
   return (
     <Listing title={`Open source alternatives similar to ${showcase.name}:`}>
-      <ShowcaseList showcases={showcases}  />
+      <ShowcaseList showcases={showcases} />
     </Listing>
   );
 };

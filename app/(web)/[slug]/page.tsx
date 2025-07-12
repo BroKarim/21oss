@@ -5,7 +5,7 @@ import { H2 } from "@/components/ui/heading";
 import { Stack } from "@/components/ui/stack";
 import { Section } from "@/components/ui/section";
 import type { ImageObject } from "schema-dts";
-import { findShowcase, findShowcaseSlugs } from "@/server/web/showcase/queries";
+import { findShowcase, findShowcaseSlugs } from "@/server/web/tools/queries";
 import { IntroDescription } from "@/components/ui/intro";
 // import { FaviconImage } from "@/components/ui/favicon";
 import { ShowcaseDisplay } from "@/components/web/showcase-display";
