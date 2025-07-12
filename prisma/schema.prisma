@@ -88,6 +88,7 @@ model Tool {
   affiliateUrl    String?
   tagline         String?
   description     String?
+  content         String?
   stars           Int       @default(0)
   forks           Int       @default(0)
   faviconUrl      String?

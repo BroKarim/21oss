@@ -1,7 +1,7 @@
 import { type Prisma } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
-import { ToolManyPayload, toolOnePayload } from "./payload";
+import { ToolManyPayload, toolOnePayload } from "./payloads";
 
 // sederhanya ini fungsi2 untuk fetch data mirip seperti API GET
 

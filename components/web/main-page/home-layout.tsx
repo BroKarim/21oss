@@ -1,7 +1,7 @@
 import { HorizontalSlider } from "./horizontal-slider";
 import { SortOption } from "@/types/globals";
 import { Suspense } from "react";
-import { ToolPreview, ToolPreviewSkeleton } from "../tool/tool-preview";
+import { ToolPreview, ToolPreviewSkeleton } from "../tools/tool-preview";
 
 interface HomeTabLayoutProps {
   sortBy?: SortOption;

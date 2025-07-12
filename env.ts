@@ -17,6 +17,12 @@ export const env = createEnv({
     RESEND_API_KEY: z.string().min(1),
     RESEND_SENDER_EMAIL: z.string().min(1).email(),
     GITHUB_TOKEN: z.string().min(1),
+    S3_ENDPOINT: z.string().optional(),
+    S3_REGION: z.string().min(1),
+    S3_BUCKET: z.string().min(1),
+    S3_ACCESS_KEY: z.string().min(1),
+    S3_SECRET_ACCESS_KEY: z.string().min(1),
+    S3_PUBLIC_URL: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.string().url().min(1),

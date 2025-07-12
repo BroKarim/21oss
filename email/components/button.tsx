@@ -1,7 +1,7 @@
 import { getUrlHostname } from "@primoui/utils";
 import { Button, type ButtonProps, Section } from "@react-email/components";
 import { siteConfig } from "@/config/site";
-import { addSearchParams } from "@/utils/searh-params";
+import { addSearchParams } from "@/utils/search-params";
 
 export const EmailButton = ({ children, href, ...props }: ButtonProps) => {
   const emailSearchParams = { utm_source: getUrlHostname(siteConfig.url), utm_medium: "email" };

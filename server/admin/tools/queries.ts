@@ -4,7 +4,6 @@ import { endOfDay, startOfDay } from "date-fns";
 import { db } from "@/services/db";
 import type { ToolsTableSchema } from "./schema";
 
-
 export const findTools = async (search: ToolsTableSchema, where?: Prisma.ToolWhereInput) => {
   const { name, sort, page, perPage, from, to, operator, status } = search;
 
@@ -70,7 +69,6 @@ export const findToolBySlug = async (slug: string) => {
   return db.tool.findUnique({
     where: { slug },
     include: {
-      alternatives: true,
       categories: true,
     },
   });

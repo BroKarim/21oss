@@ -1,59 +1,91 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import { Slot } from "radix-ui";
+import type { ComponentProps, ReactNode } from "react";
+import { Children, isValidElement } from "react";
+import { boxVariants } from "@/components/ui/box";
+import { Icon } from "@/components/ui/icon";
+import { Slottable } from "@/components/ui/slottable";
+import { cx, type VariantProps, cva } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
+const buttonVariants = cva({
+  base: [
+    "group/button relative inline-flex items-center justify-center border-transparent! font-medium text-[0.8125rem] text-start leading-tight rounded-md overflow-clip hover:z-10 hover:border-transparent",
+    "disabled:opacity-60 disabled:pointer-events-none",
+  ],
 
-const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-  {
-    variants: {
-      variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-        ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
-      },
-      size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
-      },
+  variants: {
+    variant: {
+      fancy: "bg-primary text-primary-foreground hover:opacity-90",
+      primary: "text-background bg-foreground hover:opacity-90",
+      secondary: "border-border! bg-background text-secondary-foreground hover:bg-card hover:border-ring!",
+      ghost: "text-secondary-foreground hover:bg-accent hover:text-foreground hover:outline-none",
+      destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
     },
-    defaultVariants: {
-      variant: "default",
-      size: "default",
+    size: {
+      sm: "px-2 py-1 gap-[0.66ch]",
+      md: "px-3 py-2 gap-[0.75ch]",
+      lg: "px-4 py-2.5 gap-[1ch] rounded-lg sm:text-sm",
     },
-  }
-)
+    isPending: {
+      true: "[&>*:not(.animate-spin)]:opacity-0 select-none",
+    },
+  },
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : "button"
+  defaultVariants: {
+    variant: "primary",
+    size: "lg",
+  },
+});
+
+const buttonAffixVariants = cva({
+  base: "shrink-0 first:-ml-[0.21425em] last:-mr-[0.21425em] [svg]:size-[1.1em] [svg]:opacity-75",
+});
+
+export type ButtonProps = Omit<ComponentProps<"button">, "size" | "prefix"> &
+  VariantProps<typeof buttonVariants> &
+  VariantProps<typeof boxVariants> & {
+    /**
+     * If set to `true`, the button will be rendered as a child within the component.
+     * This child component must be a valid React component.
+     */
+    asChild?: boolean;
+
+    /**
+     * If set to `true`, the button will be rendered in the pending state.
+     */
+    isPending?: boolean;
+
+    /**
+     * The slot to be rendered before the label.
+     */
+    prefix?: ReactNode;
+
+    /**
+     * The slot to be rendered after the label.
+     */
+    suffix?: ReactNode;
+  };
+
+const Button = ({ children, className, disabled, asChild, isPending, prefix, suffix, variant, size, hover = true, focus = true, ...props }: ButtonProps) => {
+  const useAsChild = asChild && isValidElement(children);
+  const Comp = useAsChild ? Slot.Root : "button";
 
   return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
-}
+    <Comp disabled={disabled ?? isPending} className={cx(boxVariants({ hover, focus }), buttonVariants({ variant, size, isPending, className }))} {...props}>
+      <Slottable child={children} asChild={asChild}>
+        {(child) => (
+          <>
+            <Slot.Root className={buttonAffixVariants()}>{prefix}</Slot.Root>
 
-export { Button, buttonVariants }
+            {Children.count(child) !== 0 && <span className="flex-1 truncate only:text-center has-[div]:contents">{child}</span>}
+
+            <Slot.Root className={buttonAffixVariants()}>{suffix}</Slot.Root>
+
+            {!!isPending && <Icon name="lucide/loader" className="absolute size-[1.25em] animate-spin" />}
+          </>
+        )}
+      </Slottable>
+    </Comp>
+  );
+};
+
+export { Button, buttonVariants };

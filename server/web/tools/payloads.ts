@@ -59,7 +59,25 @@ export const ToolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   updatedAt: true,
 });
 
+export const toolManyExtendedPayload = Prisma.validator<Prisma.ToolSelect>()({
+  name: true,
+  slug: true,
+  websiteUrl: true,
+  description: true,
+  content: true,
+  faviconUrl: true,
+  screenshotUrl: true,
+  discountCode: true,
+  discountAmount: true,
+  firstCommitDate: true,
+  publishedAt: true,
+  createdAt: true,
+  updatedAt: true,
+  categories: toolCategoriesPayload,
+});
+
 export type ToolOne = Prisma.ToolGetPayload<{ select: typeof toolOnePayload }>;
 export type ToolMany = Prisma.ToolGetPayload<{
   select: typeof ToolManyPayload;
 }>;
+export type ToolManyExtended = Prisma.ToolGetPayload<{ select: typeof toolManyExtendedPayload }>;

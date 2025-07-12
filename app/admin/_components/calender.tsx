@@ -1,109 +1,50 @@
 "use client";
 
-import { addMonths, eachDayOfInterval, endOfMonth, endOfWeek, format, isSameDay, isSameMonth, startOfMonth, startOfWeek } from "date-fns";
-import { type ComponentProps, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { H5 } from "@/components/ui/heading";
-import { Link } from "@/components/ui/link";
-import { Stack } from "@/components/ui/stack";
-import { cn } from "@/lib/utils";
+import type { ComponentProps } from "react";
+import { DayPicker } from "react-day-picker";
+import { buttonVariants } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
 
-type Tool = {
-  slug: string;
-  name: string;
-  publishedAt: Date | null;
-};
-
-type CalendarDayProps = ComponentProps<"td"> & {
-  day: Date;
-  currentDate: Date;
-  tools: Tool[];
-};
-
-const CalendarDay = ({ className, day, tools, currentDate, ...props }: CalendarDayProps) => {
-  const isToday = isSameDay(day, new Date());
-  const isCurrentMonth = isSameMonth(day, currentDate);
-  const publishedTools = tools.filter(({ publishedAt }) => publishedAt && isSameDay(publishedAt, day));
+export const Calendar = ({ classNames, ...props }: ComponentProps<typeof DayPicker>) => {
+  const buttonClasses = buttonVariants({
+    variant: "ghost",
+    className: "text-xs p-1 pointer-events-auto",
+  });
 
   return (
-    <td className={cn("h-16 p-2 border align-top", !isCurrentMonth && "bg-muted text-muted-foreground/50", className)} {...props}>
-      <Stack size="xs" direction="column">
-        <div className={cn("text-xs", isToday ? "font-semibold text-primary opacity-100" : "opacity-50")}>{format(day, "d")}</div>
-
-        {publishedTools.map((tool) => (
-          <Link key={tool.slug} href={`/admin/tools/${tool.slug}`} className="font-medium truncate hover:text-primary w-full">
-            {tool.name}
-          </Link>
-        ))}
-      </Stack>
-    </td>
-  );
-};
-
-type CalendarProps = ComponentProps<"div"> & {
-  tools?: Tool[];
-};
-
-export const Calendar = ({ className, tools = [], ...props }: CalendarProps) => {
-  const today = new Date();
-  const [currentDate, setCurrentDate] = useState(today);
-
-  // Data dummy untuk tools
-  const dummyTools: Tool[] = [
-    { slug: "figma", name: "Figma", publishedAt: new Date(2025, 6, 15) },
-    { slug: "notion", name: "Notion", publishedAt: new Date(2025, 6, 18) },
-    { slug: "slack", name: "Slack", publishedAt: new Date(2025, 6, 22) },
-    { slug: "trello", name: "Trello", publishedAt: new Date(2025, 6, 25) },
-    { slug: "discord", name: "Discord", publishedAt: new Date(2025, 6, 28) },
-    { slug: "github", name: "GitHub", publishedAt: new Date(2025, 7, 2) },
-    { slug: "vercel", name: "Vercel", publishedAt: new Date(2025, 7, 5) },
-    { slug: "linear", name: "Linear", publishedAt: new Date(2025, 7, 8) },
-    { slug: "supabase", name: "Supabase", publishedAt: new Date(2025, 7, 12) },
-    { slug: "framer", name: "Framer", publishedAt: new Date(2025, 7, 15) },
-  ];
-
-  const toolsData = tools.length > 0 ? tools : dummyTools;
-
-  const monthStart = startOfMonth(currentDate);
-  const monthEnd = endOfMonth(monthStart);
-  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
-  const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
-
-  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
-
-  const weeks = Array.from({ length: Math.ceil(days.length / 7) }, (_, i) => days.slice(i * 7, (i + 1) * 7));
-
-  return (
-    <div className={cn("space-y-2", className)} {...props}>
-      <Stack className="justify-between">
-        <Button variant="secondary" size="sm" />
-
-        <H5>{format(currentDate, "MMMM yyyy")}</H5>
-
-        <Button variant="secondary" size="sm" onClick={() => setCurrentDate((date) => addMonths(date, 1))} />
-      </Stack>
-
-      <table className="w-full table-fixed border-collapse text-sm">
-        <thead>
-          <tr>
-            {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((day, index) => (
-              <th key={day} style={{ width: index < 5 ? "16%" : "10%" }} className="text-start text-muted-foreground p-2 text-xs font-normal">
-                {day}
-              </th>
-            ))}
-          </tr>
-        </thead>
-
-        <tbody>
-          {weeks.map((week, weekIndex) => (
-            <tr key={weekIndex}>
-              {week.map((day) => (
-                <CalendarDay key={day.toISOString()} day={day} tools={toolsData} currentDate={currentDate} />
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DayPicker
+      weekStartsOn={1}
+      classNames={{
+        months: "relative flex flex-col sm:flex-row gap-y-4 sm:gap-x-4 sm:gap-y-0",
+        month: "group/month space-y-4 w-full",
+        month_caption: "flex justify-center pt-1 relative items-center",
+        caption_label: "text-sm font-medium",
+        nav: "absolute top-px inset-x-0 z-10 flex items-center justify-between gap-x-1 pointer-events-none",
+        button_previous: buttonClasses,
+        button_next: buttonClasses,
+        month_grid: "w-full border-collapse gap-y-1",
+        weekdays: "flex",
+        weekday: "text-muted-foreground/50 rounded-md min-w-8 w-full font-normal text-xs",
+        week: "group/week flex mt-2",
+        day: "group/day relative w-full text-center text-[0.8125rem] rounded-md focus-within:z-20",
+        day_button: "relative w-full px-1 py-[10%] cursor-pointer rounded-md hover:bg-muted hover:group-data-selected/day:bg-transparent",
+        selected: "bg-foreground! text-background!",
+        range_middle: "bg-muted! text-foreground! rounded-none",
+        today: "font-semibold text-primary opacity-100",
+        outside: "opacity-40",
+        disabled: "opacity-40 pointer-events-none",
+        hidden: "invisible",
+        ...classNames,
+      }}
+      components={{
+        Chevron: ({ orientation }) => {
+          if (orientation === "left") {
+            return <Icon name="lucide/chevron-left" className="size-4" />;
+          }
+          return <Icon name="lucide/chevron-right" className="size-4" />;
+        },
+      }}
+      {...props}
+    />
   );
 };

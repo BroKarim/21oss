@@ -7,7 +7,7 @@ import { Card, CardDescription, CardFooter, CardHeader } from "@/components/ui/c
 import { H4 } from "@/components/ui/heading";
 import { Link } from "@/components/ui/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ToolMany } from "@/server/web/tools/payload";
+import type { ToolMany } from "@/server/web/tools/payloads";
 import ComponentPreviewImage from "../list-card/card-image";
 import { Insights } from "@/components/ui/insights";
 import { formatDistanceToNowStrict } from "date-fns";

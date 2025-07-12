@@ -29,5 +29,5 @@ export const getToolRepositoryData = async (repository: string) => {
           },
         }
       : undefined,
-  } satisfies Prisma.ContentUpdateInput;
+  } satisfies Prisma.ToolUpdateInput;
 };

@@ -1,9 +1,11 @@
-import { type Tool } from "@prisma/client";
-import { createSearchParamsCache, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
+import { type Tool, ToolStatus } from "@prisma/client";
+import { createSearchParamsCache, parseAsArrayOf, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
 import { z } from "zod";
 import { getSortingStateParser } from "@/lib/parsers";
-import { repositorySchema } from "~/server/web/shared/schema";
+import { repositorySchema } from "@/server/web/shared/schema";
 
+//Mendefinisikan skema query parameter untuk tabel di admin (search, sort, filter, pagination)
+// agar parameter URL aman, tervalidasi, dan punya nilai default.
 export const toolsTableParamsSchema = {
   name: parseAsString.withDefault(""),
   sort: getSortingStateParser<Tool>().withDefault([{ id: "createdAt", desc: true }]),
@@ -12,11 +14,16 @@ export const toolsTableParamsSchema = {
   from: parseAsString.withDefault(""),
   to: parseAsString.withDefault(""),
   operator: parseAsStringEnum(["and", "or"]).withDefault("and"),
+  status: parseAsArrayOf(z.nativeEnum(ToolStatus)).withDefault([]),
 };
 
+// helper untuk parsing + cache query
 export const toolsTableParamsCache = createSearchParamsCache(toolsTableParamsSchema);
-export type toolsTableSchema = Awaited<ReturnType<typeof toolsTableParamsCache.parse>>;
 
+export type ToolsTableSchema = Awaited<ReturnType<typeof toolsTableParamsCache.parse>>;
+
+//Validasi data form satu tool
+// untuk tambah/edit tool di admin
 export const toolSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Name is required"),
@@ -29,13 +36,14 @@ export const toolSchema = z.object({
   content: z.string().optional(),
   faviconUrl: z.string().optional().or(z.literal("")),
   screenshotUrl: z.string().optional().or(z.literal("")),
-  submitterName: z.string().optional(),
-  submitterEmail: z.string().email().optional().or(z.literal("")),
-  submitterNote: z.string().optional(),
+  isFeatured: z.boolean().default(false),
   discountCode: z.string().optional(),
   discountAmount: z.string().optional(),
   publishedAt: z.coerce.date().nullish(),
+  status: z.nativeEnum(ToolStatus).default("Draft"),
   categories: z.array(z.string()).optional(),
+  platforms: z.array(z.string()).optional(), // Tambahkan untuk relation platforms
+  stacks: z.array(z.string()).optional(),
 });
 
 export type ToolSchema = z.infer<typeof toolSchema>;

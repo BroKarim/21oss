@@ -2,7 +2,7 @@
 
 import { Fragment } from "react";
 import { ToolCard, ToolCardSkeleton } from "./tool-card";
-import type { ToolMany } from "@/server/web/tools/payload";
+import type { ToolMany } from "@/server/web/tools/payloads";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type ToolListProps = {

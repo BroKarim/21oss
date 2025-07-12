@@ -3,7 +3,7 @@
 import { revalidateTag } from "next/cache";
 import { getToolRepositoryData } from "@/lib/repositories";
 
-import { adminProcedure } from "@/prisma/safe-actions";
+import { adminProcedure } from "@/lib/safe-actions";
 import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
 

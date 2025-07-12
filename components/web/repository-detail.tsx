@@ -5,7 +5,7 @@ import { Button } from "../ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "../ui/card";
 import { GitFork, Star, Timer, Copyright, History } from "lucide-react";
 import { Insights } from "../ui/insights";
-import { ContentOne } from "@/server/web/tools/payload";
+import { ContentOne } from "@/server/web/tools/payloads";
 
 import { cn } from "@/lib/utils";
 import { Link } from "../ui/link";
