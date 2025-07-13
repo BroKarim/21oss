@@ -1,21 +1,23 @@
 "use client";
 
 import { Suspense } from "react";
-
+import { usePathname } from "next/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { MainSidebar } from "@/components/web/main-page/sidebar-layout";
+import { AdminSidebar } from "@/components/admin/sidebar";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
 import { Separator } from "@/components/ui/separator";
 import { useAtom } from "jotai";
 
 export function AppProviders({ children }: { children: React.ReactNode }): React.ReactElement {
   const [open, setOpen] = useAtom(sidebarOpenAtom);
+  const pathname = usePathname();
+
+  const isAdmin = pathname.startsWith("/admin");
 
   return (
     <SidebarProvider defaultOpen={open} open={open} onOpenChange={setOpen}>
-      <Suspense fallback={null}>
-        <MainSidebar />
-      </Suspense>
+      <Suspense fallback={null}>{isAdmin ? <AdminSidebar /> : <MainSidebar />}</Suspense>
       <MainLayout>
         {/* TODO : MAKE COMMAND MENU LIKE 21ST.DEV */}
         {/* <CommandMenu /> */}

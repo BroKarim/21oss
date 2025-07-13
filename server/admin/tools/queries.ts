@@ -70,6 +70,8 @@ export const findToolBySlug = async (slug: string) => {
     where: { slug },
     include: {
       categories: true,
+      platforms: true, // ✅ tambahkan
+      stacks: true,
     },
   });
 };

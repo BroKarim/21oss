@@ -29,4 +29,5 @@ const DashboardPage = () => {
   );
 };
 
-export default withAdminPage(DashboardPage);
+export default DashboardPage;
+// export default withAdminPage(DashboardPage);

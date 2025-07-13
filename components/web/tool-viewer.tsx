@@ -10,29 +10,29 @@ import { categories, getScreenshotsByCategory } from "@/data/mock-data";
 import Image from "next/image";
 import { CategoryType, ScreenshotType } from "@/types/globals";
 
-interface ShowcaseViewerContextProps {
+interface ToolViewerContextProps {
   selectedCategoryId: string | null;
   setSelectedCategoryId: (id: string | null) => void;
 }
 
-export interface ShowcaseViewerData {
+export interface ToolViewerData {
   categories: CategoryType[];
   screenshots: ScreenshotType[];
 }
 
-export interface ShowcaseViewerProviderProps extends ShowcaseViewerData {
+export interface ToolViewerProviderProps extends ToolViewerData {
   children: ReactNode;
 }
 
-export type ShowcaseViewerProps = ShowcaseViewerData;
+export type ToolViewerProps = ToolViewerData;
 
-const ShowcaseViewerContext = createContext<ShowcaseViewerContextProps | undefined>(undefined);
+const ToolViewerContext = createContext<ToolViewerContextProps | undefined>(undefined);
 
-function ShowcaseViewerProvider({ categories, screenshots, children }: ShowcaseViewerProviderProps) {
+function ToolViewerProvider({ categories, screenshots, children }: ToolViewerProviderProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
 
   return (
-    <ShowcaseViewerContext.Provider
+    <ToolViewerContext.Provider
       value={{
         selectedCategoryId,
         setSelectedCategoryId,
@@ -41,21 +41,21 @@ function ShowcaseViewerProvider({ categories, screenshots, children }: ShowcaseV
       }}
     >
       {children}
-    </ShowcaseViewerContext.Provider>
+    </ToolViewerContext.Provider>
   );
 }
 
 // Hook agar mudah digunakan di komponen lain
-export function useShowcaseViewer() {
-  const context = useContext(ShowcaseViewerContext);
+export function useToolViewer() {
+  const context = useContext(ToolViewerContext);
   if (!context) {
-    throw new Error("useShowcaseViewer must be used within a ShowcaseViewerProvider");
+    throw new Error("useToolViewer must be used within a ToolViewerProvider");
   }
   return context;
 }
 
-function ShowcaseViewerFile() {
-  const { selectedCategoryId, setSelectedCategoryId } = useShowcaseViewer();
+function ToolViewerFile() {
+  const { selectedCategoryId, setSelectedCategoryId } = useToolViewer();
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(["starting-fundraiser", "edit-fundraiser", "donations"]));
 
   const toggleCategory = (categoryId: string) => {
@@ -150,8 +150,8 @@ function ShowcaseViewerFile() {
   );
 }
 
-function ShowcaseViewerImage() {
-  const { selectedCategoryId } = useShowcaseViewer();
+function ToolViewerImage() {
+  const { selectedCategoryId } = useToolViewer();
   const screenshots = selectedCategoryId ? getScreenshotsByCategory(selectedCategoryId) : [];
 
   if (!selectedCategoryId) {
@@ -195,15 +195,15 @@ function ShowcaseViewerImage() {
   );
 }
 
-function ShowcaseViewer({ categories, screenshots }: ShowcaseViewerProps) {
+function ToolViewer({ categories, screenshots }: ToolViewerProps) {
   return (
-    <ShowcaseViewerProvider categories={categories} screenshots={screenshots}>
+    <ToolViewerProvider categories={categories} screenshots={screenshots}>
       <div className="w-full flex h-screen">
-        <ShowcaseViewerFile />
-        <ShowcaseViewerImage />
+        <ToolViewerFile />
+        <ToolViewerImage />
       </div>
-    </ShowcaseViewerProvider>
+    </ToolViewerProvider>
   );
 }
 
-export { ShowcaseViewer };
+export { ToolViewer };

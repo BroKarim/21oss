@@ -22,14 +22,12 @@ import { Input, inputVariants } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
 import { Note } from "@/components/ui/note";
 import { Stack } from "@/components/ui/stack";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { ExternalLink } from "@/components/web/external-link";
 import { Markdown } from "@/components/web/markdown";
 import { siteConfig } from "@/config/site";
 import { useComputedField } from "@/hooks/use-computed-field";
 import { isToolPublished } from "@/lib/tools";
-import type { findAlternativeList } from "@/server/admin/alternatives/queries";
 import type { findCategoryList } from "@/server/admin/categories/queries";
 import { upsertTool } from "@/server/admin/tools/actions";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
@@ -54,13 +52,11 @@ const ToolStatusChange = ({ tool }: { tool: Tool }) => {
 
 type ToolFormProps = ComponentProps<"form"> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>;
-  alternativesPromise: ReturnType<typeof findAlternativeList>;
   categoriesPromise: ReturnType<typeof findCategoryList>;
 };
 
-export function ToolForm({ children, className, title, tool, alternativesPromise, categoriesPromise, ...props }: ToolFormProps) {
+export function ToolForm({ className, title, tool, categoriesPromise, ...props }: ToolFormProps) {
   const router = useRouter();
-  const alternatives = use(alternativesPromise);
   const categories = use(categoriesPromise);
 
   const [isPreviewing, setIsPreviewing] = useState(false);
@@ -80,18 +76,13 @@ export function ToolForm({ children, className, title, tool, alternativesPromise
       repositoryUrl: tool?.repositoryUrl ?? "",
       faviconUrl: tool?.faviconUrl ?? "",
       screenshotUrl: tool?.screenshotUrl ?? "",
-      isFeatured: tool?.isFeatured ?? false,
-      isSelfHosted: tool?.isSelfHosted ?? false,
-      submitterName: tool?.submitterName ?? "",
-      submitterEmail: tool?.submitterEmail ?? "",
-      submitterNote: tool?.submitterNote ?? "",
       discountCode: tool?.discountCode ?? "",
       discountAmount: tool?.discountAmount ?? "",
       status: tool?.status ?? ToolStatus.Draft,
       publishedAt: tool?.publishedAt ?? null,
-      alternatives: tool?.alternatives.map((a) => a.id) ?? [],
       categories: tool?.categories.map((c) => c.id) ?? [],
-      notifySubmitter: true,
+      platforms: tool?.platforms.map((p) => p.id) ?? [],
+      stacks: tool?.stacks.map((s) => s.slug) ?? [],
     },
   });
 
@@ -105,7 +96,7 @@ export function ToolForm({ children, className, title, tool, alternativesPromise
   });
 
   // Keep track of the form values
-  const [name, slug, websiteUrl, description, content] = form.watch(["name", "slug", "websiteUrl", "description", "content"]);
+  const [name, slug, websiteUrl, description] = form.watch(["name", "slug", "websiteUrl", "description", "content"]);
 
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
@@ -302,41 +293,11 @@ export function ToolForm({ children, className, title, tool, alternativesPromise
                 )}
               </Stack>
 
-              <FormControl>{field.value && isPreviewing ? <Markdown code={field.value} className={cx(inputVariants(), "max-w-none border leading-normal")} /> : <TextArea {...field} />}</FormControl>
+              <FormControl>{field.value && isPreviewing ? <Markdown code={field.value} className={cx(inputVariants(), "max-w-none border leading-normal")} /> : <Textarea {...field} />}</FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-
-        <div className="grid gap-4 @2xl:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="isFeatured"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>Featured</FormLabel>
-                <FormControl>
-                  <Switch onCheckedChange={field.onChange} checked={field.value} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="isSelfHosted"
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormLabel>Self-hosted</FormLabel>
-                <FormControl>
-                  <Switch onCheckedChange={field.onChange} checked={field.value} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
 
         <div className="grid gap-4 @2xl:grid-cols-2">
           <FormField
@@ -367,52 +328,6 @@ export function ToolForm({ children, className, title, tool, alternativesPromise
             )}
           />
         </div>
-
-        {tool?.submitterEmail && (
-          <>
-            <FormField
-              control={form.control}
-              name="submitterName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Submitter Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="submitterEmail"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Submitter Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="submitterNote"
-              render={({ field }) => (
-                <FormItem className="col-span-full">
-                  <FormLabel>Submitter Note</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </>
-        )}
 
         <FormField
           control={form.control}
@@ -452,73 +367,6 @@ export function ToolForm({ children, className, title, tool, alternativesPromise
             </FormItem>
           )}
         />
-
-        {/* <FormField
-          control={form.control}
-          name="screenshotUrl"
-          render={({ field }) => (
-            <FormItem className="items-stretch">
-              <Stack className="justify-between">
-                <FormLabel className="flex-1">Screenshot URL</FormLabel>
-
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="secondary"
-                  prefix={<Icon name="lucide/refresh-cw" className={cx(screenshotAction.isPending && "animate-spin")} />}
-                  className="-my-1"
-                  disabled={!isValidUrl(websiteUrl) || screenshotAction.isPending}
-                  onClick={() => {
-                    screenshotAction.execute({
-                      url: websiteUrl,
-                      path: `tools/${slug || getRandomString(12)}`,
-                    });
-                  }}
-                >
-                  {field.value ? "Regenerate" : "Generate"}
-                </Button>
-              </Stack>
-
-              <Stack size="sm">
-                {field.value && <img src={field.value} alt="Screenshot" className="h-8 max-w-32 border box-content rounded-md object-contain" />}
-
-                <FormControl>
-                  <Input type="url" className="flex-1" {...field} />
-                </FormControl>
-              </Stack>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-
-        {/* <FormField
-          control={form.control}
-          name="alternatives"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Alternatives</FormLabel>
-              <RelationSelector
-                relations={alternatives}
-                selectedIds={field.value ?? []}
-                setSelectedIds={field.onChange}
-                maxSuggestions={10}
-                prompt={
-                  name &&
-                  description &&
-                  content &&
-                  `From the list of available alternative, proprietary software below, suggest relevant alternatives for this open source tool link: 
-                  
-                  - URL: ${websiteUrl}
-                  - Meta title: ${name}
-                  - Meta description: ${description}
-                  - Content: ${content}. 
-                  `
-                }
-              />
-            </FormItem>
-          )}
-        /> */}
 
         <FormField
           control={form.control}

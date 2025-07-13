@@ -53,12 +53,12 @@ export const findToolslugs = async ({ where, orderBy, ...args }: Prisma.ToolFind
   });
 };
 
-export const findShowcase = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}) => {
+export const findTool = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}) => {
   "use cache";
 
   cacheTag("showcase", `showcase-${where?.slug}`);
   cacheLife("max");
-  console.log("findShowcase args:", args);
+  console.log("findTool args:", args);
   return db.tool.findFirst({
     ...args,
 

@@ -1,49 +1,34 @@
 "use client";
 
 import { isValidUrl } from "@primoui/utils";
-import type { Content } from "@prisma/client";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import type { Tool } from "@prisma/client";
+import { usePathname, useRouter } from "next/navigation";
 import { type ComponentProps, useState } from "react";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
-import { ToolsDeleteDialog } from "~/app/admin/tools/_components/tools-delete-dialog";
+import { ToolsDeleteDialog } from "@/app/admin/tools/_components/tools-delete-dialog";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Icon } from "@/components/ui/icon";
 import { Link } from "@/components/ui/link";
-import { analyzeToolStack, fetchToolRepositoryData } from "~/server/admin/tools/actions";
+import { fetchToolRepositoryData } from "@/server/admin/tools/actions";
 import { cx } from "@/lib/utils";
 
 type ToolActionsProps = ComponentProps<typeof Button> & {
   tool: Tool;
 };
-
+// menampilkan dropdown menu tindakan untuk satu tool di halaman admin, seperti:
+// edit tool, hapus tool dll
 export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => {
   const pathname = usePathname();
   const router = useRouter();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  const actions = [
-    {
-      action: fetchToolRepositoryData,
-      label: "Fetch Repository Data",
-      successMessage: "Repository data fetched successfully",
-    },
-    {
-      action: analyzeToolStack,
-      label: "Analyze Stack",
-      successMessage: "Tool stack analyzed successfully",
-    },
-  ] as const;
-
-  const toolActions = actions.map(({ label, action, successMessage }) => ({
-    label,
-    execute: useServerAction(action, {
-      onSuccess: () => toast.success(successMessage),
-      onError: ({ err }) => toast.error(err.message),
-    }).execute,
-  }));
+  // ✅ Gunakan useServerAction secara langsung (bukan dalam .map)
+  const fetchRepo = useServerAction(fetchToolRepositoryData, {
+    onSuccess: () => toast.success("Repository data fetched successfully"),
+    onError: ({ err }) => toast.error(err.message),
+  });
 
   return (
     <DropdownMenu modal={false}>
@@ -64,25 +49,22 @@ export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => 
           </Link>
         </DropdownMenuItem>
 
-        {toolActions.map(({ label, execute }) => (
-          <DropdownMenuItem key={label} onSelect={() => execute({ id: tool.id })}>
-            {label}
-          </DropdownMenuItem>
-        ))}
+        {/* ✅ Aksi: Fetch Repository */}
+        <DropdownMenuItem onSelect={() => fetchRepo.execute({ id: tool.id })}>Fetch Repository Data</DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
-        {isValidUrl(tool.websiteUrl) && (
+        {isValidUrl(tool.websiteUrl ?? undefined) && (
           <DropdownMenuItem asChild>
-            <Link href={tool.websiteUrl} target="_blank">
+            <Link href={tool.websiteUrl!} target="_blank">
               Visit website
             </Link>
           </DropdownMenuItem>
         )}
 
-        {isValidUrl(tool.repositoryUrl) && (
+        {isValidUrl(tool.repositoryUrl ?? undefined) && (
           <DropdownMenuItem asChild>
-            <Link href={tool.repositoryUrl} target="_blank">
+            <Link href={tool.repositoryUrl!} target="_blank">
               Visit repository
             </Link>
           </DropdownMenuItem>

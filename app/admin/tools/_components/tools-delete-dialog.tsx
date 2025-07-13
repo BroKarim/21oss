@@ -1,16 +1,16 @@
 "use client";
 
-import type { Content } from "@prisma/client";
+import type { Tool } from "@prisma/client";
 import type { ComponentProps } from "react";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Icon } from "@/components/ui/icon";
-import { deleteTools } from "~/server/admin/tools/actions";
+import { deleteTools } from "@/server/admin/tools/actions";
 
 type ToolsDeleteDialogProps = ComponentProps<typeof Dialog> & {
-  contents: Content[];
+  tools: Tool[];
   showTrigger?: boolean;
   onSuccess?: () => void;
 };

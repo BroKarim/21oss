@@ -5,10 +5,10 @@ import { H2 } from "@/components/ui/heading";
 import { Stack } from "@/components/ui/stack";
 import { Section } from "@/components/ui/section";
 import type { ImageObject } from "schema-dts";
-import { findShowcase, findShowcaseSlugs } from "@/server/web/tools/queries";
+import { findTool, findToolslugs } from "@/server/web/tools/queries";
 import { IntroDescription } from "@/components/ui/intro";
 // import { FaviconImage } from "@/components/ui/favicon";
-import { ShowcaseDisplay } from "@/components/web/showcase-display";
+import { ToolDisplay } from "@/components/web/tool-display";
 
 import { Note } from "@/components/ui/note";
 import { RepositoryDetails } from "@/components/web/repository-detail";
@@ -18,7 +18,7 @@ type PageProps = {
 
 const getShowcase = cache(async ({ params }: PageProps) => {
   const { slug } = await params;
-  const tool = await findShowcase({ where: { slug } });
+  const tool = await findTool({ where: { slug } });
 
   if (!tool) {
     notFound();
@@ -28,8 +28,8 @@ const getShowcase = cache(async ({ params }: PageProps) => {
 });
 
 export const generateStaticParams = async () => {
-  const showcases = await findShowcaseSlugs({});
-  return showcases.map(({ slug }) => ({ slug }));
+  const tools = await findToolslugs({});
+  return tools.map(({ slug }) => ({ slug }));
 };
 
 //TODO : buat dlu schem untuk terima image dan link, bias bs getShowvase
@@ -109,7 +109,7 @@ export default async function ShowcasePage(props: PageProps) {
           </Section.Sidebar>
         </Section>
         <div className="w-full flex h-screen min-h-[500px]">
-          <ShowcaseDisplay />
+          <ToolDisplay />
         </div>
 
         {/* gambar */}
