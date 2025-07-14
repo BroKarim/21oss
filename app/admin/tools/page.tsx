@@ -1,6 +1,6 @@
 import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
-import { withAdminPage } from "@/components/admin/auth-hoc";
+// import { withAdminPage } from "@/components/admin/auth-hoc";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { findTools } from "@/server/admin/tools/queries";
 import { toolsTableParamsCache } from "@/server/admin/tools/schema";
@@ -21,4 +21,5 @@ const ToolsPage = async ({ searchParams }: ToolsPageProps) => {
   );
 };
 
-export default withAdminPage(ToolsPage);
+export default ToolsPage;
+// export default withAdminPage(ToolsPage);

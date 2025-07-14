@@ -1,15 +1,15 @@
 "use client";
 
 import { formatDate } from "@primoui/utils";
-import { type Content } from "@prisma/client";
+import { type Tool, ToolStatus } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
 import type { ComponentProps } from "react";
-import { ToolActions } from "~/app/admin/tools/_components/tool-actions";
+import { ToolActions } from "@/app/admin/tools/_components/tool-actions";
 import { RowCheckbox } from "@/components/admin/row-checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Note } from "@/components/ui/note";
-import { DataTableColumnHeader } from "~/components/data-table/data-table-column-header";
-import { DataTableLink } from "~/components/data-table/data-table-link";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import { DataTableLink } from "@/components/data-table/data-table-link";
 
 export const getColumns = (): ColumnDef<Tool>[] => {
   const statusBadges: Record<ToolStatus, ComponentProps<typeof Badge>> = {

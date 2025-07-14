@@ -1,6 +1,6 @@
 "use client";
 
-import { type Content } from "@prisma/client";
+import { type Tool, ToolStatus } from "@prisma/client";
 import { useQueryStates } from "nuqs";
 import { use, useMemo } from "react";
 import { DateRangePicker } from "@/components/admin/date-range-picker";
@@ -12,8 +12,8 @@ import { DataTableHeader } from "@/components/data-table/data-table-header";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
 import { useDataTable } from "@/hooks/use-data-table";
-import type { findTools } from "~/server/admin/tools/queries";
-import { toolsTableParamsSchema } from "~/server/admin/tools/schema";
+import type { findTools } from "@/server/admin/tools/queries";
+import { toolsTableParamsSchema } from "@/server/admin/tools/schema";
 import type { DataTableFilterField } from "@/types";
 import { getColumns } from "./tools-table-columns";
 import { ToolsTableToolbarActions } from "./tools-table-toolbar-actions";

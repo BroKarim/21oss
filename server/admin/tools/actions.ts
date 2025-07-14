@@ -16,25 +16,41 @@ import { tryCatch } from "@/utils/helpers";
 export const upsertTool = adminProcedure
   .createServerAction()
   .input(toolSchema)
-  .handler(async ({ input: { id, categories, ...input } }) => {
+  .handler(async ({ input }) => {
+    const { id, categories, platforms, stacks, ...rest } = input;
+
+    const slug = rest.slug || slugify(rest.name);
+
+    // Format relasi untuk Prisma
     const categoryIds = categories?.map((id) => ({ id }));
+    const platformIds = platforms?.map((id) => ({ id }));
+    const stackIds = stacks?.map((id) => ({ id }));
+
+    console.info(`[UPSERTOOL] isUpdate: ${!!id}`);
+    console.info(`[UPSERTOOL] input:`, input);
 
     const tool = id
       ? await db.tool.update({
           where: { id },
           data: {
-            ...input,
-            slug: input.slug || slugify(input.name),
+            ...rest,
+            slug,
             categories: { set: categoryIds },
+            platforms: { set: platformIds },
+            stacks: { set: stackIds },
           },
         })
       : await db.tool.create({
           data: {
-            ...input,
-            slug: input.slug || slugify(input.name),
+            ...rest,
+            slug,
             categories: { connect: categoryIds },
+            platforms: { connect: platformIds },
+            stacks: { connect: stackIds },
           },
         });
+
+    console.info(`[UPSERTOOL] done, id=${tool.id}, status=${tool.status}`);
 
     revalidateTag("tools");
     revalidateTag(`tool-${tool.slug}`);

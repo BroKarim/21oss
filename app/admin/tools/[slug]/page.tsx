@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ToolForm } from "@/app/admin/tools/_components/tool-form";
-import { withAdminPage } from "@/components/admin/auth-hoc";
+// import { withAdminPage } from "@/components/admin/auth-hoc";
 import { Wrapper } from "@/components/admin/wrapper";
 import { findCategoryList } from "@/server/admin/categories/queries";
 import { findToolBySlug } from "@/server/admin/tools/queries";
@@ -25,4 +25,5 @@ const UpdateToolPage = async ({ params }: PageProps) => {
   );
 };
 
-export default withAdminPage(UpdateToolPage);
+export default UpdateToolPage;
+// export default withAdminPage(UpdateToolPage);

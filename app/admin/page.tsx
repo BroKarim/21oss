@@ -3,7 +3,7 @@ import { StatsCard } from "./_components/stats-card";
 import { ScheduledCard } from "./_components/scheduled-card";
 import { SubscribersCard } from "./_components/subscribers-card";
 import { UsersCard } from "./_components/users-card";
-import { withAdminPage } from "@/components/admin/auth-hoc";
+// import { withAdminPage } from "@/components/admin/auth-hoc";
 import { H3 } from "@/components/ui/heading";
 
 const DashboardPage = () => {

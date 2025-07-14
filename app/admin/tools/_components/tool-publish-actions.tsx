@@ -5,9 +5,7 @@ import { type ComponentProps, type ReactNode, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { FormControl, FormField, FormLabel, FormItem } from "@/components/ui/form";
 import { H5, H6 } from "@/components/ui/heading";
 import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
@@ -17,7 +15,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Stack } from "@/components/ui/stack";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
 import type { ToolSchema } from "@/server/admin/tools/schema";
-import { cx } from "@/lib/utils";
 
 type ToolPublishActionsProps = ComponentProps<typeof Stack> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>;
@@ -42,8 +39,8 @@ type ActionConfig = Omit<ButtonProps, "popover"> & {
 };
 
 export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusSubmit, children, ...props }: ToolPublishActionsProps) => {
-  const { control, watch } = useFormContext<ToolSchema>();
-  const [status, submitterEmail, publishedAt] = watch(["status", "submitterEmail", "publishedAt"]);
+  const { watch } = useFormContext<ToolSchema>();
+  const [status, publishedAt] = watch(["status", "publishedAt"]);
   const publishedAtDate = new Date(publishedAt ?? new Date());
 
   const [isOpen, setIsOpen] = useState(false);
@@ -238,7 +235,9 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
                                       selected={new Date(selectedDate)}
                                       disabled={{ before: new Date() }}
                                       onSelect={(date) => {
-                                        date && setSelectedDate(formatDate(date, "yyyy-MM-dd"));
+                                        if (date) {
+                                          setSelectedDate(formatDate(date, "yyyy-MM-dd"));
+                                        }
                                         setIsScheduleOpen(false);
                                       }}
                                       modifiers={{
@@ -260,22 +259,6 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
                       </Stack>
                     ))}
                   </RadioGroup>
-
-                  {submitterEmail && status !== ToolStatus.Published && (currentOption.status === ToolStatus.Published || currentOption.status === ToolStatus.Scheduled) && (
-                    <FormField
-                      control={control}
-                      name="notifySubmitter"
-                      render={({ field }) => (
-                        <FormItem size="sm" direction="row">
-                          <FormControl>
-                            <Checkbox checked={field.value} onCheckedChange={() => field.onChange(!field.value)} />
-                          </FormControl>
-
-                          <FormLabel className={cx(!field.value && "font-normal text-muted-foreground")}>Notify submitter via email</FormLabel>
-                        </FormItem>
-                      )}
-                    />
-                  )}
 
                   <Stack className="justify-between">
                     <Button size="md" variant="secondary" onClick={() => setIsOpen(false)}>

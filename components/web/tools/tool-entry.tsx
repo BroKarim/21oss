@@ -8,7 +8,6 @@ import { Markdown } from "@/components/web/markdown";
 import { OverlayImage } from "@/components/web/overlay-image";
 import { ToolBadges } from "@/components/web/tools/tool-badges";
 import { FaviconImage } from "@/components/ui/favicon";
-import { VerifiedBadge } from "@/components/web/verified-badge";
 import type { ToolManyExtended, ToolOne } from "@/server/web/tools/payloads";
 import { cx } from "@/lib/utils";
 
@@ -27,8 +26,6 @@ const ToolEntry = ({ children, className, tool, ...props }: ToolEntryProps) => {
             <FaviconImage src={tool.faviconUrl} title={tool.name} className="size-8" />
 
             <H2 className="leading-tight! truncate underline decoration-transparent group-hover:decoration-foreground/30">{tool.name}</H2>
-
-            {tool.ownerId && <VerifiedBadge size="lg" />}
           </Link>
         </Stack>
 

@@ -17,7 +17,7 @@ import { RelationSelector } from "@/components/admin/relation-selector";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { H3 } from "@/components/ui/heading";
-import { Icon } from "@/components/ui/icon";
+import { Pencil, RefreshCw, Eye } from "lucide-react";
 import { Input, inputVariants } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
 import { Note } from "@/components/ui/note";
@@ -287,7 +287,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
                 <FormLabel>Content</FormLabel>
 
                 {field.value && (
-                  <Button type="button" size="sm" variant="secondary" onClick={() => setIsPreviewing((prev) => !prev)} prefix={isPreviewing ? <Icon name="lucide/pencil" /> : <Icon name="lucide/eye" />} className="-my-1">
+                  <Button type="button" size="sm" variant="secondary" onClick={() => setIsPreviewing((prev) => !prev)} prefix={isPreviewing ? <Pencil /> : <Eye />} className="-my-1">
                     {isPreviewing ? "Edit" : "Preview"}
                   </Button>
                 )}
@@ -341,7 +341,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
                   type="button"
                   size="sm"
                   variant="secondary"
-                  prefix={<Icon name="lucide/refresh-cw" className={cx(faviconAction.isPending && "animate-spin")} />}
+                  prefix={<RefreshCw className={cx(faviconAction.isPending && "animate-spin")} />}
                   className="-my-1"
                   disabled={!isValidUrl(websiteUrl) || faviconAction.isPending}
                   onClick={() => {
