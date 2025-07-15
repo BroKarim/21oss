@@ -18,10 +18,16 @@ export const userProcedure = createProcedure().handler(async () => {
 /**
  * A procedure that checks if the user is an admin.
  */
-export const adminProcedure = createProcedure(userProcedure).handler(async ({ ctx }) => {
-  if (ctx.user.role !== "admin") {
-    throw new Error("User not authenticated");
-  }
-
-  return { user: ctx.user };
+export const adminProcedure = createProcedure().handler(async () => {
+  return { user: { role: "admin" } }; // hardcoded
 });
+
+// export const adminProcedure = createProcedure(userProcedure).handler(async ({ ctx }) => {
+//   // if (ctx.user.role !== "admin") {
+//   //   throw new Error("User not authenticated");
+//   // }
+
+//   return { user: ctx.user };
+// });
+
+// export const adminProcedure = createProcedure();

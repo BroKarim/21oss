@@ -7,7 +7,6 @@ import { Button, type ButtonProps } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { H5, H6 } from "@/components/ui/heading";
-import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Note } from "@/components/ui/note";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -15,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Stack } from "@/components/ui/stack";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
 import type { ToolSchema } from "@/server/admin/tools/schema";
+import { BadgeCheck, Table } from "lucide-react";
 
 type ToolPublishActionsProps = ComponentProps<typeof Stack> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>;
@@ -107,7 +107,7 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
         type: "button",
         children: "Scheduled",
         variant: "secondary",
-        prefix: <Icon name="lucide/calendar" />,
+        prefix: <Table />,
         popover: {
           title: "Update tool status",
           options: [
@@ -153,7 +153,7 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
         type: "button",
         children: "Published",
         variant: "secondary",
-        prefix: <Icon name="lucide/badge-check" />,
+        prefix: <BadgeCheck />,
         popover: {
           title: "Update tool status",
           options: [
@@ -218,7 +218,7 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
 
                             {option.status === ToolStatus.Scheduled && currentStatus === ToolStatus.Scheduled && (
                               <Stack size="sm" wrap={false} className="mt-2 items-stretch w-full">
-                                <Button size="md" variant="secondary" onClick={() => setIsScheduleOpen(true)} suffix={<Icon name="lucide/calendar" />} className="w-full tabular-nums">
+                                <Button size="md" variant="secondary" onClick={() => setIsScheduleOpen(true)} suffix={<Table />} className="w-full tabular-nums">
                                   {selectedDate}
                                 </Button>
 

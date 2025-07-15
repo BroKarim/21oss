@@ -12,7 +12,6 @@ import { useServerAction } from "zsa-react";
 import { generateFavicon } from "@/actions/media";
 import { ToolActions } from "@/app/admin/tools/_components/tool-actions";
 import { ToolGenerateContent } from "@/app/admin/tools/_components/tool-generate-content";
-import { ToolPublishActions } from "@/app/admin/tools/_components/tool-publish-actions";
 import { RelationSelector } from "@/components/admin/relation-selector";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -106,7 +105,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
         toast.success(<ToolStatusChange tool={data} />);
         setOriginalStatus(data.status);
       }
-
       // Otherwise, just show a success message
       else {
         toast.success(`Tool successfully ${tool ? "updated" : "created"}`);
@@ -132,7 +130,8 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
     onError: ({ err }) => toast.error(err.message),
   });
 
-  const handleSubmit = form.handleSubmit((data, event) => {
+  const handleSubmit = form.handleSubmit(async (data, event) => {
+    console.log("🔥 Submitting Tool Data", data);
     const submitter = (event?.nativeEvent as SubmitEvent)?.submitter;
     const isStatusChange = submitter?.getAttribute("name") !== "submit";
 
@@ -140,17 +139,10 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
       setIsStatusPending(true);
     }
 
+    console.log("➡️ Executing upsertAction now...");
+
     upsertAction.execute({ id: tool?.id, ...data });
   });
-
-  const handleStatusSubmit = (status: ToolStatus, publishedAt: Date | null) => {
-    // Update form values
-    form.setValue("status", status);
-    form.setValue("publishedAt", publishedAt);
-
-    // Submit the form with updated values
-    handleSubmit();
-  };
 
   return (
     <Form {...form}>
@@ -418,8 +410,9 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
           <Button size="md" variant="secondary" asChild>
             <Link href="/admin/tools">Cancel</Link>
           </Button>
-
-          <ToolPublishActions tool={tool} isPending={!isStatusPending && upsertAction.isPending} isStatusPending={isStatusPending} onStatusSubmit={handleStatusSubmit} />
+          <Button type="submit" variant="fancy" name="submit">
+            Publish
+          </Button>
         </div>
       </form>
     </Form>

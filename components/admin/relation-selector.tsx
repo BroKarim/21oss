@@ -5,11 +5,11 @@ import { AnimatedContainer } from "@/components/ui/animated-container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { Icon } from "@/components/ui/icon";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { Stack } from "@/components/ui/stack";
 import { cx } from "@/lib/utils";
+import { MousePointerClick, Sparkles } from "lucide-react";
 
 type Relation = {
   id: string;
@@ -83,7 +83,7 @@ export const RelationSelector = <T extends Relation>({ relations, selectedIds, p
             variant="secondary"
             size="md"
             className="justify-start w-full px-3 gap-2.5"
-            prefix={<Icon name="lucide/mouse-pointer-click" />}
+            prefix={<MousePointerClick />}
             suffix={
               <Badge variant="outline" className="ml-auto size-auto">
                 {selectedRelations.length}
@@ -128,7 +128,7 @@ export const RelationSelector = <T extends Relation>({ relations, selectedIds, p
 
                       <Stack wrap={false} className={cx("flex-1 justify-between truncate", isSuggested && "font-medium text-orange-800 dark:text-orange-200")}>
                         {relation.name}
-                        {isSuggested && <Icon name="lucide/sparkles" />}
+                        {isSuggested && <Sparkles />}
                       </Stack>
                     </CommandItem>
                   );

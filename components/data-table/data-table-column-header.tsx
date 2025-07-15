@@ -2,8 +2,8 @@ import type { Column } from "@tanstack/react-table";
 import type { ComponentProps } from "react";
 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Icon } from "@/components/ui/icon";
 import { cn, cva } from "@/lib/utils";
+import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
 
 const dataTableColumnHeaderVariants = cva({
   base: "text-start font-medium text-muted-foreground whitespace-nowrap",
@@ -28,7 +28,7 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className,
   const buttonLabel =
     column.getCanSort() && column.getIsSorted() === "desc" ? "Sorted descending. Click to sort ascending." : column.getIsSorted() === "asc" ? "Sorted ascending. Click to sort descending." : "Not sorted. Click to sort ascending.";
 
-  const buttonSuffix = column.getCanSort() && column.getIsSorted() === "desc" ? <Icon name="lucide/arrow-down" /> : column.getIsSorted() === "asc" ? <Icon name="lucide/arrow-up" /> : <Icon name="lucide/chevrons-up-down" />;
+  const buttonSuffix = column.getCanSort() && column.getIsSorted() === "desc" ? <ArrowDown /> : column.getIsSorted() === "asc" ? <ArrowUp /> : <ChevronsUpDown />;
 
   return (
     <DropdownMenu>
@@ -41,12 +41,12 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className,
         {column.getCanSort() && (
           <>
             <DropdownMenuItem aria-label="Sort ascending" onClick={() => column.toggleSorting(false)}>
-              <Icon name="lucide/arrow-up" className="mr-2 text-muted-foreground/70" aria-hidden="true" />
+              <ArrowUp className="mr-2 text-muted-foreground/70" aria-hidden="true" />
               Asc
             </DropdownMenuItem>
 
             <DropdownMenuItem aria-label="Sort descending" onClick={() => column.toggleSorting(true)}>
-              <Icon name="lucide/arrow-down" className="mr-2 text-muted-foreground/70" aria-hidden="true" />
+              <ArrowDown className="mr-2 text-muted-foreground/70" aria-hidden="true" />
               Desc
             </DropdownMenuItem>
           </>
@@ -54,7 +54,7 @@ export function DataTableColumnHeader<TData, TValue>({ column, title, className,
         {column.getCanSort() && column.getCanHide() && <DropdownMenuSeparator />}
         {column.getCanHide() && (
           <DropdownMenuItem aria-label="Hide column" onClick={() => column.toggleVisibility(false)}>
-            <Icon name="lucide/eye-off" className="mr-2 text-muted-foreground/70" aria-hidden="true" />
+            <EyeOff className="mr-2 text-muted-foreground/70" aria-hidden="true" />
             Hide
           </DropdownMenuItem>
         )}

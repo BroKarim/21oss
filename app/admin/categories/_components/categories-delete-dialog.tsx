@@ -6,8 +6,8 @@ import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Icon } from "@/components/ui/icon";
 import { deleteCategories } from "@/server/admin/categories/actions";
+import { Trash } from "lucide-react";
 
 type CategoriesDeleteDialogProps = ComponentProps<typeof Dialog> & {
   categories: Category[];
@@ -32,7 +32,7 @@ export const CategoriesDeleteDialog = ({ categories, showTrigger = true, onSucce
     <Dialog {...props}>
       {showTrigger && (
         <DialogTrigger asChild>
-          <Button variant="secondary" size="md" prefix={<Icon name="lucide/trash" />}>
+          <Button variant="secondary" size="md" prefix={<Trash />}>
             Delete ({categories.length})
           </Button>
         </DialogTrigger>

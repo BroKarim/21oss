@@ -1,3 +1,5 @@
+"use server";
+
 import { isTruthy } from "@primoui/utils";
 import { type Prisma, ToolStatus } from "@prisma/client";
 import { endOfDay, startOfDay } from "date-fns";

@@ -5,7 +5,6 @@ import { useQueryStates } from "nuqs";
 import { use, useMemo } from "react";
 import { DateRangePicker } from "@/components/admin/date-range-picker";
 import { Button } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
 import { Link } from "@/components/ui/link";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableHeader } from "@/components/data-table/data-table-header";
@@ -17,6 +16,7 @@ import { toolsTableParamsSchema } from "@/server/admin/tools/schema";
 import type { DataTableFilterField } from "@/types";
 import { getColumns } from "./tools-table-columns";
 import { ToolsTableToolbarActions } from "./tools-table-toolbar-actions";
+import { Circle, CircleDashed, CircleDotDashed, Plus } from "lucide-react";
 
 type ToolsTableProps = {
   toolsPromise: ReturnType<typeof findTools>;
@@ -43,17 +43,17 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
         {
           label: "Published",
           value: ToolStatus.Published,
-          icon: <Icon name="lucide/circle" className="text-green-500" />,
+          icon: <Circle className="text-green-500" />,
         },
         {
           label: "Scheduled",
           value: ToolStatus.Scheduled,
-          icon: <Icon name="lucide/circle-dot-dashed" className="text-blue-500" />,
+          icon: <CircleDotDashed className="text-blue-500" />,
         },
         {
           label: "Draft",
           value: ToolStatus.Draft,
-          icon: <Icon name="lucide/circle-dashed" className="text-gray-500" />,
+          icon: <CircleDashed className="text-gray-500" />,
         },
       ],
     },
@@ -81,7 +81,7 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
         title="Tools"
         total={toolsTotal}
         callToAction={
-          <Button variant="primary" size="md" prefix={<Icon name="lucide/plus" />} asChild>
+          <Button variant="primary" size="md" prefix={<Plus />} asChild>
             <Link href="/admin/tools/new">
               <div className="max-sm:sr-only">New tool</div>
             </Link>

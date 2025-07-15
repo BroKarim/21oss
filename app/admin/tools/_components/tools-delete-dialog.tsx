@@ -6,8 +6,8 @@ import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Icon } from "@/components/ui/icon";
 import { deleteTools } from "@/server/admin/tools/actions";
+import { Trash } from "lucide-react";
 
 type ToolsDeleteDialogProps = ComponentProps<typeof Dialog> & {
   tools: Tool[];
@@ -32,7 +32,7 @@ export const ToolsDeleteDialog = ({ tools, showTrigger = true, onSuccess, ...pro
     <Dialog {...props}>
       {showTrigger && (
         <DialogTrigger asChild>
-          <Button variant="secondary" size="md" prefix={<Icon name="lucide/trash" />}>
+          <Button variant="secondary" size="md" prefix={<Trash />}>
             Delete ({tools.length})
           </Button>
         </DialogTrigger>

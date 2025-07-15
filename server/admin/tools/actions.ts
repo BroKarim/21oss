@@ -12,11 +12,13 @@ import { toolSchema } from "@/server/admin/tools/schema";
 import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
 
+console.log("✅ upsertTool loaded");
 // ✅ Tambah/Edit Tool (tanpa alternatives)
 export const upsertTool = adminProcedure
   .createServerAction()
   .input(toolSchema)
   .handler(async ({ input }) => {
+    console.log("✅ upsertTool called", input);
     const { id, categories, platforms, stacks, ...rest } = input;
 
     const slug = rest.slug || slugify(rest.name);

@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { type ComponentProps, Suspense } from "react";
-import { Icon } from "@/components/ui/icon";
 import { Link } from "@/components/ui/link";
 import { ExternalLink } from "@/components/web/external-link";
 import { ToolEntry as ToolEntryPrimitive } from "@/components/web/tools/tool-entry";
 import { toolOnePayload } from "@/server/web/tools/payloads";
 import { db } from "@/services/db";
 import { cx } from "@/lib/utils";
+import { ArrowUpRight } from "lucide-react";
 
 const a = ({ href, ...props }: ComponentProps<"a">) => {
   if (typeof href !== "string") {
@@ -20,7 +20,7 @@ const a = ({ href, ...props }: ComponentProps<"a">) => {
   return (
     <ExternalLink {...props} href={href}>
       {props.children}
-      <Icon name="lucide/arrow-up-right" className="inline-block ml-0.5 mb-0.5 size-3.5" />
+      <ArrowUpRight className="inline-block ml-0.5 mb-0.5 size-3.5" />
     </ExternalLink>
   );
 };

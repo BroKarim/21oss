@@ -6,6 +6,16 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: ["picsum.photos", "images.unsplash.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "http",
+        hostname: "**",
+      },
+    ],
   },
 
   /* config options here */

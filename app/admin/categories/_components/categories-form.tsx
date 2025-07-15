@@ -12,7 +12,6 @@ import { RelationSelector } from "@/components/admin/relation-selector";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { H3 } from "@/components/ui/heading";
-import { Icon } from "@/components/ui/icon";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -23,6 +22,7 @@ import type { findCategoryBySlug, findCategoryList } from "@/server/admin/catego
 import { categorySchema } from "@/server/admin/categories/schema";
 import type { findToolList } from "@/server/admin/tools/queries";
 import { cx } from "@/lib/utils";
+import { X } from "lucide-react";
 
 type CategoryFormProps = ComponentProps<"form"> & {
   category?: Awaited<ReturnType<typeof findCategoryBySlug>>;
@@ -181,7 +181,7 @@ export function CategoryForm({ className, title, category, toolsPromise, categor
                 <FormLabel>Parent Category</FormLabel>
 
                 {field.value && (
-                  <Button type="button" size="sm" variant="secondary" onClick={() => form.setValue("parentId", "")} prefix={<Icon name="lucide/x" />} disabled={!!category?.subcategories.length} className="-my-1">
+                  <Button type="button" size="sm" variant="secondary" onClick={() => form.setValue("parentId", "")} prefix={<X />} disabled={!!category?.subcategories.length} className="-my-1">
                     Clear
                   </Button>
                 )}

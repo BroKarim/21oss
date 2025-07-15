@@ -6,7 +6,7 @@ import { use } from "react";
 import { useMemo } from "react";
 import { DateRangePicker } from "@/components/admin/date-range-picker";
 import { Button } from "@/components/ui/button";
-import { Icon } from "@/components/ui/icon";
+
 import { Link } from "@/components/ui/link";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableHeader } from "@/components/data-table/data-table-header";
@@ -18,6 +18,7 @@ import { categoriesTableParamsSchema } from "@/server/admin/categories/schema";
 import type { DataTableFilterField } from "@/types";
 import { getColumns } from "./categories-table-columns";
 import { CategoriesTableToolbarActions } from "@/app/admin/categories/_components/categories-table-toolbar-actions";
+import { Plus } from "lucide-react";
 
 type CategoriesTableProps = {
   categoriesPromise: ReturnType<typeof findCategories>;
@@ -60,7 +61,7 @@ export function CategoriesTable({ categoriesPromise }: CategoriesTableProps) {
         title="Categories"
         total={categoriesTotal}
         callToAction={
-          <Button variant="primary" size="md" prefix={<Icon name="lucide/plus" />} asChild>
+          <Button variant="primary" size="md" prefix={<Plus />} asChild>
             <Link href="/admin/categories/new">
               <div className="max-sm:sr-only">New category</div>
             </Link>

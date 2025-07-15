@@ -9,10 +9,10 @@ import { useServerAction } from "zsa-react";
 import { ToolsDeleteDialog } from "@/app/admin/tools/_components/tools-delete-dialog";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Icon } from "@/components/ui/icon";
 import { Link } from "@/components/ui/link";
 import { fetchToolRepositoryData } from "@/server/admin/tools/actions";
 import { cx } from "@/lib/utils";
+import { Ellipsis } from "lucide-react";
 
 type ToolActionsProps = ComponentProps<typeof Button> & {
   tool: Tool;
@@ -33,7 +33,7 @@ export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button aria-label="Open menu" variant="secondary" size="sm" prefix={<Icon name="lucide/ellipsis" />} className={cx("data-[state=open]:bg-accent", className)} {...props} />
+        <Button aria-label="Open menu" variant="secondary" size="sm" prefix={<Ellipsis />} className={cx("data-[state=open]:bg-accent", className)} {...props} />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
