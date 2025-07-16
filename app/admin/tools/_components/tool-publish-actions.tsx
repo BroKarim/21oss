@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Note } from "@/components/ui/note";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Stack } from "@/components/ui/stack";
+import { Stack } from "@/components/ui/stack";  
 import type { findToolBySlug } from "@/server/admin/tools/queries";
 import type { ToolSchema } from "@/server/admin/tools/schema";
 import { BadgeCheck, Table } from "lucide-react";

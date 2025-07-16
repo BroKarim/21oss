@@ -40,6 +40,22 @@ export const upsertTool = adminProcedure
             categories: { set: categoryIds },
             platforms: { set: platformIds },
             stacks: { set: stackIds },
+            flowNodes: {
+              deleteMany: {}, // hapus semua flow lama sebelum create ulang (saat update)
+              create:
+                rest.flowNodes?.map((node, nodeIndex) => ({
+                  label: node.label,
+                  repositoryPath: node.repositoryPath,
+                  order: nodeIndex,
+                  screenshots: {
+                    create:
+                      node.screenshots?.map((url, i) => ({
+                        imageUrl: url,
+                        order: i,
+                      })) ?? [],
+                  },
+                })) ?? [],
+            },
           },
         })
       : await db.tool.create({
@@ -49,6 +65,20 @@ export const upsertTool = adminProcedure
             categories: { connect: categoryIds },
             platforms: { connect: platformIds },
             stacks: { connect: stackIds },
+            flowNodes: {
+              create:
+                rest.flowNodes?.map((node, nodeIndex) => ({
+                  label: node.label,
+                  order: nodeIndex,
+                  screenshots: {
+                    create:
+                      node.screenshots?.map((url, i) => ({
+                        imageUrl: url,
+                        order: i,
+                      })) ?? [],
+                  },
+                })) ?? [],
+            },
           },
         });
 

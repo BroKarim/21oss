@@ -6,27 +6,23 @@ import { type Tool, ToolStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { use, useState } from "react";
-import { useForm } from "react-hook-form";
+
+import { useForm, useFieldArray } from "react-hook-form";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
 import { generateFavicon } from "@/actions/media";
-import { ToolActions } from "@/app/admin/tools/_components/tool-actions";
-import { ToolGenerateContent } from "@/app/admin/tools/_components/tool-generate-content";
 import { RelationSelector } from "@/components/admin/relation-selector";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { H3 } from "@/components/ui/heading";
-import { Pencil, RefreshCw, Eye } from "lucide-react";
-import { Input, inputVariants } from "@/components/ui/input";
+import { RefreshCw } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
-import { Note } from "@/components/ui/note";
 import { Stack } from "@/components/ui/stack";
 import { Textarea } from "@/components/ui/textarea";
+import { FlowNodeGroup } from "./tool-flowNodes-group";
 import { ExternalLink } from "@/components/web/external-link";
-import { Markdown } from "@/components/web/markdown";
-import { siteConfig } from "@/config/site";
 import { useComputedField } from "@/hooks/use-computed-field";
-import { isToolPublished } from "@/lib/tools";
 import type { findCategoryList } from "@/server/admin/categories/queries";
 import { upsertTool } from "@/server/admin/tools/actions";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
@@ -58,8 +54,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
   const router = useRouter();
   const categories = use(categoriesPromise);
 
-  const [isPreviewing, setIsPreviewing] = useState(false);
-  const [isStatusPending, setIsStatusPending] = useState(false);
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft);
 
   const form = useForm({
@@ -69,23 +63,30 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
       slug: tool?.slug ?? "",
       tagline: tool?.tagline ?? "",
       description: tool?.description ?? "",
-      content: tool?.content ?? "",
       websiteUrl: tool?.websiteUrl ?? "",
       affiliateUrl: tool?.affiliateUrl ?? "",
       repositoryUrl: tool?.repositoryUrl ?? "",
       faviconUrl: tool?.faviconUrl ?? "",
       screenshotUrl: tool?.screenshotUrl ?? "",
-      discountCode: tool?.discountCode ?? "",
-      discountAmount: tool?.discountAmount ?? "",
       status: tool?.status ?? ToolStatus.Draft,
       publishedAt: tool?.publishedAt ?? null,
       categories: tool?.categories.map((c) => c.id) ?? [],
       platforms: tool?.platforms.map((p) => p.id) ?? [],
       stacks: tool?.stacks.map((s) => s.slug) ?? [],
+      flowNodes:
+        tool?.flowNodes?.map((node) => ({
+          label: node.label,
+          screenshots: node.screenshots?.map((s) => s.imageUrl) ?? [],
+          children:
+            node.children?.map((child) => ({
+              label: child.label,
+              repositoryPath: child.repositoryPath ?? "",
+            })) ?? [],
+        })) ?? [],
     },
   });
 
-  // Set the slug based on the name
+  // otomatis isi form slug berdasarkan nama
   useComputedField({
     form,
     sourceField: "name",
@@ -94,8 +95,17 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
     enabled: !tool,
   });
 
+  const {
+    fields: flowNodes,
+    append,
+    remove,
+  } = useFieldArray({
+    control: form.control,
+    name: "flowNodes",
+  });
+
   // Keep track of the form values
-  const [name, slug, websiteUrl, description] = form.watch(["name", "slug", "websiteUrl", "description", "content"]);
+  const [name, slug, websiteUrl, description] = form.watch(["name", "slug", "websiteUrl", "description"]);
 
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
@@ -117,7 +127,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
     },
 
     onError: ({ err }) => toast.error(err.message),
-    onFinish: () => setIsStatusPending(false),
   });
 
   // Generate favicon
@@ -130,14 +139,8 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
     onError: ({ err }) => toast.error(err.message),
   });
 
-  const handleSubmit = form.handleSubmit(async (data, event) => {
+  const handleSubmit = form.handleSubmit(async (data) => {
     console.log("🔥 Submitting Tool Data", data);
-    const submitter = (event?.nativeEvent as SubmitEvent)?.submitter;
-    const isStatusChange = submitter?.getAttribute("name") !== "submit";
-
-    if (isStatusChange) {
-      setIsStatusPending(true);
-    }
 
     console.log("➡️ Executing upsertAction now...");
 
@@ -148,27 +151,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
     <Form {...form}>
       <Stack className="justify-between">
         <H3 className="flex-1 truncate">{title}</H3>
-
-        <Stack size="sm" className="-my-0.5">
-          <ToolGenerateContent />
-
-          {tool && <ToolActions tool={tool} size="md" />}
-        </Stack>
-
-        {tool && (
-          <Note className="w-full">
-            {isToolPublished(tool) ? "View:" : "Preview:"}{" "}
-            <ExternalLink href={`/${tool.slug}`} className="text-primary underline">
-              {siteConfig.url}/{tool.slug}
-            </ExternalLink>
-            {tool.status === ToolStatus.Scheduled && tool.publishedAt && (
-              <>
-                <br />
-                Scheduled to be published on <strong className="text-foreground">{formatDateTime(tool.publishedAt)}</strong>
-              </>
-            )}
-          </Note>
-        )}
       </Stack>
 
       <form onSubmit={handleSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>
@@ -270,56 +252,80 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem className="col-span-full items-stretch">
-              <Stack className="justify-between">
-                <FormLabel>Content</FormLabel>
-
-                {field.value && (
-                  <Button type="button" size="sm" variant="secondary" onClick={() => setIsPreviewing((prev) => !prev)} prefix={isPreviewing ? <Pencil /> : <Eye />} className="-my-1">
-                    {isPreviewing ? "Edit" : "Preview"}
-                  </Button>
-                )}
-              </Stack>
-
-              <FormControl>{field.value && isPreviewing ? <Markdown code={field.value} className={cx(inputVariants(), "max-w-none border leading-normal")} /> : <Textarea {...field} />}</FormControl>
+        <div className="rounded-xl col-span-full border p-4 space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4 items-end w-full">
+            {/* Parent Label */}
+            <FormItem>
+              <FormLabel>Parent Label</FormLabel>
+              <FormControl>
+                <Input placeholder="Contoh: Landing Page" />
+              </FormControl>
               <FormMessage />
             </FormItem>
-          )}
-        />
 
-        <div className="grid gap-4 @2xl:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="discountCode"
-            render={({ field }) => (
+            {/* Upload Screenshot */}
+            <FormItem>
+              <FormLabel>Screenshots (untuk parent)</FormLabel>
+              <FormControl>
+                <Input type="file" multiple />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          </div>
+
+          {/* Child Nodes */}
+          <div className="space-y-4">
+            <div className="grid sm:grid-cols-2 gap-4">
+              {/* Child Label */}
               <FormItem>
-                <FormLabel>Discount Code</FormLabel>
+                <FormLabel>Child Label</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input placeholder="Contoh: Home, About" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
-            )}
-          />
 
-          <FormField
-            control={form.control}
-            name="discountAmount"
-            render={({ field }) => (
+              {/* Repo Path */}
               <FormItem>
-                <FormLabel>Discount Amount</FormLabel>
+                <FormLabel>Repository Path</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <Input placeholder="/app/(web)/(home)/page.tsx" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
-            )}
-          />
+            </div>
+
+            {/* Tombol tambah child */}
+            <Button type="button" size="sm" variant="secondary">
+              + Tambah Child
+            </Button>
+          </div>
+
+          {/* Tombol hapus parent */}
+          <div className="flex justify-end">
+            <Button type="button" size="sm" variant="destructive">
+              Hapus Parent Ini
+            </Button>
+          </div>
         </div>
+
+        {/* Tombol tambah parent */}
+        <div className="text-right col-span-full">
+          <Button type="button" variant="secondary">
+            + Tambah Parent Baru
+          </Button>
+        </div>
+
+        {flowNodes.map((node, index) => (
+          <FlowNodeGroup key={node.id ?? index} control={form.control} nodeIndex={index} removeParent={() => remove(index)} />
+        ))}
+        <div className="text-right col-span-full">
+          <Button type="button" variant="secondary" onClick={() => append({ label: "", screenshots: [], children: [] })}>
+            + Tambah Parent Baru
+          </Button>
+        </div>
+
+        <div className="grid gap-4 @2xl:grid-cols-2"></div>
 
         <FormField
           control={form.control}

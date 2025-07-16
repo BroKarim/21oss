@@ -33,16 +33,30 @@ export const toolSchema = z.object({
   repositoryUrl: repositorySchema,
   tagline: z.string().optional(),
   description: z.string().optional(),
-  content: z.string().optional(),
   faviconUrl: z.string().optional().or(z.literal("")),
   screenshotUrl: z.string().optional().or(z.literal("")),
-  discountCode: z.string().optional(),
-  discountAmount: z.string().optional(),
   publishedAt: z.coerce.date().nullish(),
   status: z.nativeEnum(ToolStatus).default("Draft"),
   categories: z.array(z.string()).optional(),
-  platforms: z.array(z.string()).optional(), // Tambahkan untuk relation platforms
+  platforms: z.array(z.string()).optional(),
   stacks: z.array(z.string()).optional(),
+  flowNodes: z
+    .array(
+      z.object({
+        label: z.string().min(1, "Label is required"),
+        repositoryPath: z.string().optional(),
+        screenshots: z.array(z.string().url()).optional(), // URL gambar parent
+        children: z
+          .array(
+            z.object({
+              label: z.string().min(1),
+              repositoryPath: z.string().min(1),
+            })
+          )
+          .optional(),
+      })
+    )
+    .optional(),
 });
 
 export type ToolSchema = z.infer<typeof toolSchema>;

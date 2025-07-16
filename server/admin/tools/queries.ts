@@ -72,8 +72,17 @@ export const findToolBySlug = async (slug: string) => {
     where: { slug },
     include: {
       categories: true,
-      platforms: true, // ✅ tambahkan
+      platforms: true,
       stacks: true,
+
+      // ✅ Tambahkan ini:
+      flowNodes: {
+        include: {
+          screenshots: true,
+          children: true,
+        },
+        orderBy: { order: "asc" },
+      },
     },
   });
 };

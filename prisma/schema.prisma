@@ -113,6 +113,7 @@ model Tool {
   categories Category[]  @relation("ToolCategories")
   platforms  Platform[]  @relation("ToolPlatforms")
   stacks     Stack[]     @relation("ToolStacks")
+  flowNodes  FlowNode[]
   likes      Like[]
   reports    Report[]
 
@@ -121,6 +122,34 @@ model Tool {
   @@index([licenseId])
   @@index([inspiredById])
 }
+
+
+model FlowNode {
+  id         String      @id @default(cuid())
+  tool       Tool        @relation(fields: [toolId], references: [id])
+  toolId     String
+  parent     FlowNode?   @relation("NodeChildren", fields: [parentId], references: [id])
+  parentId   String?
+  label      String      // contoh: "Home", "About"
+  order      Int
+
+  // Tambahkan field ini untuk link repo per label
+  repositoryPath String? // contoh: /app/(web)/(home)/page.tsx
+
+  screenshots FlowScreenshot[]
+  children    FlowNode[] @relation("NodeChildren")
+}
+
+
+model FlowScreenshot {
+  id         String    @id @default(cuid())
+  node       FlowNode  @relation(fields: [nodeId], references: [id])
+  nodeId     String
+  imageUrl   String
+  caption    String?
+  order      Int       // untuk menentukan urutan tampil
+}
+
 
 model Category {
   id          String   @id @default(cuid())
