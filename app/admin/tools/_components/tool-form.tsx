@@ -73,16 +73,22 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
       categories: tool?.categories.map((c) => c.id) ?? [],
       platforms: tool?.platforms.map((p) => p.id) ?? [],
       stacks: tool?.stacks.map((s) => s.slug) ?? [],
-      flowNodes:
-        tool?.flowNodes?.map((node) => ({
-          label: node.label,
-          screenshots: node.screenshots?.map((s) => s.imageUrl) ?? [],
-          children:
-            node.children?.map((child) => ({
-              label: child.label,
-              repositoryPath: child.repositoryPath ?? "",
-            })) ?? [],
+      screenshots:
+        tool?.screenshots?.map((img) => ({
+          imageUrl: img.imageUrl,
+          caption: img.caption ?? "",
         })) ?? [],
+      flowNodes:
+        tool?.flowNodes
+          ?.filter((node) => !node.parentId) // hanya ambil parent
+          .map((parent) => ({
+            parentLabel: parent.label,
+            path:
+              parent.children?.map((child) => ({
+                label: child.label,
+                repositoryPath: child.repositoryPath ?? "",
+              })) ?? [],
+          })) ?? [],
     },
   });
 
@@ -104,8 +110,17 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
     name: "flowNodes",
   });
 
+  const {
+    fields: screenshotFields,
+    append: appendScreenshot,
+    remove: removeScreenshot,
+  } = useFieldArray({
+    control: form.control,
+    name: "screenshots",
+  });
+
   // Keep track of the form values
-  const [name, slug, websiteUrl, description] = form.watch(["name", "slug", "websiteUrl", "description"]);
+  const [slug, websiteUrl] = form.watch(["slug", "websiteUrl"]);
 
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
@@ -141,11 +156,16 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
 
   const handleSubmit = form.handleSubmit(async (data) => {
     console.log("🔥 Submitting Tool Data", data);
-
     console.log("➡️ Executing upsertAction now...");
-
     upsertAction.execute({ id: tool?.id, ...data });
   });
+
+  // Tambahkan event listener untuk debugging
+  const handleFormSubmit = (e: React.FormEvent) => {
+    console.log("🔥 Form submit event triggered");
+    e.preventDefault();
+    handleSubmit(e);
+  };
 
   return (
     <Form {...form}>
@@ -153,7 +173,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
         <H3 className="flex-1 truncate">{title}</H3>
       </Stack>
 
-      <form onSubmit={handleSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>
+      <form onSubmit={handleFormSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>
         <FormField
           control={form.control}
           name="name"
@@ -252,172 +272,132 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
           )}
         />
 
-        <div className="rounded-xl col-span-full border p-4 space-y-4">
-          <div className="grid sm:grid-cols-2 gap-4 items-end w-full">
-            {/* Parent Label */}
-            <FormItem>
-              <FormLabel>Parent Label</FormLabel>
-              <FormControl>
-                <Input placeholder="Contoh: Landing Page" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-
-            {/* Upload Screenshot */}
-            <FormItem>
-              <FormLabel>Screenshots (untuk parent)</FormLabel>
-              <FormControl>
-                <Input type="file" multiple />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          </div>
-
-          {/* Child Nodes */}
-          <div className="space-y-4">
-            <div className="grid sm:grid-cols-2 gap-4">
-              {/* Child Label */}
-              <FormItem>
-                <FormLabel>Child Label</FormLabel>
-                <FormControl>
-                  <Input placeholder="Contoh: Home, About" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-
-              {/* Repo Path */}
-              <FormItem>
-                <FormLabel>Repository Path</FormLabel>
-                <FormControl>
-                  <Input placeholder="/app/(web)/(home)/page.tsx" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            </div>
-
-            {/* Tombol tambah child */}
-            <Button type="button" size="sm" variant="secondary">
-              + Tambah Child
-            </Button>
-          </div>
-
-          {/* Tombol hapus parent */}
-          <div className="flex justify-end">
-            <Button type="button" size="sm" variant="destructive">
-              Hapus Parent Ini
-            </Button>
-          </div>
-        </div>
-
-        {/* Tombol tambah parent */}
-        <div className="text-right col-span-full">
-          <Button type="button" variant="secondary">
+        <div className="space-y-4 col-span-full">
+          <h3 className="font-semibold text-lg">File Repo </h3>
+          {flowNodes.map((node, index) => (
+            <FlowNodeGroup key={node.id ?? index} control={form.control} nodeIndex={index} removeParent={() => remove(index)} />
+          ))}
+          <Button type="button" variant="secondary" onClick={() => append({ path: [], parentLabel: "" })}>
             + Tambah Parent Baru
           </Button>
         </div>
 
-        {flowNodes.map((node, index) => (
-          <FlowNodeGroup key={node.id ?? index} control={form.control} nodeIndex={index} removeParent={() => remove(index)} />
-        ))}
-        <div className="text-right col-span-full">
-          <Button type="button" variant="secondary" onClick={() => append({ label: "", screenshots: [], children: [] })}>
-            + Tambah Parent Baru
-          </Button>
-        </div>
-
-        <div className="grid gap-4 @2xl:grid-cols-2"></div>
-
-        <FormField
-          control={form.control}
-          name="faviconUrl"
-          render={({ field }) => (
-            <FormItem className="items-stretch">
-              <Stack className="justify-between">
-                <FormLabel className="flex-1">Favicon URL</FormLabel>
-
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="secondary"
-                  prefix={<RefreshCw className={cx(faviconAction.isPending && "animate-spin")} />}
-                  className="-my-1"
-                  disabled={!isValidUrl(websiteUrl) || faviconAction.isPending}
-                  onClick={() => {
-                    faviconAction.execute({
-                      url: websiteUrl,
-                      path: `tools/${slug || getRandomString(12)}`,
-                    });
-                  }}
-                >
-                  {field.value ? "Regenerate" : "Generate"}
-                </Button>
-              </Stack>
-
-              <Stack size="sm">
-                {field.value && <img src={field.value} alt="Favicon" className="size-8 border box-content rounded-md object-contain" />}
-
-                <FormControl>
-                  <Input type="url" className="flex-1" {...field} />
-                </FormControl>
-              </Stack>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="categories"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Categories</FormLabel>
-              <RelationSelector
-                relations={categories}
-                selectedIds={field.value ?? []}
-                setSelectedIds={field.onChange}
-                mapFunction={({ id, name, fullPath }) => {
-                  const depth = fullPath.split("/").length - 1;
-                  const prefix = "- ".repeat(depth);
-                  return { id, name: `${prefix}${name}` };
-                }}
-                sortFunction={(a, b) => {
-                  // Split paths into segments for comparison
-                  const aSegments = a.fullPath.split("/");
-                  const bSegments = b.fullPath.split("/");
-
-                  // Compare each segment
-                  for (let i = 0; i < Math.min(aSegments.length, bSegments.length); i++) {
-                    if (aSegments[i] !== bSegments[i]) {
-                      return aSegments[i].localeCompare(bSegments[i]);
-                    }
-                  }
-
-                  // If all segments match up to the shorter path length,
-                  // the shorter path comes first
-                  return aSegments.length - bSegments.length;
-                }}
-                prompt={
-                  name &&
-                  description &&
-                  `From the list of available categories below, suggest relevant categories for this link: 
-                  
-                  - URL: ${websiteUrl}
-                  - Meta title: ${name}
-                  - Meta description: ${description}.
-                  `
-                }
+        <div className="space-y-4 col-span-full">
+          <h3 className="font-semibold text-lg">Screenshots</h3>
+          {screenshotFields.map((screenshot, index) => (
+            <div key={screenshot.id ?? index} className="grid sm:grid-cols-2 gap-4 items-end border p-4 rounded-xl">
+              <FormField
+                control={form.control}
+                name={`screenshots.${index}.imageUrl`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Image URL</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="https://..." />
+                    </FormControl>
+                  </FormItem>
+                )}
               />
-            </FormItem>
-          )}
-        />
+              <FormField
+                control={form.control}
+                name={`screenshots.${index}.caption`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Caption</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Homepage Screenshot" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <div className="col-span-2 text-right">
+                <Button type="button" size="sm" variant="destructive" onClick={() => removeScreenshot(index)}>
+                  Hapus Screenshot
+                </Button>
+              </div>
+            </div>
+          ))}
+          <Button type="button" variant="secondary" onClick={() => appendScreenshot({ imageUrl: "", caption: "" })}>
+            + Tambah Screenshot
+          </Button>
+        </div>
+
+        <div className="grid gap-4 col-span-full grid-cols-2">
+          <FormField
+            control={form.control}
+            name="faviconUrl"
+            render={({ field }) => (
+              <FormItem className="items-stretch">
+                <Stack className="justify-between">
+                  <FormLabel className="flex-1">Favicon URL</FormLabel>
+
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="secondary"
+                    prefix={<RefreshCw className={cx(faviconAction.isPending && "animate-spin")} />}
+                    className="-my-1"
+                    disabled={!isValidUrl(websiteUrl) || faviconAction.isPending}
+                    onClick={() => {
+                      faviconAction.execute({
+                        url: websiteUrl,
+                        path: `tools/${slug || getRandomString(12)}`,
+                      });
+                    }}
+                  >
+                    {field.value ? "Regenerate" : "Generate"}
+                  </Button>
+                </Stack>
+
+                <Stack size="sm">
+                  {field.value && <img src={field.value} alt="Favicon" className="size-8 border box-content rounded-md object-contain" />}
+
+                  <FormControl>
+                    <Input type="url" className="flex-1" {...field} />
+                  </FormControl>
+                </Stack>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="categories"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Categories</FormLabel>
+                <RelationSelector
+                  relations={categories}
+                  selectedIds={field.value ?? []}
+                  setSelectedIds={field.onChange}
+                  mapFunction={({ id, name, fullPath }) => {
+                    const depth = fullPath.split("/").length - 1;
+                    const prefix = "- ".repeat(depth);
+                    return { id, name: `${prefix}${name}` };
+                  }}
+                  sortFunction={(a, b) => {
+                    const aSegments = a.fullPath.split("/");
+                    const bSegments = b.fullPath.split("/");
+                    for (let i = 0; i < Math.min(aSegments.length, bSegments.length); i++) {
+                      if (aSegments[i] !== bSegments[i]) {
+                        return aSegments[i].localeCompare(bSegments[i]);
+                      }
+                    }
+                    return aSegments.length - bSegments.length;
+                  }}
+                />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <div className="flex justify-between gap-4 col-span-full">
           <Button size="md" variant="secondary" asChild>
             <Link href="/admin/tools">Cancel</Link>
           </Button>
-          <Button type="submit" variant="fancy" name="submit">
-            Publish
+          <Button type="submit" variant="fancy" name="submit" disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting ? "Publishing..." : "Publish"}
           </Button>
         </div>
       </form>

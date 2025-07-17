@@ -74,11 +74,9 @@ export const findToolBySlug = async (slug: string) => {
       categories: true,
       platforms: true,
       stacks: true,
-
-      // ✅ Tambahkan ini:
+      screenshots: true,
       flowNodes: {
         include: {
-          screenshots: true,
           children: true,
         },
         orderBy: { order: "asc" },

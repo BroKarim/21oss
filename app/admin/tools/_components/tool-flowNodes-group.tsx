@@ -2,7 +2,6 @@ import { useFieldArray } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 
 export function FlowNodeGroup({ control, nodeIndex, removeParent }: { control: any; nodeIndex: number; removeParent: () => void }) {
   const {
@@ -11,33 +10,21 @@ export function FlowNodeGroup({ control, nodeIndex, removeParent }: { control: a
     remove: removeChild,
   } = useFieldArray({
     control,
-    name: `flowNodes.${nodeIndex}.children`,
+    name: `flowNodes.${nodeIndex}.path`,
   });
 
   return (
     <div className="rounded-xl border p-4 space-y-4 col-span-full">
       {/* Parent */}
-      <div className="grid sm:grid-cols-2 gap-4 items-end">
+      <div className="grid sm:grid-cols-1 w-full gap-4 items-end">
         <FormField
           control={control}
-          name={`flowNodes.${nodeIndex}.label`}
+          name={`flowNodes.${nodeIndex}.parentLabel`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Parent Label</FormLabel>
               <FormControl>
                 <Input {...field} placeholder="Landing Page" />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={control}
-          name={`flowNodes.${nodeIndex}.screenshots`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Screenshots URL (pisah baris)</FormLabel>
-              <FormControl>
-                <Textarea {...field} placeholder="https://..." />
               </FormControl>
             </FormItem>
           )}
@@ -50,7 +37,7 @@ export function FlowNodeGroup({ control, nodeIndex, removeParent }: { control: a
           <div key={child.id ?? childIndex} className="grid sm:grid-cols-2 gap-4 items-end">
             <FormField
               control={control}
-              name={`flowNodes.${nodeIndex}.children.${childIndex}.label`}
+              name={`flowNodes.${nodeIndex}.path.${childIndex}.label`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Child Label</FormLabel>
@@ -62,7 +49,7 @@ export function FlowNodeGroup({ control, nodeIndex, removeParent }: { control: a
             />
             <FormField
               control={control}
-              name={`flowNodes.${nodeIndex}.children.${childIndex}.repositoryPath`}
+              name={`flowNodes.${nodeIndex}.path.${childIndex}.repositoryPath`}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Repository Path</FormLabel>

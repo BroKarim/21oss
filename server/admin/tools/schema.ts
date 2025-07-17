@@ -36,24 +36,30 @@ export const toolSchema = z.object({
   faviconUrl: z.string().optional().or(z.literal("")),
   screenshotUrl: z.string().optional().or(z.literal("")),
   publishedAt: z.coerce.date().nullish(),
-  status: z.nativeEnum(ToolStatus).default("Draft"),
+  status: z.  nativeEnum(ToolStatus).default("Draft"),
   categories: z.array(z.string()).optional(),
   platforms: z.array(z.string()).optional(),
   stacks: z.array(z.string()).optional(),
   flowNodes: z
     .array(
       z.object({
-        label: z.string().min(1, "Label is required"),
-        repositoryPath: z.string().optional(),
-        screenshots: z.array(z.string().url()).optional(), // URL gambar parent
-        children: z
+        parentLabel: z.string().min(1, "Parent label is required"),
+        path: z
           .array(
             z.object({
-              label: z.string().min(1),
-              repositoryPath: z.string().min(1),
+              label: z.string().min(1, "Step label is required"),
+              repositoryPath: z.string().min(1, "Repository path is required"),
             })
           )
-          .optional(),
+          .min(1, "At least one step is required"),
+      })
+    )
+    .optional(),
+  screenshots: z
+    .array(
+      z.object({
+        imageUrl: z.string().url(),
+        caption: z.string().optional(),
       })
     )
     .optional(),
