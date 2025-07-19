@@ -2,7 +2,6 @@ import Image from "next/image";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ScreenshotType } from "@/types/globals";
 
-
 interface ToolViewerImageProps {
   screenshots: ScreenshotType[];
 }
@@ -25,9 +24,8 @@ export function ToolViewerImage({ screenshots }: ToolViewerImageProps) {
         <div className="flex gap-6 px-6 pb-4">
           {screenshots.map((screenshot) => (
             <div key={screenshot.id} className="flex-shrink-0 group cursor-pointer">
-              <div className="relative w-[280px] h-[560px] rounded-2xl overflow-hidden bg-black shadow-2xl transform transition-all duration-300 hover:scale-105 hover:shadow-3xl">
-                <Image src={screenshot.imageUrl} alt={screenshot.caption ?? "Screenshot"} fill className="object-cover transition-transform duration-300 group-hover:scale-110" sizes="280px" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="relative w-[1200px] h-[600px] rounded-2xl overflow-hidden shadow-2xl  hover:shadow-3xl">
+                <Image src={screenshot.imageUrl} alt={screenshot.caption ?? "Screenshot"} fill className="object-cover " sizes="1200px" />
               </div>
             </div>
           ))}

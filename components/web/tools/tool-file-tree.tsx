@@ -1,7 +1,7 @@
 "use client";
 
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { FileIcon, FolderIcon, FolderOpenIcon, Github } from "lucide-react";
+import {  FolderIcon, FolderOpenIcon, Github } from "lucide-react";
 import React, { createContext, forwardRef, useCallback, useContext, useEffect, useState } from "react";
 import { FlowNode } from "@/types/globals";
 import Link from "next/link";
@@ -18,7 +18,7 @@ type TreeViewElement = {
   children?: TreeViewElement[];
 };
 
-export function flowNodesToTreeElements(nodes: FlowNode[]): TreeViewElement[] {
+const flowNodesToTreeElements = (nodes: FlowNode[]): TreeViewElement[] => {
   return nodes.map((node) => ({
     id: node.id,
     name: node.label,
@@ -27,7 +27,27 @@ export function flowNodesToTreeElements(nodes: FlowNode[]): TreeViewElement[] {
     repositoryPath: node.repositoryPath ?? undefined,
     children: node.children ? flowNodesToTreeElements(node.children) : [],
   }));
-}
+};
+
+const renderTree = (elements?: TreeViewElement[]): React.ReactNode => {
+  if (!elements) return null;
+
+  return elements.map((element) => {
+    if (element.type === "folder") {
+      return (
+        <Folder key={element.id} value={element.id} element={element.name}>
+          {renderTree(element.children)}
+        </Folder>
+      );
+    }
+
+    return (
+      <Link key={element.id} href={element.repositoryPath ?? "#"} target="_blank" rel="noopener noreferrer" className="no-underline">
+        <File value={element.id}>{element.name}</File>
+      </Link>
+    );
+  });
+};
 
 type TreeContextProps = {
   selectedId: string | undefined;
@@ -285,24 +305,6 @@ const CollapseButton = forwardRef<
 
 CollapseButton.displayName = "CollapseButton";
 
-function renderTree(elements?: TreeViewElement[]): React.ReactNode {
-  if (!elements) return null;
 
-  return elements.map((element) => {
-    if (element.type === "folder") {
-      return (
-        <Folder key={element.id} value={element.id} element={element.name}>
-          {renderTree(element.children)}
-        </Folder>
-      );
-    }
 
-    return (
-      <Link key={element.id} href={element.repositoryPath ?? "#"} target="_blank" rel="noopener noreferrer" className="no-underline">
-        <File value={element.id}>{element.name}</File>
-      </Link>
-    );
-  });
-}
-
-export { CollapseButton, File, Folder, Tree, renderTree, type TreeViewElement };
+export { CollapseButton, File, Folder, Tree, renderTree, flowNodesToTreeElements, type TreeViewElement };
