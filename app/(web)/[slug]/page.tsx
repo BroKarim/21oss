@@ -9,8 +9,6 @@ import { findTool, findToolSlugs } from "@/server/web/tools/queries";
 import { IntroDescription } from "@/components/ui/intro";
 // import { FaviconImage } from "@/components/ui/favicon";
 import { ToolDisplay } from "@/components/web/tool-display";
-import { FileTreeDemo } from "@/components/web/demo";
-
 import { Note } from "@/components/ui/note";
 import { RepositoryDetails } from "@/components/web/repository-detail";
 
@@ -21,10 +19,10 @@ type PageProps = {
 const getTool = cache(async ({ params }: PageProps) => {
   const { slug } = await params;
   const tool = await findTool({ where: { slug } });
-
   if (!tool) {
     notFound();
   }
+  console.log("TOOL DATA:", JSON.stringify(tool, null, 2)); // ✅ cek apakah flowNodes & screenshots ada
 
   return tool;
 });

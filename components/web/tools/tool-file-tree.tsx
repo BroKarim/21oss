@@ -1,9 +1,10 @@
 "use client";
 
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { FileIcon, FolderIcon, FolderOpenIcon } from "lucide-react";
+import { FileIcon, FolderIcon, FolderOpenIcon, Github } from "lucide-react";
 import React, { createContext, forwardRef, useCallback, useContext, useEffect, useState } from "react";
 import { FlowNode } from "@/types/globals";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -12,6 +13,8 @@ type TreeViewElement = {
   id: string;
   name: string;
   isSelectable?: boolean;
+  type: "folder" | "file";
+  repositoryPath?: string;
   children?: TreeViewElement[];
 };
 
@@ -19,33 +22,11 @@ export function flowNodesToTreeElements(nodes: FlowNode[]): TreeViewElement[] {
   return nodes.map((node) => ({
     id: node.id,
     name: node.label,
-    isSelectable: true, // opsional
-    children: node.children ? flowNodesToTreeElements(node.children) : undefined,
+    isSelectable: true,
+    type: node.children && node.children.length > 0 ? "folder" : "file",
+    repositoryPath: node.repositoryPath ?? undefined,
+    children: node.children ? flowNodesToTreeElements(node.children) : [],
   }));
-}
-
-export function buildTreeFromFlatList(nodes: FlowNode[]): FlowNode[] {
-  const nodeMap = new Map<string, FlowNode>();
-
-  // siapkan children kosong
-  nodes.forEach((node) => {
-    nodeMap.set(node.id, { ...node, children: [] });
-  });
-
-  const tree: FlowNode[] = [];
-
-  nodes.forEach((node) => {
-    if (node.parentId) {
-      const parent = nodeMap.get(node.parentId);
-      if (parent) {
-        parent.children?.push(nodeMap.get(node.id)!);
-      }
-    } else {
-      tree.push(nodeMap.get(node.id)!);
-    }
-  });
-
-  return tree;
 }
 
 type TreeContextProps = {
@@ -173,7 +154,7 @@ Tree.displayName = "Tree";
 const TreeIndicator = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
   const { direction } = useTree();
 
-  return <div dir={direction} ref={ref} className={cn("absolute left-1.5 h-full w-px rounded-md bg-muted py-3 duration-300 ease-in-out hover:bg-slate-300 rtl:right-1.5", className)} {...props} />;
+  return <div dir={direction} ref={ref} className={cn("absolute left-1.5 h-full w-px rounded-md bg-white/75 py-3 duration-300 ease-in-out hover:bg-slate-300 rtl:right-1.5", className)} {...props} />;
 });
 
 TreeIndicator.displayName = "TreeIndicator";
@@ -205,11 +186,11 @@ const Folder = forwardRef<HTMLDivElement, FolderProps & React.HTMLAttributes<HTM
         <span>{element}</span>
       </AccordionPrimitive.Trigger>
       <AccordionPrimitive.Content className="relative h-full overflow-hidden text-sm data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down">
-        {element && indicator && <TreeIndicator aria-hidden="true" />}
+        {element && indicator && <TreeIndicator aria-hidden="false" />}
         <AccordionPrimitive.Root
           dir={direction}
           type="multiple"
-          className="ml-5 flex flex-col gap-1 py-1 rtl:mr-5 "
+          className="ml-5 flex flex-col gap-2 py-2 rtl:mr-5 "
           defaultValue={expandedItems}
           value={expandedItems}
           onValueChange={(value) => {
@@ -254,7 +235,7 @@ const File = forwardRef<
       onClick={() => selectItem(value)}
       {...props}
     >
-      {fileIcon ?? <FileIcon className="size-4" />}
+      {fileIcon ?? <Github className="size-4" />}
       {children}
     </button>
   );
@@ -308,7 +289,7 @@ function renderTree(elements?: TreeViewElement[]): React.ReactNode {
   if (!elements) return null;
 
   return elements.map((element) => {
-    if (element.children && element.children.length > 0) {
+    if (element.type === "folder") {
       return (
         <Folder key={element.id} value={element.id} element={element.name}>
           {renderTree(element.children)}
@@ -317,9 +298,9 @@ function renderTree(elements?: TreeViewElement[]): React.ReactNode {
     }
 
     return (
-      <File key={element.id} value={element.id}>
-        {element.name}
-      </File>
+      <Link key={element.id} href={element.repositoryPath ?? "#"} target="_blank" rel="noopener noreferrer" className="no-underline">
+        <File value={element.id}>{element.name}</File>
+      </Link>
     );
   });
 }
