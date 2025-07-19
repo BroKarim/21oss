@@ -4,11 +4,12 @@ import { Button } from "@/components/ui/button";
 import { H2 } from "@/components/ui/heading";
 import { Stack } from "@/components/ui/stack";
 import { Section } from "@/components/ui/section";
-import type { ImageObject } from "schema-dts";
-import { findTool, findToolslugs } from "@/server/web/tools/queries";
+// import type { ImageObject } from "schema-dts";
+import { findTool, findToolSlugs } from "@/server/web/tools/queries";
 import { IntroDescription } from "@/components/ui/intro";
 // import { FaviconImage } from "@/components/ui/favicon";
 import { ToolDisplay } from "@/components/web/tool-display";
+import { FileTreeDemo } from "@/components/web/demo";
 
 import { Note } from "@/components/ui/note";
 import { RepositoryDetails } from "@/components/web/repository-detail";
@@ -28,37 +29,13 @@ const getShowcase = cache(async ({ params }: PageProps) => {
 });
 
 export const generateStaticParams = async () => {
-  const tools = await findToolslugs({});
+  const tools = await findToolSlugs({});
   return tools.map(({ slug }) => ({ slug }));
 };
 
 //TODO : buat dlu schem untuk terima image dan link, bias bs getShowvase
 export default async function ShowcasePage(props: PageProps) {
   const showcase = await getShowcase(props);
-
-  const jsonLd: ImageObject[] = [];
-
-  if (showcase.screenshotUrl) {
-    jsonLd.push({
-      "@type": "ImageObject",
-      url: showcase.screenshotUrl,
-      contentUrl: showcase.screenshotUrl,
-      width: "1280",
-      height: "720",
-      caption: `A screenshot of ${showcase.name}`,
-    });
-  }
-
-  // if (showcase.faviconUrl) {
-  //   jsonLd.push({
-  //     "@type": "ImageObject",
-  //     url: showcase.faviconUrl,
-  //     contentUrl: showcase.faviconUrl,
-  //     width: "144",
-  //     height: "144",
-  //     caption: `A favicon of ${showcase.name}`,
-  //   });
-  // }
 
   return (
     <>
@@ -94,7 +71,7 @@ export default async function ShowcasePage(props: PageProps) {
                 </Stack>
                 <Stack size="lg" direction="column">
                   <Note>Stacks:</Note>
-                  web, Android
+                  React, TailwindCSS, RadixUI
                 </Stack>
               </div>
 
@@ -109,7 +86,8 @@ export default async function ShowcasePage(props: PageProps) {
           </Section.Sidebar>
         </Section>
         <div className="w-full flex h-screen min-h-[500px]">
-          <ToolDisplay />
+          {/* <ToolDisplay /> */}
+          <FileTreeDemo />
         </div>
 
         {/* gambar */}

@@ -38,7 +38,7 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
 });
 
 //Mendefinisikan field yang lebih ringkas untuk list banyak Tool
-export const ToolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
+export const ToolManyPayload: Prisma.ToolSelect = {
   id: true,
   name: true,
   slug: true,
@@ -57,7 +57,7 @@ export const ToolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   publishedAt: true,
   createdAt: true,
   updatedAt: true,
-});
+};
 
 export const toolManyExtendedPayload = Prisma.validator<Prisma.ToolSelect>()({
   name: true,

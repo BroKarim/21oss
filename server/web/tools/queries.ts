@@ -1,4 +1,4 @@
-import { type Prisma } from "@prisma/client";
+import { type Prisma, ToolStatus } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
 import { ToolManyPayload, toolOnePayload } from "./payloads";
@@ -12,14 +12,11 @@ export const findFeaturedTool = async ({ where, ...args }: Prisma.ToolFindManyAr
   cacheLife("max");
 
   return await findTools({
-    where: {
-      stars: { gt: 0 },
-      ...where,
-    },
+    where: { status: ToolStatus.Published, ...where },
     orderBy: {
-      stars: "desc",
+      createdAt: "desc",
     },
-    take: 10, // ambil 10 konten dengan bintang terbanyak
+    take: 10,
     ...args,
   });
 };
@@ -30,25 +27,27 @@ export const findTools = async ({ where, orderBy, ...args }: Prisma.ToolFindMany
 
   cacheTag("showcase");
   cacheLife("max");
+  console.log(await db.tool.findMany({ take: 5, orderBy: { createdAt: "desc" } }));
+  console.log("🔍 where:", where);
 
   return db.tool.findMany({
     ...args,
     orderBy: orderBy ?? { name: "asc" },
-    where: { ...where },
-    select: ToolManyPayload, //membatasi hanya field tertentu yang diambil
+    where: { status: ToolStatus.Published, ...where },
+    select: ToolManyPayload,
   });
 };
 
-export const findToolslugs = async ({ where, orderBy, ...args }: Prisma.ToolFindManyArgs) => {
+export const findToolSlugs = async ({ where, orderBy, ...args }: Prisma.ToolFindManyArgs) => {
   "use cache";
 
-  cacheTag("showcases");
+  cacheTag("tools");
   cacheLife("max");
 
   return db.tool.findMany({
     ...args,
     orderBy: orderBy ?? { name: "asc" },
-    where: { ...where },
+    where: { status: ToolStatus.Published, ...where },
     select: { slug: true, updatedAt: true },
   });
 };
@@ -56,12 +55,11 @@ export const findToolslugs = async ({ where, orderBy, ...args }: Prisma.ToolFind
 export const findTool = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}) => {
   "use cache";
 
-  cacheTag("showcase", `showcase-${where?.slug}`);
+  cacheTag("tool", `tool-${where?.slug}`);
   cacheLife("max");
-  console.log("findTool args:", args);
+
   return db.tool.findFirst({
     ...args,
-
     where: { ...where },
     select: toolOnePayload,
   });

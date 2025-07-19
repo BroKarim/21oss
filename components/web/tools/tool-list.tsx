@@ -1,4 +1,4 @@
-//ToolList
+"use client";
 
 import { Fragment } from "react";
 import { ToolCard, ToolCardSkeleton } from "./tool-card";
