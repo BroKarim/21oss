@@ -19,7 +19,6 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   stars: true,
   forks: true,
   faviconUrl: true,
-  screenshotUrl: true,
   discountCode: true,
   discountAmount: true,
   firstCommitDate: true,
@@ -33,6 +32,25 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
       name: true,
       slug: true,
       iconUrl: true,
+    },
+  },
+  screenshots: {
+    select: {
+      id: true,
+      imageUrl: true,
+      caption: true,
+    },
+  },
+  flowNodes: {
+    where: {
+      parentId: null,
+    },
+    include: {
+      children: {
+        include: {
+          children: true,
+        },
+      },
     },
   },
 });

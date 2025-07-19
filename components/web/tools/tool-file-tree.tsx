@@ -3,7 +3,7 @@
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import { FileIcon, FolderIcon, FolderOpenIcon } from "lucide-react";
 import React, { createContext, forwardRef, useCallback, useContext, useEffect, useState } from "react";
-
+import { FlowNode } from "@/types/globals";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,39 @@ type TreeViewElement = {
   isSelectable?: boolean;
   children?: TreeViewElement[];
 };
+
+export function flowNodesToTreeElements(nodes: FlowNode[]): TreeViewElement[] {
+  return nodes.map((node) => ({
+    id: node.id,
+    name: node.label,
+    isSelectable: true, // opsional
+    children: node.children ? flowNodesToTreeElements(node.children) : undefined,
+  }));
+}
+
+export function buildTreeFromFlatList(nodes: FlowNode[]): FlowNode[] {
+  const nodeMap = new Map<string, FlowNode>();
+
+  // siapkan children kosong
+  nodes.forEach((node) => {
+    nodeMap.set(node.id, { ...node, children: [] });
+  });
+
+  const tree: FlowNode[] = [];
+
+  nodes.forEach((node) => {
+    if (node.parentId) {
+      const parent = nodeMap.get(node.parentId);
+      if (parent) {
+        parent.children?.push(nodeMap.get(node.id)!);
+      }
+    } else {
+      tree.push(nodeMap.get(node.id)!);
+    }
+  });
+
+  return tree;
+}
 
 type TreeContextProps = {
   selectedId: string | undefined;
@@ -271,4 +304,24 @@ const CollapseButton = forwardRef<
 
 CollapseButton.displayName = "CollapseButton";
 
-export { CollapseButton, File, Folder, Tree, type TreeViewElement };
+function renderTree(elements?: TreeViewElement[]): React.ReactNode {
+  if (!elements) return null;
+
+  return elements.map((element) => {
+    if (element.children && element.children.length > 0) {
+      return (
+        <Folder key={element.id} value={element.id} element={element.name}>
+          {renderTree(element.children)}
+        </Folder>
+      );
+    }
+
+    return (
+      <File key={element.id} value={element.id}>
+        {element.name}
+      </File>
+    );
+  });
+}
+
+export { CollapseButton, File, Folder, Tree, renderTree, type TreeViewElement };

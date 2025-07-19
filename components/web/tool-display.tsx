@@ -1,11 +1,11 @@
-import { CategoryType, ScreenshotType } from "@/types/globals";
-import { ToolViewer } from "./tool-viewer";
+import { ToolViewer } from "./tools/tool-viewer";
+import { FlowNode, ScreenshotType } from "@/types/globals";
 
 interface ToolDisplayProps {
-  categories: CategoryType[];
+  path: FlowNode[];
   screenshots: ScreenshotType[];
 }
 
-export function ToolDisplay({ categories, screenshots }: ToolDisplayProps) {
-  return <ToolViewer categories={categories} screenshots={screenshots} />;
+export function ToolDisplay({ path, screenshots }: ToolDisplayProps) {
+  return <ToolViewer path={path} screenshots={screenshots} />;
 }

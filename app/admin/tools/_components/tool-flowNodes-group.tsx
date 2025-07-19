@@ -13,6 +13,7 @@ export function FlowNodeGroup({ control, nodeIndex, removeParent }: { control: a
     name: `flowNodes.${nodeIndex}.path`,
   });
 
+  
   return (
     <div className="rounded-xl border p-4 space-y-4 col-span-full">
       {/* Parent */}

@@ -13,11 +13,12 @@ import { FileTreeDemo } from "@/components/web/demo";
 
 import { Note } from "@/components/ui/note";
 import { RepositoryDetails } from "@/components/web/repository-detail";
+
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const getShowcase = cache(async ({ params }: PageProps) => {
+const getTool = cache(async ({ params }: PageProps) => {
   const { slug } = await params;
   const tool = await findTool({ where: { slug } });
 
@@ -34,8 +35,8 @@ export const generateStaticParams = async () => {
 };
 
 //TODO : buat dlu schem untuk terima image dan link, bias bs getShowvase
-export default async function ShowcasePage(props: PageProps) {
-  const showcase = await getShowcase(props);
+export default async function ToolPage(props: PageProps) {
+  const tool = await getTool(props);
 
   return (
     <>
@@ -45,16 +46,16 @@ export default async function ShowcasePage(props: PageProps) {
             <div className="flex flex-1 flex-col items-start gap-6 max-md:order-1 md:gap-8 px">
               <div className="flex w-full flex-col items-start gap-y-4">
                 <Stack className="w-full">
-                  {/* <FaviconImage src={showcase.faviconUrl} title={showcase.name} className="size-8" /> */}
+                  {/* <FaviconImage src={tool.faviconUrl} title={tool.name} className="size-8" /> */}
 
                   <Stack className="flex-1">
                     <H2 as="h1" className="truncate">
-                      {showcase.name}
+                      {tool.name}
                     </H2>
                   </Stack>
                 </Stack>
 
-                {showcase.description && <IntroDescription>{showcase.description}</IntroDescription>}
+                {tool.description && <IntroDescription>{tool.description}</IntroDescription>}
               </div>
               <div className="flex gap-8">
                 <Stack size="lg" direction="column">
@@ -76,18 +77,18 @@ export default async function ShowcasePage(props: PageProps) {
               </div>
 
               <Stack className="w-full">
-                <Button className="sm:min-w-36">Visit {showcase.name}</Button>
+                <Button className="sm:min-w-36">Visit {tool.name}</Button>
               </Stack>
             </div>
             {/* gambar dan lain2 taru di section content */}
           </Section.Content>
           <Section.Sidebar className="max-md:contents">
-            <RepositoryDetails showcase={showcase} className="max-md:order-5" />
+            <RepositoryDetails showcase={tool} className="max-md:order-5" />
           </Section.Sidebar>
         </Section>
         <div className="w-full flex h-screen min-h-[500px]">
-          {/* <ToolDisplay /> */}
-          <FileTreeDemo />
+          <ToolDisplay path={tool.flowNodes ?? []} screenshots={tool.screenshots ?? []} />
+          {/* <FileTreeDemo /> */}
         </div>
 
         {/* gambar */}

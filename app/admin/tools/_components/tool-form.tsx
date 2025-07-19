@@ -150,7 +150,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
       toast.success("Favicon successfully generated. Please save the tool to update.");
       form.setValue("faviconUrl", data);
     },
-
+    
     onError: ({ err }) => toast.error(err.message),
   });
 

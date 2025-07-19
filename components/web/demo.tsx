@@ -1,4 +1,4 @@
-import { File, Folder, Tree } from "@/components/web/file-tree";
+import { File, Folder, Tree } from "@/components/web/tools/tool-file-tree";
 
 export function FileTreeDemo() {
   return (

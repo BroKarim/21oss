@@ -31,3 +31,4 @@ export type DataTableFilterOption<TData> = {
   filterOperator?: string;
   isMulti?: boolean;
 };
+

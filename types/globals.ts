@@ -13,7 +13,15 @@ export interface CategoryType {
 
 export interface ScreenshotType {
   id: string;
-  title: string;
+  caption: string | null;
   imageUrl: string;
-  categoryId: string;
 }
+
+export type FlowNode = {
+  id: string;
+  label: string;
+  parentId?: string | null;
+  order: number;
+  repositoryPath?: string | null;
+  children?: FlowNode[];
+};
