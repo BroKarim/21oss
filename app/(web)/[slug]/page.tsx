@@ -86,7 +86,6 @@ export default async function ToolPage(props: PageProps) {
         </Section>
         <div className="w-full flex h-screen min-h-[500px]">
           <ToolDisplay path={tool.flowNodes ?? []} screenshots={tool.screenshots ?? []} />
-          {/* <FileTreeDemo /> */}
         </div>
 
         {/* gambar */}
