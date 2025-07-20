@@ -6,11 +6,11 @@ import { type Tool, ToolStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { use, useState } from "react";
-
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm, useFieldArray, Control } from "react-hook-form";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
 import { generateFavicon } from "@/actions/media";
+import { MultiSelectCheckbox } from "@/components/admin/multi-select-checkbox";
 import { RelationSelector } from "@/components/admin/relation-selector";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -26,7 +26,8 @@ import { useComputedField } from "@/hooks/use-computed-field";
 import type { findCategoryList } from "@/server/admin/categories/queries";
 import { upsertTool } from "@/server/admin/tools/actions";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
-import { toolSchema } from "@/server/admin/tools/schema";
+import type { findPlatformList } from "@/server/admin/platforms/queries";
+import { toolSchema, type ToolSchema } from "@/server/admin/tools/schema";
 import { cx } from "@/lib/utils";
 
 const ToolStatusChange = ({ tool }: { tool: Tool }) => {
@@ -48,11 +49,13 @@ const ToolStatusChange = ({ tool }: { tool: Tool }) => {
 type ToolFormProps = ComponentProps<"form"> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>;
   categoriesPromise: ReturnType<typeof findCategoryList>;
+  platformsPromise: ReturnType<typeof findPlatformList>;
 };
 
-export function ToolForm({ className, title, tool, categoriesPromise, ...props }: ToolFormProps) {
+export function ToolForm({ className, title, tool, categoriesPromise, platformsPromise, ...props }: ToolFormProps) {
   const router = useRouter();
   const categories = use(categoriesPromise);
+  const platformOptions = use(platformsPromise);
 
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft);
 
@@ -119,6 +122,15 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
     name: "screenshots",
   });
 
+  const {
+    fields: stackFields,
+    append: appendStack,
+    remove: removeStack,
+  } = useFieldArray({
+    control: form.control as unknown as Control<ToolSchema>,
+    name: "stacks",
+  });
+
   // Keep track of the form values
   const [slug, websiteUrl] = form.watch(["slug", "websiteUrl"]);
 
@@ -150,7 +162,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
       toast.success("Favicon successfully generated. Please save the tool to update.");
       form.setValue("faviconUrl", data);
     },
-    
+
     onError: ({ err }) => toast.error(err.message),
   });
 
@@ -257,7 +269,45 @@ export function ToolForm({ className, title, tool, categoriesPromise, ...props }
             </FormItem>
           )}
         />
+        {/* Platforms Field (Multi-Select) */}
+        <FormField
+          control={form.control}
+          name="platforms"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Platforms</FormLabel>
+              <FormControl>
+                <MultiSelectCheckbox options={platformOptions} value={field.value ?? []} onChange={field.onChange} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
+        {/* Stacks Field (Dynamic Input with useFieldArray) */}
+        <FormItem>
+          <FormLabel>Stacks</FormLabel>
+          {stackFields.map((stack, index) => (
+            <div key={stack.id} className="flex items-center gap-2">
+              <FormField
+                control={form.control}
+                name={`stacks.${index}`}
+                render={({ field }) => (
+                  <FormControl>
+                    <Input placeholder="Enter stack (e.g., React)" {...field} />
+                  </FormControl>
+                )}
+              />
+              <Button type="button" variant="secondary" size="sm" onClick={() => removeStack(index)}>
+                Remove
+              </Button>
+            </div>
+          ))}
+          <Button type="button" variant="secondary" size="sm" className="mt-2" onClick={() => appendStack("")}>
+            Add Stack
+          </Button>
+          <FormMessage />
+        </FormItem>
         <FormField
           control={form.control}
           name="description"

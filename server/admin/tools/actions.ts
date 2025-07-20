@@ -26,7 +26,26 @@ export const upsertTool = adminProcedure
     // Format relasi untuk Prisma
     const categoryIds = categories?.map((id) => ({ id }));
     const platformIds = platforms?.map((id) => ({ id }));
-    const stackIds = stacks?.map((id) => ({ id }));
+    const stackIds = stacks
+      ? await Promise.all(
+          stacks.map(async (stackName) => {
+            const stackSlug = slugify(stackName);
+            const existingStack = await db.stack.findUnique({
+              where: { slug: stackSlug },
+            });
+            if (existingStack) {
+              return { id: existingStack.id };
+            }
+            const newStack = await db.stack.create({
+              data: {
+                name: stackName,
+                slug: stackSlug,
+              },
+            });
+            return { id: newStack.id };
+          })
+        )
+      : [];
 
     console.info(`[UPSERTOOL] isUpdate: ${!!id}`);
     console.info(`[UPSERTOOL] input:`, input);

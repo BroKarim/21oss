@@ -1,0 +1,1 @@
+INSERT INTO "public"."Platform" ("id", "name", "slug", "iconUrl", "createdAt", "updatedAt") VALUES ('1', 'Website', 'website', 'https://api.iconify.design/system-uicons:globe.svg', '2025-07-20 14:24:38', '2025-07-20 14:24:43');
