@@ -37,7 +37,9 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   screenshots: {
     select: {
       id: true,
+      page: true,
       imageUrl: true,
+      order: true,
       caption: true,
     },
   },

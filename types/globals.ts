@@ -13,8 +13,10 @@ export interface CategoryType {
 
 export interface ScreenshotType {
   id: string;
+  page?: string;
   caption: string | null;
   imageUrl: string;
+  order?: number;
 }
 
 export type FlowNode = {

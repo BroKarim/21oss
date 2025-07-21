@@ -144,6 +144,7 @@ model ToolScreenshot {
   id         String   @id @default(cuid())
   tool       Tool     @relation(fields: [toolId], references: [id])
   toolId     String
+  page       String   @db.Citext @default("uncategorized")
   imageUrl   String
   caption    String?
   order      Int

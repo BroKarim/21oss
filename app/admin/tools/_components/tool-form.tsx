@@ -78,6 +78,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       stacks: tool?.stacks.map((s) => s.slug) ?? [],
       screenshots:
         tool?.screenshots?.map((img) => ({
+          page: img.page ?? "",
           imageUrl: img.imageUrl,
           caption: img.caption ?? "",
         })) ?? [],
@@ -338,6 +339,18 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
             <div key={screenshot.id ?? index} className="grid sm:grid-cols-2 gap-4 items-end border p-4 rounded-xl">
               <FormField
                 control={form.control}
+                name={`screenshots.${index}.page`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Halaman</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Contoh: dashboard" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name={`screenshots.${index}.imageUrl`}
                 render={({ field }) => (
                   <FormItem>
@@ -367,7 +380,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
               </div>
             </div>
           ))}
-          <Button type="button" variant="secondary" onClick={() => appendScreenshot({ imageUrl: "", caption: "" })}>
+          <Button type="button" variant="secondary" onClick={() => appendScreenshot({ page: "", imageUrl: "", caption: "" })}>
             + Tambah Screenshot
           </Button>
         </div>

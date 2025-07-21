@@ -65,6 +65,7 @@ export const upsertTool = adminProcedure
                 rest.screenshots?.map((img, index) => ({
                   imageUrl: img.imageUrl,
                   caption: img.caption,
+                  page: img.page,
                   order: index,
                 })) ?? [],
             },
@@ -85,6 +86,7 @@ export const upsertTool = adminProcedure
                 rest.screenshots?.map((img, index) => ({
                   imageUrl: img.imageUrl,
                   caption: img.caption,
+                  page: img.page,
                   order: index,
                 })) ?? [],
             },

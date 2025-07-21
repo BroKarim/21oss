@@ -36,7 +36,7 @@ export const toolSchema = z.object({
   faviconUrl: z.string().optional().or(z.literal("")),
   screenshotUrl: z.string().optional().or(z.literal("")),
   publishedAt: z.coerce.date().nullish(),
-  status: z.  nativeEnum(ToolStatus).default("Draft"),
+  status: z.nativeEnum(ToolStatus).default("Draft"),
   categories: z.array(z.string()).optional(),
   platforms: z.array(z.string()).optional(),
   stacks: z.array(z.string()).optional(),
@@ -58,6 +58,7 @@ export const toolSchema = z.object({
   screenshots: z
     .array(
       z.object({
+        page: z.string().min(1, "Halaman wajib diisi"),
         imageUrl: z.string().url(),
         caption: z.string().optional(),
       })

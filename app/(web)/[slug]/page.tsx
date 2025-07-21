@@ -22,7 +22,7 @@ const getTool = cache(async ({ params }: PageProps) => {
   if (!tool) {
     notFound();
   }
-  console.log("TOOL DATA:", JSON.stringify(tool, null, 2)); // ✅ cek apakah flowNodes & screenshots ada
+  console.log("TOOL DATA:", JSON.stringify(tool, null, 2)); 
 
   return tool;
 });
