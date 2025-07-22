@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { cache } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { H2 } from "@/components/ui/heading";
 import { Stack } from "@/components/ui/stack";
@@ -22,7 +23,7 @@ const getTool = cache(async ({ params }: PageProps) => {
   if (!tool) {
     notFound();
   }
-  console.log("TOOL DATA:", JSON.stringify(tool, null, 2)); 
+  console.log("TOOL DATA:", JSON.stringify(tool, null, 2));
 
   return tool;
 });
@@ -32,7 +33,7 @@ export const generateStaticParams = async () => {
   return tools.map(({ slug }) => ({ slug }));
 };
 
-//TODO : buat dlu schem untuk terima image dan link, bias bs getShowvase
+
 export default async function ToolPage(props: PageProps) {
   const tool = await getTool(props);
 
@@ -62,7 +63,15 @@ export default async function ToolPage(props: PageProps) {
                 </Stack>
                 <Stack size="lg" direction="column">
                   <Note>Category:</Note>
-                  web, Android
+                  {tool.categories?.length > 0 ? (
+                    tool.categories.map((category) => (
+                      <Link href={category.slug} key={category.slug} className="text-sm">
+                        {category.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <span className="text-sm">No categories</span>
+                  )}
                 </Stack>
                 <Stack size="lg" direction="column">
                   <Note>Licenses:</Note>
@@ -70,7 +79,15 @@ export default async function ToolPage(props: PageProps) {
                 </Stack>
                 <Stack size="lg" direction="column">
                   <Note>Stacks:</Note>
-                  React, TailwindCSS, RadixUI
+                  {tool.stacks && tool.stacks.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {tool.stacks.map((stack) => (
+                        <Link key={stack.id} href={`/stacks/${stack.slug}`} className="px-3 py-1 rounded-md border text-sm hover:bg-muted transition">
+                          {stack.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </Stack>
               </div>
 

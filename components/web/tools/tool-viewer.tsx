@@ -14,8 +14,8 @@ export function ToolViewer({ path, screenshots }: ToolViewerProps) {
 
   return (
     <div className="w-full flex h-full min-h-[300px]">
-      <div className="w-1/4  bg-muted h-[300px] overflow-y-auto rounded-md">
-        <Tree className="overflow-hidden rounded-md p-2" initialSelectedId={path[0]?.label} initialExpandedItems={path.map((p) => p.id)} elements={treeElements}>
+      <div className="w-1/4 h-full overflow-y-auto rounded-md">
+        <Tree className="overflow-hidden rounded-md p-2 text-base" initialSelectedId={path[0]?.label} initialExpandedItems={path.map((p) => p.id)} elements={treeElements}>
           {renderTree(treeElements)}{" "}
         </Tree>
       </div>

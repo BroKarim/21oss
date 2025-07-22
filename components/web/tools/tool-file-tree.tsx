@@ -35,15 +35,17 @@ const renderTree = (elements?: TreeViewElement[]): React.ReactNode => {
   return elements.map((element) => {
     if (element.type === "folder") {
       return (
-        <Folder key={element.id} value={element.id} element={element.name}>
+        <Folder key={element.id} value={element.id} element={element.name} className="text-lg font-medium py-2 ">
           {renderTree(element.children)}
         </Folder>
       );
     }
 
     return (
-      <Link key={element.id} href={element.repositoryPath ?? "#"} target="_blank" rel="noopener noreferrer" className="no-underline">
-        <File value={element.id}>{element.name}</File>
+      <Link key={element.id} href={element.repositoryPath ?? "#"} target="_blank" rel="noopener noreferrer" className="no-underline block">
+        <File className="text-base font-normal py-1.5 px-2 hover:bg-gray-800 rounded-md transition-colors duration-200 cursor-pointer" value={element.id}>
+          {element.name}
+        </File>
       </Link>
     );
   });
@@ -175,7 +177,7 @@ Tree.displayName = "Tree";
 const TreeIndicator = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
   const { direction } = useTree();
 
-  return <div dir={direction} ref={ref} className={cn("absolute left-1.5 h-full w-px rounded-md bg-white/75 py-3 duration-300 ease-in-out hover:bg-slate-300 rtl:right-1.5", className)} {...props} />;
+  return <div dir={direction} ref={ref} className={cn("absolute left-1.5 h-full w-px rounded-md bg-white/20 py-3 duration-300 ease-in-out hover:bg-slate-300 rtl:right-1.5", className)} {...props} />;
 });
 
 TreeIndicator.displayName = "TreeIndicator";

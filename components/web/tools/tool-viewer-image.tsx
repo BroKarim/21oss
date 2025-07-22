@@ -36,17 +36,25 @@ export function ToolViewerImage({ screenshots }: ToolViewerImageProps) {
   }
 
   return (
-    <div className=" flex flex-col gap-4">
+    <div className="flex flex-col h-full">
       {Object.entries(groupedScreenshots).map(([page, screenshots]) => (
-        <div key={page} className="space-y-4">
-          <h3 className="font-semibold text-lg capitalize">{page}</h3>
-          <ScrollArea className="w-full whitespace-nowrap">
-            <div className="flex gap-6  pb-4">
+        <div key={page} className="flex flex-col h-full">
+          {/* Header */}
+          <div className="mb-4">
+            <h2 className="text-2xl font-semibold  capitalize">{page}</h2>
+            <p className="text-sm text-gray-600 mt-1">{screenshots.length} screens</p>
+          </div>
+
+          {/* Horizontal scroll area */}
+          <ScrollArea className="flex-1 w-full">
+            <div className="flex gap-6 pb-4 h-full items-center">
               {screenshots.map((screenshot) => (
                 <div key={screenshot.id} className="flex-shrink-0 group cursor-pointer">
-                  <div className="relative w-[1000px] h-[600px] rounded-2xl overflow-hidden shadow-2xl hover:shadow-3xl">
-                    <Image src={screenshot.imageUrl} alt={screenshot.caption ?? `Screenshot ${page}`} fill className="object-cover" sizes="(max-width: 600px) 100vw, 600px" />
+                  <div className="relative w-[420px] h-[300px] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-200 bg-white border border-gray-200">
+                    <Image src={screenshot.imageUrl} alt={screenshot.caption ?? `Screenshot ${page}`} fill className="object-cover" sizes="320px" />
                   </div>
+                  {/* Optional: Add caption below image */}
+                  {screenshot.caption && <p className="text-sm text-gray-600 mt-2 text-center max-w-[320px] truncate">{screenshot.caption}</p>}
                 </div>
               ))}
             </div>
