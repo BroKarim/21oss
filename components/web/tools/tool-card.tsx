@@ -41,7 +41,7 @@ const ToolCard = ({ tool, ...props }: ToolCardProps) => {
           <div className="absolute inset-0">
             <div className="relative w-full h-full rounded-lg shadow-base overflow-hidden">
               <div className="absolute inset-0">
-                <ComponentPreviewImage src={tool.screenshotUrl || "/placeholder.svg"} alt="tes" fallbackSrc="/placeholder.svg" className="rounded-t-lg" />
+                <ComponentPreviewImage src={tool.screenshots?.find((s) => s.order === 0)?.imageUrl || "/placeholder.svg"} alt="thumbnail" fallbackSrc="/placeholder.svg" className="rounded-t-lg w-full h-full bg-size-[auto_100px] bg-center" />
               </div>
               <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-lg flex items-center flex-col justify-center p-4">
                 <p className="text-white text-sm text-center leading-relaxed">{tool.description}</p>

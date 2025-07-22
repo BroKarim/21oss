@@ -33,6 +33,7 @@ export default function ComponentPreviewImage({ src, alt, fallbackSrc, className
         width: "100%",
         height: "100%",
         objectFit: "cover",
+        objectPosition: "center center",
         backgroundColor: isPlaceholder ? "transparent" : "",
       }}
     />

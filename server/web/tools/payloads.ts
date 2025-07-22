@@ -79,6 +79,15 @@ export const ToolManyPayload: Prisma.ToolSelect = {
   faviconUrl: true,
   discountCode: true,
   discountAmount: true,
+  screenshots: {
+    select: {
+      id: true,
+      page: true,
+      imageUrl: true,
+      order: true,
+      caption: true,
+    },
+  },
   firstCommitDate: true,
   lastCommitDate: true,
   publishedAt: true,
