@@ -42,12 +42,12 @@ const data = {
     },
     {
       title: "Marketplace",
-      url: "#",
+      url: "/marketplace",
       icon: Store,
     },
     {
       title: "Blog",
-      url: "#",
+      url: "/blog",
       icon: BookOpen,
     },
   ],
