@@ -1,20 +1,17 @@
-import { isTruthy } from "@primoui/utils";
 import { ToolStatus } from "@prisma/client";
-import { addDays, formatDate, isFriday, isMonday, isWednesday } from "date-fns";
 import { type ComponentProps, type ReactNode, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { H5, H6 } from "@/components/ui/heading";
-import { Input } from "@/components/ui/input";
 import { Note } from "@/components/ui/note";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Stack } from "@/components/ui/stack";  
+import { Stack } from "@/components/ui/stack";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
 import type { ToolSchema } from "@/server/admin/tools/schema";
-import { BadgeCheck, Table } from "lucide-react";
+import { BadgeCheck } from "lucide-react";
+
 
 type ToolPublishActionsProps = ComponentProps<typeof Stack> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>;
@@ -40,23 +37,13 @@ type ActionConfig = Omit<ButtonProps, "popover"> & {
 
 export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusSubmit, children, ...props }: ToolPublishActionsProps) => {
   const { watch } = useFormContext<ToolSchema>();
-  const [status, publishedAt] = watch(["status", "publishedAt"]);
-  const publishedAtDate = new Date(publishedAt ?? new Date());
+  const [status] = watch(["status", "publishedAt"]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(status);
-  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(formatDate(publishedAtDate, "yyyy-MM-dd"));
-  const [selectedTime, setSelectedTime] = useState(formatDate(publishedAtDate, "HH:mm"));
 
   const handlePublished = () => {
     onStatusSubmit(ToolStatus.Published, new Date());
-    setIsOpen(false);
-  };
-
-  const handleScheduled = () => {
-    const scheduledDate = new Date(`${selectedDate}T${selectedTime}`);
-    onStatusSubmit(ToolStatus.Scheduled, scheduledDate);
     setIsOpen(false);
   };
 
@@ -73,6 +60,7 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
         variant: "fancy",
         popover: {
           title: "Ready to publish this tool?",
+          description: "Choose to publish or keep as draft.",
           options: [
             {
               status: ToolStatus.Published,
@@ -84,12 +72,12 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
               },
             },
             {
-              status: ToolStatus.Scheduled,
-              title: "Schedule for later",
-              description: "Set automatic future publish date",
+              status: ToolStatus.Draft,
+              title: "Keep as draft",
+              description: "Save without publishing",
               button: {
-                onClick: handleScheduled,
-                children: "Schedule",
+                onClick: handleDraft,
+                children: "Save Draft",
               },
             },
           ],
@@ -101,53 +89,6 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
         variant: "primary",
       },
     ],
-
-    [ToolStatus.Scheduled]: [
-      {
-        type: "button",
-        children: "Scheduled",
-        variant: "secondary",
-        prefix: <Table />,
-        popover: {
-          title: "Update tool status",
-          options: [
-            {
-              status: ToolStatus.Draft,
-              title: "Revert to draft",
-              description: "Do not publish",
-              button: {
-                onClick: handleDraft,
-                children: "Unschedule",
-              },
-            },
-            {
-              status: ToolStatus.Scheduled,
-              title: "Schedule for later",
-              description: "Set automatic future publish date",
-              button: {
-                onClick: handleScheduled,
-                children: "Reschedule",
-              },
-            },
-            {
-              status: ToolStatus.Published,
-              title: "Publish now",
-              description: "Set this tool live immediately",
-              button: {
-                onClick: handlePublished,
-                children: "Publish",
-              },
-            },
-          ],
-        },
-      },
-      {
-        type: "submit",
-        children: "Update",
-        variant: "primary",
-      },
-    ],
-
     [ToolStatus.Published]: [
       {
         type: "button",
@@ -156,20 +97,21 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
         prefix: <BadgeCheck />,
         popover: {
           title: "Update tool status",
+          description: "Choose to keep published or revert to draft.",
           options: [
             {
+              status: ToolStatus.Published,
+              title: "Keep published",
+              description: "Keep this tool publicly available",
+            },
+            {
               status: ToolStatus.Draft,
-              title: "Unpublished",
+              title: "Unpublish",
               description: "Revert this tool to a draft",
               button: {
                 onClick: handleDraft,
                 children: "Unpublish",
               },
-            },
-            {
-              status: ToolStatus.Published,
-              title: "Published",
-              description: "Keep this tool publicly available",
             },
           ],
         },
@@ -182,99 +124,45 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
     ],
   };
 
+  const actions = toolActions[status] || toolActions[ToolStatus.Draft];
+
   return (
-    <Stack size="sm" {...props}>
-      {children}
-
-      {toolActions[tool?.status ?? ToolStatus.Draft].map(({ popover, ...action }) => {
-        if (popover) {
-          const opts = popover.options;
-          const currentOption = opts.find((o) => o.status === currentStatus) || opts[0];
-
-          return (
-            <Popover key={String(action.children)} open={isOpen} onOpenChange={setIsOpen}>
-              <PopoverTrigger asChild>
-                <Button size="md" isPending={isStatusPending} {...action} />
-              </PopoverTrigger>
-
-              <PopoverContent align="center" side="top" sideOffset={8} className="w-72" onOpenAutoFocus={(e) => e.preventDefault()} asChild>
-                <Stack size="lg" direction="column" className="items-stretch gap-5 min-w-80">
-                  <Stack size="sm" direction="column">
-                    <H5>{popover.title}</H5>
-
-                    {popover.description && <Note>{popover.description}</Note>}
-                  </Stack>
-
-                  <RadioGroup defaultValue={currentOption.status} className="contents" onValueChange={(value) => setCurrentStatus(value as ToolStatus)}>
-                    {opts.map((option) => (
-                      <Stack size="sm" className="items-start" key={option.status}>
-                        <RadioGroupItem id={option.status} value={option.status} className="mt-0.5" />
-
-                        <Stack size="sm" direction="column" className="grow" asChild>
-                          <label htmlFor={option.status}>
-                            <H6>{option.title}</H6>
-
-                            {option.description && <Note>{option.description}</Note>}
-
-                            {option.status === ToolStatus.Scheduled && currentStatus === ToolStatus.Scheduled && (
-                              <Stack size="sm" wrap={false} className="mt-2 items-stretch w-full">
-                                <Button size="md" variant="secondary" onClick={() => setIsScheduleOpen(true)} suffix={<Table />} className="w-full tabular-nums">
-                                  {selectedDate}
-                                </Button>
-
-                                <Input type="time" value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)} className="w-full tabular-nums" />
-
-                                <Dialog open={isScheduleOpen} onOpenChange={setIsScheduleOpen}>
-                                  <DialogContent className="max-w-sm">
-                                    <DialogHeader>
-                                      <DialogTitle>Pick a date to publish</DialogTitle>
-                                    </DialogHeader>
-
-                                    <Calendar
-                                      mode="single"
-                                      selected={new Date(selectedDate)}
-                                      disabled={{ before: new Date() }}
-                                      onSelect={(date) => {
-                                        if (date) {
-                                          setSelectedDate(formatDate(date, "yyyy-MM-dd"));
-                                        }
-                                        setIsScheduleOpen(false);
-                                      }}
-                                      modifiers={{
-                                        schedulable: Array.from({ length: 365 }, (_, i) => {
-                                          const date = addDays(new Date(), i);
-                                          return isMonday(date) || isWednesday(date) || isFriday(date) ? date : undefined;
-                                        }).filter(isTruthy),
-                                      }}
-                                      modifiersClassNames={{
-                                        schedulable: "before:absolute before:bottom-0.5 before:left-1/2 before:z-10 before:size-1 before:rounded-full before:bg-chart-1 before:-translate-x-1/2",
-                                      }}
-                                    />
-                                  </DialogContent>
-                                </Dialog>
-                              </Stack>
-                            )}
-                          </label>
-                        </Stack>
-                      </Stack>
-                    ))}
-                  </RadioGroup>
-
-                  <Stack className="justify-between">
-                    <Button size="md" variant="secondary" onClick={() => setIsOpen(false)}>
-                      Cancel
-                    </Button>
-
-                    {currentOption.button && <Button size="md" isPending={isStatusPending} {...currentOption.button} />}
-                  </Stack>
+    <Stack direction="row" className="gap-2">
+      {actions.map((action) => (
+        <Popover key={String(action.children)} open={isOpen} onOpenChange={setIsOpen}>
+          <PopoverTrigger asChild>
+            <Button size="md" isPending={action.type === "submit" ? isPending : isStatusPending} {...action} />
+          </PopoverTrigger>
+          {action.popover && (
+            <PopoverContent align="center" side="top" sideOffset={8} className="w-72" onOpenAutoFocus={(e) => e.preventDefault()}>
+              <Stack size="lg" direction="column" className="items-stretch gap-5 min-w-80">
+                <Stack size="sm" direction="column">
+                  <H5>{action.popover.title}</H5>
+                  {action.popover.description && <Note>{action.popover.description}</Note>}
                 </Stack>
-              </PopoverContent>
-            </Popover>
-          );
-        }
-
-        return <Button key={String(action.children)} name="submit" size="md" isPending={isPending} className="lg:min-w-24" {...action} />;
-      })}
+                <RadioGroup defaultValue={currentStatus} className="contents" onValueChange={(value) => setCurrentStatus(value as ToolStatus)}>
+                  {action.popover.options.map((option) => (
+                    <Stack size="sm" className="items-start" key={option.status}>
+                      <RadioGroupItem id={option.status} value={option.status} className="mt-0.5" />
+                      <Stack size="sm" direction="column" className="grow" asChild>
+                        <label htmlFor={option.status}>
+                          <H6>{option.title}</H6>
+                          {option.description && <Note>{option.description}</Note>}
+                          {option.button && (
+                            <Button onClick={option.button.onClick} variant="primary" className="mt-2">
+                              {option.button.children}
+                            </Button>
+                          )}
+                        </label>
+                      </Stack>
+                    </Stack>
+                  ))}
+                </RadioGroup>
+              </Stack>
+            </PopoverContent>
+          )}
+        </Popover>
+      ))}
     </Stack>
   );
 };

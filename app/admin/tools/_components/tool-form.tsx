@@ -14,6 +14,7 @@ import { MultiSelectCheckbox } from "@/components/admin/multi-select-checkbox";
 import { RelationSelector } from "@/components/admin/relation-selector";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { ToolPublishActions } from "./tool-publish-actions";
 import { H3 } from "@/components/ui/heading";
 import { RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -462,6 +463,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
           <Button type="submit" variant="fancy" name="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? "Publishing..." : "Publish"}
           </Button>
+          {/* <ToolPublishActions tool={tool} /> */}
         </div>
       </form>
     </Form>

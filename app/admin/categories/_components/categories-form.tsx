@@ -14,7 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { H3 } from "@/components/ui/heading";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Stack } from "@/components/ui/stack";
 import { useComputedField } from "@/hooks/use-computed-field";
 import { upsertCategory } from "@/server/admin/categories/actions";
@@ -66,23 +66,29 @@ export function CategoryForm({ className, title, category, toolsPromise, categor
   });
 
   // Group available categories by parent
-  const groupedCategories = useMemo(() => {
-    return parents.reduce(
-      (acc, category) => {
-        // Skip categories with no parent or with path that's too deep
-        if (!category.parentId || category.fullPath.split("/").length >= 3) {
-          return acc;
-        }
+  // const groupedCategories = useMemo(() => {
+  //   return parents.reduce(
+  //     (acc, category) => {
+  //       if (!category.parentId || category.fullPath.split("/").length >= 3) {
+  //         return acc;
+  //       }
 
-        if (!acc[category.parentId]) {
-          acc[category.parentId] = [];
-        }
+  //       if (!acc[category.parentId]) {
+  //         acc[category.parentId] = [];
+  //       }
 
-        acc[category.parentId].push(category);
-        return acc;
-      },
-      {} as Record<string, typeof parents>
-    );
+  //       acc[category.parentId].push(category);
+  //       return acc;
+  //     },
+  //     {} as Record<string, typeof parents>
+  //   );
+  // }, [parents]);
+
+  const parentCandidates = useMemo(() => {
+    return parents.filter((category) => {
+      // tampilkan hanya kategori top-level sebagai calon parent
+      return !category.parentId && category.fullPath.split("/").length < 3;
+    });
   }, [parents]);
 
   // Upsert category
@@ -194,18 +200,10 @@ export function CategoryForm({ className, title, category, toolsPromise, categor
                   </SelectTrigger>
 
                   <SelectContent>
-                    {Object.entries(groupedCategories).map(([parentId, categories]) => (
-                      <SelectGroup key={parentId} className="not-first:mt-2">
-                        <SelectItem value={parentId} className="font-semibold text-foreground">
-                          {parents.find((c) => c.id === parentId)?.name}
-                        </SelectItem>
-
-                        {categories.map((parent) => (
-                          <SelectItem key={parent.id} value={parent.id}>
-                            – {parent.name}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
+                    {parentCandidates.map((parent) => (
+                      <SelectItem key={parent.id} value={parent.id}>
+                        {parent.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
