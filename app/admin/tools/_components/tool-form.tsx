@@ -57,7 +57,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   const router = useRouter();
   const categories = use(categoriesPromise);
   const platformOptions = use(platformsPromise);
-
+  const [isStatusPending, setIsStatusPending] = useState(false);
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft);
 
   const form = useForm({
@@ -156,6 +156,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     },
 
     onError: ({ err }) => toast.error(err.message),
+    onFinish: () => setIsStatusPending(false),
   });
 
   // Generate favicon
@@ -170,15 +171,14 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
   const handleSubmit = form.handleSubmit(async (data) => {
     console.log("🔥 Submitting Tool Data", data);
-    console.log("➡️ Executing upsertAction now...");
     upsertAction.execute({ id: tool?.id, ...data });
   });
 
-  // Tambahkan event listener untuk debugging
-  const handleFormSubmit = (e: React.FormEvent) => {
-    console.log("🔥 Form submit event triggered");
-    e.preventDefault();
-    handleSubmit(e);
+  const handleStatusSubmit = (status: ToolStatus, publishedAt: Date | null) => {
+    form.setValue("status", status);
+    form.setValue("publishedAt", publishedAt);
+    setIsStatusPending(true);
+    handleSubmit();
   };
 
   return (
@@ -187,7 +187,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
         <H3 className="flex-1 truncate">{title}</H3>
       </Stack>
 
-      <form onSubmit={handleFormSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>
+      <form onSubmit={handleSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>
         <FormField
           control={form.control}
           name="name"
@@ -463,7 +463,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
           <Button type="submit" variant="fancy" name="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? "Publishing..." : "Publish"}
           </Button>
-          {/* <ToolPublishActions tool={tool} /> */}
+          <ToolPublishActions tool={tool} isPending={upsertAction.isPending} isStatusPending={isStatusPending} onStatusSubmit={handleStatusSubmit} />
         </div>
       </form>
     </Form>
