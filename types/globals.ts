@@ -11,19 +11,10 @@ export interface CategoryType {
   }[];
 }
 
-export interface ScreenshotType {
+export type ScreenshotType = {
   id: string;
-  page?: string;
-  caption: string | null;
   imageUrl: string;
-  order?: number;
-}
-
-export type FlowNode = {
-  id: string;
-  label: string;
-  parentId?: string | null;
+  caption?: string | null;
+  githubUrl?: string | null;
   order: number;
-  repositoryPath?: string | null;
-  children?: FlowNode[];
 };

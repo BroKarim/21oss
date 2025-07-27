@@ -1,26 +1,31 @@
 "use client";
 
-import { Tree, flowNodesToTreeElements, renderTree } from "@/components/web/tools/tool-file-tree";
-import { ToolViewerImage } from "@/components/web/tools/tool-viewer-image";
-import { FlowNode, ScreenshotType } from "@/types/globals";
+import { ScreenshotType } from "@/types/globals";
+import { Button } from "@/components/ui/button-shadcn";
+import { Github } from "lucide-react";
+import Image from "next/image";
 
-type ToolViewerProps = {
-  path: FlowNode[];
+interface ToolViewerProps {
   screenshots: ScreenshotType[];
-};
+}
 
-export function ToolViewer({ path, screenshots }: ToolViewerProps) {
-  const treeElements = flowNodesToTreeElements(path);
-
+export function ToolViewer({ screenshots }: ToolViewerProps) {
   return (
-    <div className="w-full flex h-full min-h-[300px]">
-      <div className="w-1/4 h-full overflow-y-auto rounded-md">
-        <Tree className="overflow-hidden rounded-md p-2 text-base" initialSelectedId={path[0]?.label} initialExpandedItems={path.map((p) => p.id)} elements={treeElements}>
-          {renderTree(treeElements)}{" "}
-        </Tree>
-      </div>
-      <div className="flex-1 overflow-hidden">
-        <ToolViewerImage screenshots={screenshots} />
+    <div className="w-full  h-full min-h-[300px] ">
+      <div className="w-full grid md:grid-cols-2 gap-2">
+        {screenshots.map((screenshot, idx) => (
+          <div key={idx} className="relative group w-full overflow-hidden rounded-2xl bg-gray-100 shadow-sm">
+            <Image src={screenshot.imageUrl} alt={screenshot.caption || `Screenshot ${idx + 1}`} width={1280} height={720} className="w-full h-auto object-contain transition duration-300 group-hover:brightness-75 border-none" />
+            {screenshot.githubUrl && (
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                <Button variant="secondary" className="rounded-full shadow-lg" onClick={() => window.open(screenshot.githubUrl, "_blank")}>
+                  <Github className="mr-2 h-4 w-4" />
+                  View on GitHub
+                </Button>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -33,7 +33,6 @@ export const generateStaticParams = async () => {
   return tools.map(({ slug }) => ({ slug }));
 };
 
-
 export default async function ToolPage(props: PageProps) {
   const tool = await getTool(props);
 
@@ -102,7 +101,7 @@ export default async function ToolPage(props: PageProps) {
           </Section.Sidebar>
         </Section>
         <div className="w-full flex h-screen min-h-[500px]">
-          <ToolDisplay path={tool.flowNodes ?? []} screenshots={tool.screenshots ?? []} />
+          <ToolDisplay screenshots={tool.screenshots ?? []} />
         </div>
 
         {/* gambar */}
@@ -111,4 +110,3 @@ export default async function ToolPage(props: PageProps) {
     </>
   );
 }
-// https://github.com/piotrkulpinski/openalternative/blob/main/app/(web)/%5Bslug%5D/page.tsx

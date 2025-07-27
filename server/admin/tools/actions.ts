@@ -19,7 +19,7 @@ export const upsertTool = adminProcedure
   .input(toolSchema)
   .handler(async ({ input }) => {
     console.log("✅ upsertTool called", input);
-    const { id, categories, platforms, stacks, flowNodes, ...rest } = input;
+    const { id, categories, platforms, stacks, ...rest } = input;
 
     const slug = rest.slug || slugify(rest.name);
 
@@ -65,12 +65,8 @@ export const upsertTool = adminProcedure
                 rest.screenshots?.map((img, index) => ({
                   imageUrl: img.imageUrl,
                   caption: img.caption,
-                  page: img.page,
                   order: index,
                 })) ?? [],
-            },
-            flowNodes: {
-              deleteMany: {},
             },
           },
         })
@@ -86,7 +82,6 @@ export const upsertTool = adminProcedure
                 rest.screenshots?.map((img, index) => ({
                   imageUrl: img.imageUrl,
                   caption: img.caption,
-                  page: img.page,
                   order: index,
                 })) ?? [],
             },
@@ -94,35 +89,6 @@ export const upsertTool = adminProcedure
         });
 
     // Create flow nodes (simple approach)
-    if (flowNodes && flowNodes.length > 0) {
-      let globalOrder = 0;
-
-      for (const flowGroup of flowNodes) {
-        // Create parent node
-        const parentNode = await db.flowNode.create({
-          data: {
-            toolId: tool.id,
-            label: flowGroup.parentLabel,
-            order: globalOrder++,
-            repositoryPath: null, // Parent tidak punya repository
-            parentId: null,
-          },
-        });
-
-        // Create child nodes (steps)
-        for (const path of flowGroup.path) {
-          await db.flowNode.create({
-            data: {
-              toolId: tool.id,
-              label: path.label,
-              repositoryPath: path.repositoryPath,
-              order: globalOrder++,
-              parentId: parentNode.id,
-            },
-          });
-        }
-      }
-    }
 
     console.info(`[UPSERTOOL] done, id=${tool.id}, status=${tool.status}`);
 

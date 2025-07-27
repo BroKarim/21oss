@@ -115,7 +115,6 @@ model Tool {
   categories Category[]  @relation("ToolCategories")
   platforms  Platform[]  @relation("ToolPlatforms")
   stacks     Stack[]     @relation("ToolStacks")
-  flowNodes  FlowNode[]
   likes      Like[]
   reports    Report[]
 
@@ -126,27 +125,16 @@ model Tool {
 }
 
 
-model FlowNode {
-  id         String      @id @default(cuid())
-  tool       Tool        @relation(fields: [toolId], references: [id])
-  toolId     String
-  parent     FlowNode?   @relation("NodeChildren", fields: [parentId], references: [id])
-  parentId   String?
-  label      String
-  order      Int
-  repositoryPath String?
-
-  children    FlowNode[] @relation("NodeChildren")
-}
-
 
 model ToolScreenshot {
   id         String   @id @default(cuid())
   tool       Tool     @relation(fields: [toolId], references: [id])
   toolId     String
-  page       String   @db.Citext @default("uncategorized")
+
   imageUrl   String
   caption    String?
+  githubUrl  String?    
+
   order      Int
 }
 

@@ -40,27 +40,12 @@ export const toolSchema = z.object({
   categories: z.array(z.string()).optional(),
   platforms: z.array(z.string()).optional(),
   stacks: z.array(z.string()).optional(),
-  flowNodes: z
-    .array(
-      z.object({
-        parentLabel: z.string().min(1, "Parent label is required"),
-        path: z
-          .array(
-            z.object({
-              label: z.string().min(1, "Step label is required"),
-              repositoryPath: z.string().min(1, "Repository path is required"),
-            })
-          )
-          .min(1, "At least one step is required"),
-      })
-    )
-    .optional(),
   screenshots: z
     .array(
       z.object({
-        page: z.string().min(1, "Halaman wajib diisi"),
         imageUrl: z.string().url(),
         caption: z.string().optional(),
+        githubUrl: z.string().url().optional(),
       })
     )
     .optional(),

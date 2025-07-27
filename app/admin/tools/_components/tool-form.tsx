@@ -21,7 +21,6 @@ import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
 import { Stack } from "@/components/ui/stack";
 import { Textarea } from "@/components/ui/textarea";
-import { FlowNodeGroup } from "./tool-flowNodes-group";
 import { ExternalLink } from "@/components/web/external-link";
 import { useComputedField } from "@/hooks/use-computed-field";
 import type { findCategoryList } from "@/server/admin/categories/queries";
@@ -79,21 +78,10 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       stacks: tool?.stacks.map((s) => s.slug) ?? [],
       screenshots:
         tool?.screenshots?.map((img) => ({
-          page: img.page ?? "",
           imageUrl: img.imageUrl,
           caption: img.caption ?? "",
+          githubUrl: img.githubUrl ?? "", // ✅ tambahan
         })) ?? [],
-      flowNodes:
-        tool?.flowNodes
-          ?.filter((node) => !node.parentId) // hanya ambil parent
-          .map((parent) => ({
-            parentLabel: parent.label,
-            path:
-              parent.children?.map((child) => ({
-                label: child.label,
-                repositoryPath: child.repositoryPath ?? "",
-              })) ?? [],
-          })) ?? [],
     },
   });
 
@@ -104,15 +92,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     computedField: "slug",
     callback: slugify,
     enabled: !tool,
-  });
-
-  const {
-    fields: flowNodes,
-    append,
-    remove,
-  } = useFieldArray({
-    control: form.control,
-    name: "flowNodes",
   });
 
   const {
@@ -325,31 +304,9 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
         />
 
         <div className="space-y-4 col-span-full">
-          <h3 className="font-semibold text-lg">File Repo </h3>
-          {flowNodes.map((node, index) => (
-            <FlowNodeGroup key={node.id ?? index} control={form.control} nodeIndex={index} removeParent={() => remove(index)} />
-          ))}
-          <Button type="button" variant="secondary" onClick={() => append({ path: [], parentLabel: "" })}>
-            + Tambah Parent Baru
-          </Button>
-        </div>
-
-        <div className="space-y-4 col-span-full">
           <h3 className="font-semibold text-lg">Screenshots</h3>
           {screenshotFields.map((screenshot, index) => (
             <div key={screenshot.id ?? index} className="grid sm:grid-cols-2 gap-4 items-end border p-4 rounded-xl">
-              <FormField
-                control={form.control}
-                name={`screenshots.${index}.page`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Halaman</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="Contoh: dashboard" />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name={`screenshots.${index}.imageUrl`}
@@ -362,6 +319,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={form.control}
                 name={`screenshots.${index}.caption`}
@@ -374,6 +332,20 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name={`screenshots.${index}.githubUrl`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>GitHub URL</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="https://github.com/..." />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
               <div className="col-span-2 text-right">
                 <Button type="button" size="sm" variant="destructive" onClick={() => removeScreenshot(index)}>
                   Hapus Screenshot
@@ -381,7 +353,8 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
               </div>
             </div>
           ))}
-          <Button type="button" variant="secondary" onClick={() => appendScreenshot({ page: "", imageUrl: "", caption: "" })}>
+
+          <Button type="button" variant="secondary" onClick={() => appendScreenshot({ imageUrl: "", caption: "", githubUrl: "" })}>
             + Tambah Screenshot
           </Button>
         </div>

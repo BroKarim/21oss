@@ -44,22 +44,10 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   screenshots: {
     select: {
       id: true,
-      page: true,
+      githubUrl: true,
       imageUrl: true,
       order: true,
       caption: true,
-    },
-  },
-  flowNodes: {
-    where: {
-      parentId: null,
-    },
-    include: {
-      children: {
-        include: {
-          children: true,
-        },
-      },
     },
   },
 });
@@ -82,7 +70,7 @@ export const ToolManyPayload: Prisma.ToolSelect = {
   screenshots: {
     select: {
       id: true,
-      page: true,
+      githubUrl: true,
       imageUrl: true,
       order: true,
       caption: true,
