@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { AudioWaveform, BookOpen, Store, Command, Frame, GalleryVerticalEnd, Map, PieChart, LayoutGrid } from "lucide-react";
+import { AudioWaveform, BookOpen, PenTool, Command, Frame, GalleryVerticalEnd, Map, PieChart, LayoutGrid } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavProjects } from "./nav-projects";
@@ -41,9 +41,11 @@ const data = {
       isActive: true,
     },
     {
-      title: "Marketplace",
-      url: "/marketplace",
-      icon: Store,
+      //opensource creative tools to help you develop what you love
+      // inspired by https://minimal.gallery/tools/
+      title: "Tools",
+      url: "/tools",
+      icon: PenTool,
     },
     {
       title: "Blog",
@@ -53,17 +55,17 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
+      name: "Website",
+      url: "/?platforms=website",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      name: "Android",
       url: "#",
       icon: PieChart,
     },
     {
-      name: "Travel",
+      name: "iOS",
       url: "#",
       icon: Map,
     },

@@ -78,43 +78,43 @@ model User {
   @@index([id])
 }
 
-model Tool {
-  id              String    @id @default(cuid())
-  name            String    @db.Citext
-  slug            String    @unique
-  websiteUrl      String?   @unique 
-  repositoryUrl   String?   @unique
-  demoUrl         String?
-  affiliateUrl    String?
-  tagline         String?
-  description     String?
-  content         String?
-  stars           Int       @default(0)
-  forks           Int       @default(0)
-  faviconUrl      String?
-  screenshotUrl   String?
-  screenshots     ToolScreenshot[]
-  discountCode    String?
-  discountAmount  String?
-  firstCommitDate DateTime?
-  lastCommitDate  DateTime?
-  pageviews       Int?       @default(0)
-  status          ToolStatus @default(Draft)
-  publishedAt     DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  model Tool {
+    id              String    @id @default(cuid())
+    name            String    @db.Citext
+    slug            String    @unique
+    websiteUrl      String?   @unique 
+    repositoryUrl   String?   @unique
+    demoUrl         String?
+    affiliateUrl    String?
+    tagline         String?
+    description     String?
+    content         String?
+    stars           Int       @default(0)
+    forks           Int       @default(0)
+    faviconUrl      String?
+    screenshotUrl   String?
+    screenshots     ToolScreenshot[]
+    discountCode    String?
+    discountAmount  String?
+    firstCommitDate DateTime?
+    lastCommitDate  DateTime?
+    pageviews       Int?       @default(0)
+    status          ToolStatus @default(Draft)
+    publishedAt     DateTime?
+    createdAt       DateTime  @default(now())
+    updatedAt       DateTime  @updatedAt
 
-  // Foreign Keys
-  licenseId    String?
-  inspiredById String?
+    // Foreign Keys
+    licenseId    String?
+    inspiredById String?
 
-  // Relations
+    // Relations
 
-  license    License?    @relation(fields: [licenseId], references: [id], onDelete: SetNull)
-  inspiredBy InspiredBy? @relation(fields: [inspiredById], references: [id], onDelete: SetNull)
-  categories Category[]  @relation("ToolCategories")
-  platforms  Platform[]  @relation("ToolPlatforms")
-  stacks     Stack[]     @relation("ToolStacks")
+    license    License?    @relation(fields: [licenseId], references: [id], onDelete: SetNull)
+    inspiredBy InspiredBy? @relation(fields: [inspiredById], references: [id], onDelete: SetNull)
+    categories Category[]  @relation("ToolCategories")
+    platforms  Platform[]  @relation("ToolPlatforms")
+    stacks     Stack[]     @relation("ToolStacks")
   likes      Like[]
   reports    Report[]
 

@@ -1,6 +1,6 @@
 import { type Prisma, ToolStatus } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
-import { categoryManyNestedPayload, categoryManyPayload, categoryOnePayload, categoryWithTools } from "@/server/web/categories/payload";
+import { categoryManyNestedPayload, categoryManyPayload, categoryOnePayload, categoryWithTools } from "@/server/web/categories/payloads";
 import { db } from "@/services/db";
 
 export const findCategories = async ({ where, orderBy, ...args }: Prisma.CategoryFindManyArgs) => {

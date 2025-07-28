@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { categoryManyPayload } from "../categories/payload";
+import { categoryManyPayload } from "../categories/payloads";
 
 export const toolCategoriesPayload = Prisma.validator<Prisma.Tool$categoriesArgs>()({
   select: categoryManyPayload,

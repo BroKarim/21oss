@@ -2,8 +2,57 @@ import { type Prisma, ToolStatus } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
 import { ToolManyPayload, toolOnePayload } from "./payloads";
-
+import type { FilterSchema } from "../shared/schema";
 // sederhanya ini fungsi2 untuk fetch data mirip seperti API GET
+export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {
+  "use cache";
+
+  cacheTag("tools");
+  cacheLife("max");
+
+  const { q, page, sort, perPage, alternative, category, stack, license } = search;
+  const start = performance.now();
+  const skip = (page - 1) * perPage;
+  const take = perPage;
+
+  let orderBy: Prisma.ToolFindManyArgs["orderBy"] = [{ publishedAt: "desc" }];
+
+  if (sort !== "default") {
+    const [sortBy, sortOrder] = sort.split(".") as [keyof typeof orderBy, Prisma.SortOrder];
+    orderBy = { [sortBy]: sortOrder };
+  }
+
+  const whereQuery: Prisma.ToolWhereInput = {
+    status: ToolStatus.Published,
+    ...(!!alternative.length && { alternatives: { some: { slug: { in: alternative } } } }),
+    ...(!!category.length && { categories: { some: { slug: { in: category } } } }),
+    ...(!!stack.length && { stacks: { some: { slug: { in: stack } } } }),
+    ...(!!license.length && { license: { slug: { in: license } } }),
+  };
+
+  if (q) {
+    whereQuery.OR = [{ name: { contains: q, mode: "insensitive" } }, { tagline: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }];
+  }
+
+  const [tools, totalCount] = await db.$transaction([
+    db.tool.findMany({
+      where: { ...whereQuery, ...where },
+      select: ToolManyPayload,
+      orderBy,
+      take,
+      skip,
+    }),
+
+    db.tool.count({
+      where: { ...whereQuery, ...where },
+    }),
+  ]);
+
+  console.log(`Tools search: ${Math.round(performance.now() - start)}ms`);
+
+  const pageCount = Math.ceil(totalCount / perPage);
+  return { tools, totalCount, pageCount };
+};
 
 export const findFeaturedTool = async ({ where, ...args }: Prisma.ToolFindManyArgs = {}) => {
   "use cache";
@@ -28,7 +77,6 @@ export const findTools = async ({ where, orderBy, ...args }: Prisma.ToolFindMany
   cacheTag("showcase");
   cacheLife("max");
   console.log(await db.tool.findMany({ take: 5, orderBy: { createdAt: "desc" } }));
-  console.log("🔍 where:", where);
 
   return db.tool.findMany({
     ...args,

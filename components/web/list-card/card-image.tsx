@@ -24,7 +24,7 @@ export default function ComponentPreviewImage({ src, alt, fallbackSrc, className
     <img
       src={imgSrc}
       alt={alt}
-      className={className}
+      className={`object-cover w-full h-full rounded-t-lg ${className}`}
       onError={() => {
         setImgSrc(fallbackSrc);
         setIsPlaceholder(true);

@@ -49,8 +49,7 @@
 
   --tracking-micro: -0.0125em;
 
-  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), monospace;
+  --font-sans: var(--font-sans);
   --font-display: var(--font-display);
 
   --text-5xl: 2.75rem;

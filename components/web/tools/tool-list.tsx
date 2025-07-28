@@ -21,7 +21,7 @@ const ToolList = ({ tools }: ToolListProps) => {
           <div className="flex space-x-4" style={{ minWidth: "100%", paddingLeft: "1px", paddingRight: "1px" }}>
             {tools.map((tool, order) => (
               <Fragment key={tool.slug}>
-                <div key={tool.id} className="min-w-[280px] max-w-[280px]">
+                <div key={tool.id} className="min-w-[400px] max-w-[400px]">
                   <ToolCard tool={tool} style={{ order }} />
                 </div>
               </Fragment>
