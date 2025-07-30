@@ -56,7 +56,7 @@ const data = {
   projects: [
     {
       name: "Website",
-      url: "/?platforms=website",
+      url: "/platforms/website",
       icon: Frame,
     },
     {
@@ -75,10 +75,10 @@ const data = {
 export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader className="bg-black">
+      <SidebarHeader>
         <NavLogo teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent className="bg-black text-white">
+      <SidebarContent >
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
       </SidebarContent>

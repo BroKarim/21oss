@@ -11,7 +11,7 @@ import { metadataConfig } from "@/config/metadata";
 import { findPlatformBySlug, findPlatformSlugs } from "@/server/web/platforms/queries";
 import { ToolQuery } from "@/components/web/tools/tool-query";
 import type { PlatformOne } from "@/server/web/platforms/payloads";
-
+import { cn } from "@/lib/utils";
 type PageProps = {
   params: Promise<{ slug: string }>;
   searchParams: Promise<SearchParams>;
@@ -54,23 +54,30 @@ export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
 };
 
 export default async function PlatformPage(props: PageProps) {
-  console.log("PlatformPage: Received props:", props);
   const platform = await getPlatform(props);
-  console.log("PlatformPage: Fetched platform:", platform);
-  if (!platform) {
-    console.error("PlatformPage: No platform found for props:", props);
-    return <div>Error: Platform not found</div>;
-  }
+  if (!platform) return notFound();
+
+  const { searchParams } = props;
+
+  const platformWhere = {
+    platforms: {
+      some: { slug: platform.slug },
+    },
+  };
 
   const { title, description } = getMetadata(platform);
-  console.log("PlatformPage: Metadata:", { title, description });
+
   return (
-    <Intro>
-      <IntroTitle>{`${title}`}</IntroTitle>
-      <IntroDescription className="max-w-2xl">{description}</IntroDescription>
-      <Suspense fallback={<ToolListSkeleton />}>
-        <ToolQuery searchParams={props.searchParams} where={{ platforms: { some: { slug: platform.slug } } }} />
-      </Suspense>
-    </Intro>
+    <main className={cn("flex flex-1 flex-col ")}>
+      <div className="container p-4">
+        <Intro>
+          <IntroTitle>{`${title}`}</IntroTitle>
+          <IntroDescription className="max-w-2xl">{description}</IntroDescription>
+        </Intro>
+        <Suspense fallback={<ToolListSkeleton />}>
+          <ToolQuery searchParams={searchParams} where={platformWhere} />
+        </Suspense>
+      </div>
+    </main>
   );
 }

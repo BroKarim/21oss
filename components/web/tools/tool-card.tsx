@@ -45,7 +45,7 @@ const ToolCard = ({ tool, ...props }: ToolCardProps) => {
                   src={tool.screenshots?.find((s) => s.order === 0)?.imageUrl || "/placeholder.svg"}
                   alt="thumbnail"
                   fallbackSrc="/placeholder.svg"
-                  className=" w-full h-full"
+                  className=" w-full h-full border"
                 />
               </div>
               <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-lg flex items-center flex-col justify-center p-4">

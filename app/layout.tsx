@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { SearchProvider } from "@/contexts/search-context";
 import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/web/theme-provider";
 import { AppProviders } from "./providers";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
@@ -26,22 +26,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(GeistSans.variable, GeistMono.variable, "font-sans [scrollbar-gutter:stable]")}>
-        <div className="h-full">
-          <NuqsAdapter>
-            <TooltipProvider delayDuration={250}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange enableColorScheme>
+          <div className="h-full">
+            <NuqsAdapter>
               <SearchProvider>
                 <AppProviders>
                   {children}
                   {/* component search kayaknya buat sendiri aja, punya dia bnayk kli lib */}
                 </AppProviders>
               </SearchProvider>
-            </TooltipProvider>
-          </NuqsAdapter>
-        </div>
+            </NuqsAdapter>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

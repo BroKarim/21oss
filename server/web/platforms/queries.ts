@@ -41,8 +41,12 @@ export const findPlatformBySlug = async (slug: string) => {
   cacheTag("platform", `platform-${slug}`);
   cacheLife("max");
 
-  return db.platform.findFirst({
+  const platform = await db.platform.findFirst({
     where: { slug },
     select: platformOnePayload,
   });
+
+  console.log("findPlatformBySlug: Found platform:", platform);
+
+  return platform;
 };

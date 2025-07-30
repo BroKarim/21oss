@@ -10,3 +10,8 @@ export const siteConfig = {
   email: env.NEXT_PUBLIC_SITE_EMAIL,
   affiliateUrl: "https://go.openalternative.co",
 };
+
+export const META_THEME_COLORS = {
+  light: "#ffffff",
+  dark: "#09090b",
+};
