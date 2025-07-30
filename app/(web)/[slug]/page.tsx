@@ -1,18 +1,20 @@
 import { notFound } from "next/navigation";
-import { cache } from "react";
+import { cache, Suspense } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { H2 } from "@/components/ui/heading";
 import { Stack } from "@/components/ui/stack";
 import { Section } from "@/components/ui/section";
 // import type { ImageObject } from "schema-dts";
+import { ShareButtons } from "@/components/web/share-button";
 import { findTool, findToolSlugs } from "@/server/web/tools/queries";
 import { IntroDescription } from "@/components/ui/intro";
 // import { FaviconImage } from "@/components/ui/favicon";
 import { ToolDisplay } from "@/components/web/tool-display";
+import { RelatedTools } from "./related";
 import { Note } from "@/components/ui/note";
 import { RepositoryDetails } from "@/components/web/repository-detail";
-
+import ImageGallery from "@/components/web/image-gallery";
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -34,6 +36,11 @@ export const generateStaticParams = async () => {
 
 export default async function ToolPage(props: PageProps) {
   const tool = await getTool(props);
+  const sampleImages = [
+    "https://openlayout-web-storage.s3.us-east-1.amazonaws.com/affilmory/aff-1.png",
+    "https://openlayout-web-storage.s3.us-east-1.amazonaws.com/affilmory/aff-col-set.png",
+    "https://openlayout-web-storage.s3.us-east-1.amazonaws.com/affilmory/aff-photo-location.png",
+  ];
 
   return (
     <>
@@ -99,11 +106,22 @@ export default async function ToolPage(props: PageProps) {
             <RepositoryDetails showcase={tool} className="max-md:order-5" />
           </Section.Sidebar>
         </Section>
-        <div className="w-full flex h-screen min-h-[500px]">
+        {/* <div className="w-full flex  ">
           <ToolDisplay screenshots={tool.screenshots ?? []} />
+        </div> */}
+        <div className="w-full flex  min-h-[500px]">
+          <ImageGallery images={sampleImages} />
         </div>
+        <ShareButtons title="tess" direction="column" className="max-md:order-9" />
+        <p>
+          - tinggal tambahin -source (i)-
+        </p>
 
-        {/* gambar */}
+        <Suspense>
+          <RelatedTools tool={tool} />
+        </Suspense>
+
+        {/* Link project */}
         {/* related */}
       </div>
     </>

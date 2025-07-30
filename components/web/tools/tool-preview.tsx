@@ -6,6 +6,7 @@ import { Listing } from "../ui/listing";
 import { findFeaturedTool } from "@/server/web/tools/queries";
 
 const ToolPreview = async () => {
+  
 const tools = await findFeaturedTool({});
   // console.log("🔥 Showcase data:", tools);
 
