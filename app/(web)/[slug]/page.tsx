@@ -113,16 +113,11 @@ export default async function ToolPage(props: PageProps) {
           <ImageGallery images={sampleImages} />
         </div>
         <ShareButtons title="tess" direction="column" className="max-md:order-9" />
-        <p>
-          - tinggal tambahin -source (i)-
-        </p>
+        <p>- tinggal tambahin -source (i)-</p>
 
         <Suspense>
           <RelatedTools tool={tool} />
         </Suspense>
-
-        {/* Link project */}
-        {/* related */}
       </div>
     </>
   );
