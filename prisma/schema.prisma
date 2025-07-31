@@ -115,8 +115,8 @@ model User {
     categories Category[]  @relation("ToolCategories")
     platforms  Platform[]  @relation("ToolPlatforms")
     stacks     Stack[]     @relation("ToolStacks")
-  likes      Like[]
-  reports    Report[]
+    likes      Like[]
+    reports    Report[]
 
   // Indexes
   @@index([slug])
