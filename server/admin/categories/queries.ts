@@ -7,21 +7,13 @@ import type { CategoriesTableSchema } from "./schema";
 export const findCategories = async (search: CategoriesTableSchema) => {
   const { name, page, perPage, sort, from, to, operator } = search;
 
-  // Offset to paginate the results
   const offset = (page - 1) * perPage;
-
-  // Column and order to sort by
   const orderBy = sort.map((item) => ({ [item.id]: item.desc ? "desc" : "asc" }) as const);
-
-  // Convert the date strings to Date objects and adjust the range
   const fromDate = from ? startOfDay(new Date(from)) : undefined;
   const toDate = to ? endOfDay(new Date(to)) : undefined;
 
   const expressions: (Prisma.CategoryWhereInput | undefined)[] = [
-    // Filter by name
     name ? { name: { contains: name, mode: "insensitive" } } : undefined,
-
-    // Filter by createdAt
     fromDate || toDate ? { createdAt: { gte: fromDate, lte: toDate } } : undefined,
   ];
 
@@ -29,7 +21,6 @@ export const findCategories = async (search: CategoriesTableSchema) => {
     [operator.toUpperCase()]: expressions.filter(isTruthy),
   };
 
-  // Transaction is used to ensure both queries are executed in a single transaction
   const [categories, categoriesTotal] = await db.$transaction([
     db.category.findMany({
       where,

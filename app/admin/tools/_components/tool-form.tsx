@@ -27,6 +27,8 @@ import type { findCategoryList } from "@/server/admin/categories/queries";
 import { upsertTool } from "@/server/admin/tools/actions";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
 import type { findPlatformList } from "@/server/admin/platforms/queries";
+import { StackCombobox } from "./stack-combobox";
+import type { findStackList } from "@/server/admin/stacks/queries";
 import { toolSchema, type ToolSchema } from "@/server/admin/tools/schema";
 import { cx } from "@/lib/utils";
 
@@ -50,12 +52,14 @@ type ToolFormProps = ComponentProps<"form"> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>;
   categoriesPromise: ReturnType<typeof findCategoryList>;
   platformsPromise: ReturnType<typeof findPlatformList>;
+  stacksPromise: ReturnType<typeof findStackList>;
 };
 
-export function ToolForm({ className, title, tool, categoriesPromise, platformsPromise, ...props }: ToolFormProps) {
+export function ToolForm({ className, title, tool, categoriesPromise, platformsPromise, stacksPromise, ...props }: ToolFormProps) {
   const router = useRouter();
   const categories = use(categoriesPromise);
   const platformOptions = use(platformsPromise);
+  const stackOptions = use(stacksPromise);
   const [isStatusPending, setIsStatusPending] = useState(false);
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft);
 
@@ -93,6 +97,10 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     callback: slugify,
     enabled: !tool,
   });
+
+  if (!stacksPromise) {
+    throw new Error("stacksPromise tidak diberikan ke ToolForm");
+  }
 
   const {
     fields: screenshotFields,
@@ -268,7 +276,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
         {/* Stacks Field (Dynamic Input with useFieldArray) */}
         <FormItem>
           <FormLabel>Stacks</FormLabel>
-          {stackFields.map((stack, index) => (
+          {/* {stackFields.map((stack, index) => (
             <div key={stack.id} className="flex items-center gap-2">
               <FormField
                 control={form.control}
@@ -283,10 +291,9 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                 Remove
               </Button>
             </div>
-          ))}
-          <Button type="button" variant="secondary" size="sm" className="mt-2" onClick={() => appendStack("")}>
-            Add Stack
-          </Button>
+          ))} */}
+          <StackCombobox options={stackOptions} onSelect={(slug) => appendStack(slug)} />
+
           <FormMessage />
         </FormItem>
         <FormField

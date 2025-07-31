@@ -3,10 +3,13 @@ import { ToolForm } from "@/app/admin/tools/_components/tool-form";
 import { Wrapper } from "@/components/admin/wrapper";
 import { findCategoryList } from "@/server/admin/categories/queries";
 import { findPlatformList } from "@/server/admin/platforms/queries";
-const CreateToolPage = () => {
+import { findStackList } from "@/server/admin/stacks/queries";
+const CreateToolPage = async () => {
+  const stacks = await findStackList();
+  console.log("🧪 STACKS", stacks);
   return (
     <Wrapper size="md">
-      <ToolForm title="Create tool" categoriesPromise={findCategoryList()} platformsPromise={findPlatformList()} />
+      <ToolForm title="Create tool" categoriesPromise={findCategoryList()} platformsPromise={findPlatformList()} stacksPromise={Promise.resolve(stacks)} />
     </Wrapper>
   );
 };
