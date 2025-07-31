@@ -126,7 +126,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
     onSuccess: ({ data }) => {
-      // If status has changed, show a status change notification
+      console.log("🔥 upsertAction onSuccess, data:", data);
       if (data.status !== originalStatus) {
         toast.success(<ToolStatusChange tool={data} />);
         setOriginalStatus(data.status);
@@ -142,7 +142,10 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       }
     },
 
-    onError: ({ err }) => toast.error(err.message),
+    onError: ({ err }) => {
+      console.error("🔥 upsertAction onError:", err);
+      toast.error(err.message);
+    },
     onFinish: () => setIsStatusPending(false),
   });
 
@@ -157,7 +160,9 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   });
 
   const handleSubmit = form.handleSubmit(async (data) => {
+    console.log("🔥 handleSubmit triggered");
     console.log("🔥 Submitting Tool Data", data);
+    console.log("tool?.id:", tool?.id);
     upsertAction.execute({ id: tool?.id, ...data });
   });
 
@@ -276,7 +281,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
         {/* Stacks Field (Dynamic Input with useFieldArray) */}
         <FormItem>
           <FormLabel>Stacks</FormLabel>
-          {/* {stackFields.map((stack, index) => (
+          {stackFields.map((stack, index) => (
             <div key={stack.id} className="flex items-center gap-2">
               <FormField
                 control={form.control}
@@ -291,7 +296,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                 Remove
               </Button>
             </div>
-          ))} */}
+          ))}
           <StackCombobox options={stackOptions} onSelect={(slug) => appendStack(slug)} />
 
           <FormMessage />
@@ -440,10 +445,8 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
           <Button size="md" variant="secondary" asChild>
             <Link href="/admin/tools">Cancel</Link>
           </Button>
-          <Button type="submit" variant="fancy" name="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Publishing..." : "Publish"}
-          </Button>
-          <ToolPublishActions tool={tool} isPending={upsertAction.isPending} isStatusPending={isStatusPending} onStatusSubmit={handleStatusSubmit} />
+
+          <ToolPublishActions isPending={upsertAction.isPending} isStatusPending={isStatusPending} onStatusSubmit={handleStatusSubmit} />
         </div>
       </form>
     </Form>

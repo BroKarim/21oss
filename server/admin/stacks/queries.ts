@@ -48,6 +48,7 @@ export const findStackList = async ({ ...args }: Prisma.StackFindManyArgs = {}) 
   });
 };
 
+
 /**
  * Untuk menampilkan 1 stack secara detail (opsional)
  */

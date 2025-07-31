@@ -2,7 +2,6 @@ import { ToolStatus } from "@prisma/client";
 import { type ComponentProps, type ReactNode, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { Button, type ButtonProps } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { H5, H6 } from "@/components/ui/heading";
 import { Note } from "@/components/ui/note";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -11,7 +10,6 @@ import { Stack } from "@/components/ui/stack";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
 import type { ToolSchema } from "@/server/admin/tools/schema";
 import { BadgeCheck } from "lucide-react";
-
 
 type ToolPublishActionsProps = ComponentProps<typeof Stack> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>;
@@ -35,7 +33,7 @@ type ActionConfig = Omit<ButtonProps, "popover"> & {
   };
 };
 
-export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusSubmit, children, ...props }: ToolPublishActionsProps) => {
+export const ToolPublishActions = ({ isPending, isStatusPending, onStatusSubmit }: ToolPublishActionsProps) => {
   const { watch } = useFormContext<ToolSchema>();
   const [status] = watch(["status", "publishedAt"]);
 
@@ -118,7 +116,7 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
       },
       {
         type: "submit",
-        children: "Update",
+        children: "Updateeee",
         variant: "primary",
       },
     ],
@@ -128,41 +126,49 @@ export const ToolPublishActions = ({ tool, isPending, isStatusPending, onStatusS
 
   return (
     <Stack direction="row" className="gap-2">
-      {actions.map((action) => (
-        <Popover key={String(action.children)} open={isOpen} onOpenChange={setIsOpen}>
-          <PopoverTrigger asChild>
-            <Button size="md" isPending={action.type === "submit" ? isPending : isStatusPending} {...action} />
-          </PopoverTrigger>
-          {action.popover && (
-            <PopoverContent align="center" side="top" sideOffset={8} className="w-72" onOpenAutoFocus={(e) => e.preventDefault()}>
-              <Stack size="lg" direction="column" className="items-stretch gap-5 min-w-80">
-                <Stack size="sm" direction="column">
-                  <H5>{action.popover.title}</H5>
-                  {action.popover.description && <Note>{action.popover.description}</Note>}
-                </Stack>
-                <RadioGroup defaultValue={currentStatus} className="contents" onValueChange={(value) => setCurrentStatus(value as ToolStatus)}>
-                  {action.popover.options.map((option) => (
-                    <Stack size="sm" className="items-start" key={option.status}>
-                      <RadioGroupItem id={option.status} value={option.status} className="mt-0.5" />
-                      <Stack size="sm" direction="column" className="grow" asChild>
-                        <label htmlFor={option.status}>
-                          <H6>{option.title}</H6>
-                          {option.description && <Note>{option.description}</Note>}
-                          {option.button && (
-                            <Button onClick={option.button.onClick} variant="primary" className="mt-2">
-                              {option.button.children}
-                            </Button>
-                          )}
-                        </label>
+      {actions.map((action) =>
+        action.type === "submit" ? (
+          <Button key={String(action.children)} type="submit" size="md" variant={action.variant} isPending={isPending} onClick={() => console.log("Update button clicked")}>
+            {action.children}
+          </Button>
+        ) : (
+          <Popover key={String(action.children)} open={isOpen} onOpenChange={setIsOpen}>
+            <PopoverTrigger asChild>
+              <Button type="button" size="md" variant={action.variant} isPending={isStatusPending}>
+                {action.children}
+              </Button>
+            </PopoverTrigger>
+            {action.popover && (
+              <PopoverContent align="center" side="top" sideOffset={8} className="w-72" onOpenAutoFocus={(e) => e.preventDefault()}>
+                <Stack size="lg" direction="column" className="items-stretch gap-5 min-w-80">
+                  <Stack size="sm" direction="column">
+                    <H5>{action.popover.title}</H5>
+                    {action.popover.description && <Note>{action.popover.description}</Note>}
+                  </Stack>
+                  <RadioGroup defaultValue={currentStatus} className="contents" onValueChange={(value) => setCurrentStatus(value as ToolStatus)}>
+                    {action.popover.options.map((option) => (
+                      <Stack size="sm" className="items-start" key={option.status}>
+                        <RadioGroupItem id={option.status} value={option.status} className="mt-0.5" />
+                        <Stack size="sm" direction="column" className="grow" asChild>
+                          <label htmlFor={option.status}>
+                            <H6>{option.title}</H6>
+                            {option.description && <Note>{option.description}</Note>}
+                            {option.button && (
+                              <Button onClick={option.button.onClick} variant="primary" className="mt-2">
+                                {option.button.children}
+                              </Button>
+                            )}
+                          </label>
+                        </Stack>
                       </Stack>
-                    </Stack>
-                  ))}
-                </RadioGroup>
-              </Stack>
-            </PopoverContent>
-          )}
-        </Popover>
-      ))}
+                    ))}
+                  </RadioGroup>
+                </Stack>
+              </PopoverContent>
+            )}
+          </Popover>
+        )
+      )}
     </Stack>
   );
 };
