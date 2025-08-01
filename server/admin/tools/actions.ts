@@ -1,7 +1,6 @@
 "use server";
 
 import { slugify } from "@primoui/utils";
-import { ToolStatus } from "@prisma/client";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
@@ -18,6 +17,7 @@ export const upsertTool = adminProcedure
   .createServerAction()
   .input(toolSchema)
   .handler(async ({ input }) => {
+    console.log("🔥 upsertTool SERVER ACTION DIPANGGIL!");
     console.log("✅ upsertTool called", input);
     const { id, categories, platforms, stacks, ...rest } = input;
 
@@ -94,10 +94,6 @@ export const upsertTool = adminProcedure
 
     revalidateTag("tools");
     revalidateTag(`tool-${tool.slug}`);
-
-    if (tool.status === ToolStatus.Scheduled) {
-      revalidateTag("schedule");
-    }
 
     return tool;
   });

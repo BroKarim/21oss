@@ -1,6 +1,6 @@
 "use client";
 
-import { formatDateTime, getRandomString, isValidUrl, slugify } from "@primoui/utils";
+import { getRandomString, isValidUrl, slugify } from "@primoui/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { type Tool, ToolStatus } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -39,11 +39,6 @@ const ToolStatusChange = ({ tool }: { tool: Tool }) => {
         {tool.name}
       </ExternalLink>{" "}
       is now {tool.status.toLowerCase()}.{" "}
-      {tool.status === "Scheduled" && (
-        <>
-          Will be published on {formatDateTime(tool.publishedAt ?? new Date(), "long")} ({Intl.DateTimeFormat().resolvedOptions().timeZone.replace(/^.+\//, "")}).
-        </>
-      )}
     </>
   );
 };
@@ -62,7 +57,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   const stackOptions = use(stacksPromise);
   const [isStatusPending, setIsStatusPending] = useState(false);
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft);
-
   const form = useForm({
     resolver: zodResolver(toolSchema),
     defaultValues: {
@@ -125,6 +119,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
+    
     onSuccess: ({ data }) => {
       console.log("🔥 upsertAction onSuccess, data:", data);
       if (data.status !== originalStatus) {
@@ -158,20 +153,64 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
     onError: ({ err }) => toast.error(err.message),
   });
+  
 
-  const handleSubmit = form.handleSubmit(async (data) => {
-    console.log("🔥 handleSubmit triggered");
-    console.log("🔥 Submitting Tool Data", data);
-    console.log("tool?.id:", tool?.id);
-    upsertAction.execute({ id: tool?.id, ...data });
-  });
+  // const handleSubmit = form.handleSubmit((data, event) => {
+  //   console.log("🔥 handleSubmit DIPANGGIL!");
+  //   console.log("🔥 Data yang akan dikirim:", data);
+  //   console.log("🔥 tool?.id:", tool?.id);
 
-  const handleStatusSubmit = (status: ToolStatus, publishedAt: Date | null) => {
+  //   const submitter = (event?.nativeEvent as SubmitEvent)?.submitter;
+  //   const isStatusChange = submitter?.getAttribute("name") !== "submit";
+
+  //   console.log("🔥 submitter:", submitter);
+  //   console.log("🔥 submitter name:", submitter?.getAttribute("name"));
+  //   console.log("🔥 isStatusChange:", isStatusChange);
+
+  //   if (isStatusChange) {
+  //     setIsStatusPending(true);
+  //   }
+  //   upsertAction.execute({ id: tool?.id, ...data });
+  // });
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("🔥 FORM SUBMIT TRIGGERED");
+
+    try {
+      const isValid = await form.trigger();
+      if (!isValid) {
+        console.log("🔥 Validation errors:", JSON.stringify(Error, null, 2));
+        return;
+      }
+
+      const formData = form.getValues();
+      console.log("🔥 Form data to submit:", formData);
+
+      await upsertAction.execute({ id: tool?.id, ...formData });
+    } catch (error) {
+      console.error("Submission error:", error);
+    }
+  };
+  const handleStatusSubmit = async (status: ToolStatus, publishedAt: Date | null) => {
+    console.log("🔥 STATUS CHANGE TRIGGERED", status);
     form.setValue("status", status);
     form.setValue("publishedAt", publishedAt);
-    setIsStatusPending(true);
-    handleSubmit();
+
+    // Get current form values
+    const formData = form.getValues();
+    console.log("🔥 Form data with new status:", formData);
+
+    // Submit directly
+    await upsertAction.execute({ id: tool?.id, ...formData });
   };
+  // const handleStatusSubmit = (status: ToolStatus, publishedAt: Date | null) => {
+  //   form.setValue("status", status);
+  //   form.setValue("publishedAt", publishedAt);
+  //   handleSubmit({
+  //     preventDefault: () => {},
+  //     nativeEvent: { submitter: { getAttribute: () => "submit" } },
+  //   } as unknown as React.BaseSyntheticEvent); // Panggil tanpa parameter - ini akan trigger form submit
+  // };
 
   return (
     <Form {...form}>
@@ -179,7 +218,16 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
         <H3 className="flex-1 truncate">{title}</H3>
       </Stack>
 
-      <form onSubmit={handleSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>
+      <form
+        // onSubmit={(e) => {
+        //   console.log("🔥 FORM onSubmit triggered!", e);
+        //   handleSubmit(e);
+        // }}
+        onSubmit={handleFormSubmit}
+        className={cx("grid gap-4 @sm:grid-cols-2", className)}
+        noValidate
+        {...props}
+      >
         <FormField
           control={form.control}
           name="name"
@@ -445,8 +493,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
           <Button size="md" variant="secondary" asChild>
             <Link href="/admin/tools">Cancel</Link>
           </Button>
-
-          <ToolPublishActions isPending={upsertAction.isPending} isStatusPending={isStatusPending} onStatusSubmit={handleStatusSubmit} />
+          <ToolPublishActions tool={tool} isPending={upsertAction.isPending} isStatusPending={isStatusPending} onStatusSubmit={handleStatusSubmit} />
         </div>
       </form>
     </Form>
