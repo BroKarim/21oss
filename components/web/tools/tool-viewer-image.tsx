@@ -7,7 +7,6 @@ interface ToolViewerImageProps {
 }
 
 export function ToolViewerImage({ screenshots }: ToolViewerImageProps) {
-  console.debug("Received screenshots:", screenshots);
   const groupedScreenshots = screenshots.reduce(
     (acc, screenshot) => {
       const { page } = screenshot;

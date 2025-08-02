@@ -10,7 +10,6 @@ import { ShareButtons } from "@/components/web/share-button";
 import { findTool, findToolSlugs } from "@/server/web/tools/queries";
 import { IntroDescription } from "@/components/ui/intro";
 // import { FaviconImage } from "@/components/ui/favicon";
-import { ToolDisplay } from "@/components/web/tool-display";
 import { RelatedTools } from "./related";
 import { Note } from "@/components/ui/note";
 import { RepositoryDetails } from "@/components/web/repository-detail";

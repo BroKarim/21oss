@@ -44,7 +44,6 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   screenshots: {
     select: {
       id: true,
-      githubUrl: true,
       imageUrl: true,
       order: true,
       caption: true,
@@ -70,7 +69,6 @@ export const ToolManyPayload: Prisma.ToolSelect = {
   screenshots: {
     select: {
       id: true,
-      githubUrl: true,
       imageUrl: true,
       order: true,
       caption: true,
@@ -98,6 +96,7 @@ export const toolManyExtendedPayload = Prisma.validator<Prisma.ToolSelect>()({
   createdAt: true,
   updatedAt: true,
   categories: toolCategoriesPayload,
+  
 });
 
 export type ToolOne = Prisma.ToolGetPayload<{ select: typeof toolOnePayload }>;

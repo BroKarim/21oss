@@ -1,0 +1,76 @@
+"use client";
+
+import { useState } from "react";
+import { ToolMany } from "@/server/web/tools/payloads";
+import { ToolCard } from "../tool-card";
+import Link from "next/link";
+import { Button } from "@/components/ui/button-shadcn";
+
+type ToolGalleryGroupProps = {
+  id: string;
+  label: string;
+  tools: ToolMany[];
+  options: {
+    showViewAll?: boolean;
+    viewAllUrl?: string;
+    loadMore?: boolean;
+  };
+};
+
+export const ToolGalleryGroup = ({ id, label, tools, options }: ToolGalleryGroupProps) => {
+  const { showViewAll = false, viewAllUrl, loadMore = false } = options;
+  const [visibleCount, setVisibleCount] = useState(6);
+
+  const displayedTools = tools.slice(0, visibleCount);
+
+  if (!displayedTools.length) {
+    return (
+      <section className="space-y-4" id={id}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold">{label}</h2>
+          {showViewAll && viewAllUrl && (
+            <Button asChild variant="outline">
+              <Link href={viewAllUrl}>View All</Link>
+            </Button>
+          )}
+        </div>
+        <div className="text-center text-gray-500">No tools available for this section.</div>
+      </section>
+    );
+  }
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 3); // Tambah 3 item
+  };
+
+  return (
+    <section className="space-y-4" id={id}>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold">{label}</h2>
+        {showViewAll && viewAllUrl && (
+          <Button asChild variant="outline">
+            <Link href={viewAllUrl}>View All</Link>
+          </Button>
+        )}
+      </div>
+
+      {/* Grid 3 kolom */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {displayedTools.map((tool, index) => (
+          <div key={tool.id} className="min-w-[300px] max-w-[300px]">
+            <ToolCard tool={tool} style={{ order: index }} />
+          </div>
+        ))}
+      </div>
+
+      {/* Tombol Load More */}
+      {loadMore && visibleCount < tools.length && (
+        <div className="flex justify-center">
+          <Button onClick={handleLoadMore} variant="outline">
+            Load More
+          </Button>
+        </div>
+      )}
+    </section>
+  );
+};

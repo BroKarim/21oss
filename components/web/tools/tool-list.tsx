@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment } from "react";
 import { ToolCard, ToolCardSkeleton } from "./tool-card";
 import type { ToolMany } from "@/server/web/tools/payloads";

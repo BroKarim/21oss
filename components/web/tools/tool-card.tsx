@@ -11,7 +11,6 @@ import type { ToolMany } from "@/server/web/tools/payloads";
 import ComponentPreviewImage from "../list-card/card-image";
 import { Insights } from "@/components/ui/insights";
 import { formatDistanceToNowStrict } from "date-fns";
-
 type ToolCardProps = ComponentProps<typeof Card> & {
   tool: ToolMany;
   /**
@@ -19,7 +18,7 @@ type ToolCardProps = ComponentProps<typeof Card> & {
    */
 };
 
-const ToolCard = ({ tool, ...props }: ToolCardProps) => {
+const ToolCard = async ({ tool, ...props }: ToolCardProps) => {
   const lastCommitDate = tool.lastCommitDate && formatDistanceToNowStrict(tool.lastCommitDate, { addSuffix: true });
   const insights = [
     {
@@ -34,19 +33,15 @@ const ToolCard = ({ tool, ...props }: ToolCardProps) => {
     },
     { label: "Last commit", value: lastCommitDate, icon: <Timer /> },
   ];
+
   return (
-    <Card asChild {...props} className="p-0 border-none bg-transparent">
+    <Card asChild {...props} className="p-0 border-none bg-transparent shadow-none">
       <Link href={`/${tool.slug}`}>
         <CardHeader className="relative aspect-[900/490] group p-0">
           <div className="absolute inset-0">
             <div className="relative w-full h-full rounded-lg shadow-base overflow-hidden">
               <div className="absolute inset-0">
-                <ComponentPreviewImage
-                  src={tool.screenshots?.find((s) => s.order === 0)?.imageUrl || "/placeholder.svg"}
-                  alt="thumbnail"
-                  fallbackSrc="/placeholder.svg"
-                  className=" w-full h-full border"
-                />
+                <ComponentPreviewImage src={tool.screenshots?.find((s) => s.order === 0)?.imageUrl || "/placeholder.svg"} alt="thumbnail" fallbackSrc="/placeholder.svg" className=" w-full h-full border" />
               </div>
               <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-lg flex items-center flex-col justify-center p-4">
                 <p className="text-white text-sm text-center leading-relaxed">{tool.description}</p>

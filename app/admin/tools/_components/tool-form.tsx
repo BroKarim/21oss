@@ -119,7 +119,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
     onSuccess: ({ data }) => {
-      console.log("🔥 upsertAction onSuccess, data:", data);
       if (data.status !== originalStatus) {
         toast.success(<ToolStatusChange tool={data} />);
         setOriginalStatus(data.status);
@@ -171,7 +170,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   // });
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("🔥 FORM SUBMIT TRIGGERED");
 
     try {
       const isValid = await form.trigger();
@@ -181,7 +179,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       }
 
       const formData = form.getValues();
-      console.log("🔥 Form data to submit:", formData);
 
       await upsertAction.execute({ id: tool?.id, ...formData });
     } catch (error) {
@@ -189,13 +186,11 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     }
   };
   const handleStatusSubmit = async (status: ToolStatus, publishedAt: Date | null) => {
-    console.log("🔥 STATUS CHANGE TRIGGERED", status);
     form.setValue("status", status);
     form.setValue("publishedAt", publishedAt);
 
     // Get current form values
     const formData = form.getValues();
-    console.log("🔥 Form data with new status:", formData);
 
     // Submit directly
     await upsertAction.execute({ id: tool?.id, ...formData });

@@ -46,7 +46,5 @@ export const findPlatformBySlug = async (slug: string) => {
     select: platformOnePayload,
   });
 
-  console.log("findPlatformBySlug: Found platform:", platform);
-
   return platform;
 };

@@ -1,7 +1,7 @@
 import { type Prisma, ToolStatus } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
-import { ToolManyPayload, toolOnePayload } from "./payloads";
+import { ToolManyPayload, toolOnePayload, toolManyExtendedPayload } from "./payloads";
 import type { FilterSchema } from "../shared/schema";
 // sederhanya ini fungsi2 untuk fetch data mirip seperti API GET
 export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {
@@ -76,7 +76,6 @@ export const findTools = async ({ where, orderBy, ...args }: Prisma.ToolFindMany
 
   cacheTag("showcase");
   cacheLife("max");
-  console.log(await db.tool.findMany({ take: 5, orderBy: { createdAt: "desc" } }));
 
   return db.tool.findMany({
     ...args,
@@ -110,5 +109,32 @@ export const findTool = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}
     ...args,
     where: { ...where },
     select: toolOnePayload,
+  });
+};
+
+export const findToolsWithCategories = async ({ where, ...args }: Prisma.ToolFindManyArgs) => {
+  "use cache";
+
+  cacheTag("tools");
+  cacheLife("max");
+
+  return db.tool.findMany({
+    ...args,
+    where: { status: ToolStatus.Published, ...where },
+    select: ToolManyPayload,
+  });
+};
+
+export const findRecentTools = async ({ take = 12 }: { take?: number } = {}) => {
+  return findTools({
+    orderBy: { createdAt: "desc" },
+    take,
+  });
+};
+
+export const findToolsByStack = async (slug: string, { take = 12 }: { take?: number } = {}) => {
+  return findTools({
+    where: { stacks: { some: { slug } } },
+    take,
   });
 };

@@ -11,9 +11,6 @@ type ToolListingProps = {
 };
 
 const ToolListing = ({ list, pagination, options }: ToolListingProps) => {
-  console.log("ToolListing: Received list:", list); // Debug log
-  console.log("ToolListing: Received pagination:", pagination); // Debug log
-  console.log("ToolListing: Received options:", options);
   return (
     <FiltersProvider {...options}>
       <div className="space-y-5" id="tools">

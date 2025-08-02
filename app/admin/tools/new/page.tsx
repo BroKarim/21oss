@@ -6,7 +6,6 @@ import { findPlatformList } from "@/server/admin/platforms/queries";
 import { findStackList } from "@/server/admin/stacks/queries";
 const CreateToolPage = async () => {
   const stacks = await findStackList();
-  console.log("🧪 STACKS", stacks);
   return (
     <Wrapper size="md">
       <ToolForm title="Create tool" categoriesPromise={findCategoryList()} platformsPromise={findPlatformList()} stacksPromise={Promise.resolve(stacks)} />
