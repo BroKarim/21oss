@@ -131,8 +131,7 @@ model ToolScreenshot {
   toolId     String
 
   imageUrl   String
-  caption    String?
-  githubUrl  String?    
+  caption    String?   
 
   order      Int
 }

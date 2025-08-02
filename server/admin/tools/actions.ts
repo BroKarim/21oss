@@ -17,7 +17,6 @@ export const upsertTool = adminProcedure
   .createServerAction()
   .input(toolSchema)
   .handler(async ({ input }) => {
-    console.log("🔥 upsertTool SERVER ACTION DIPANGGIL!");
     console.log("✅ upsertTool called", input);
     const { id, categories, platforms, stacks, ...rest } = input;
 

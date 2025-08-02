@@ -78,7 +78,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
         tool?.screenshots?.map((img) => ({
           imageUrl: img.imageUrl,
           caption: img.caption ?? "",
-          githubUrl: img.githubUrl ?? "", // ✅ tambahan
         })) ?? [],
     },
   });
@@ -119,7 +118,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
-    
     onSuccess: ({ data }) => {
       console.log("🔥 upsertAction onSuccess, data:", data);
       if (data.status !== originalStatus) {
@@ -153,7 +151,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
     onError: ({ err }) => toast.error(err.message),
   });
-  
 
   // const handleSubmit = form.handleSubmit((data, event) => {
   //   console.log("🔥 handleSubmit DIPANGGIL!");
@@ -388,19 +385,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                     <FormLabel>Caption</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Homepage Screenshot" />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name={`screenshots.${index}.githubUrl`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>GitHub URL</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="https://github.com/..." />
                     </FormControl>
                   </FormItem>
                 )}

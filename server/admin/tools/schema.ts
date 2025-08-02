@@ -45,7 +45,6 @@ export const toolSchema = z.object({
       z.object({
         imageUrl: z.string().url(),
         caption: z.string().optional(),
-        githubUrl: z.string().url().optional(),
       })
     )
     .optional(),
