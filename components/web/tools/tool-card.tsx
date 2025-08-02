@@ -14,7 +14,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 type ToolCardProps = ComponentProps<typeof Card> & {
   tool: ToolMany;
   /**
-   * Disables the view transition.
+   * Disables the view trans
    */
 };
 
