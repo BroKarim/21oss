@@ -1,3 +1,5 @@
+
+
 import { type Prisma, ToolStatus } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
@@ -105,11 +107,19 @@ export const findTool = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}
   cacheTag("tool", `tool-${where?.slug}`);
   cacheLife("max");
 
-  return db.tool.findFirst({
-    ...args,
-    where: { ...where },
-    select: toolOnePayload,
-  });
+  try {
+    // Pastikan koneksi di-release dengan proper error handling
+    const result = await db.tool.findFirst({
+      ...args,
+      where: { ...where },
+      select: toolOnePayload,
+    });
+
+    return result;
+  } catch (error) {
+    console.error("Database query error:", error);
+    throw error;
+  }
 };
 
 export const findToolsWithCategories = async ({ where, ...args }: Prisma.ToolFindManyArgs) => {

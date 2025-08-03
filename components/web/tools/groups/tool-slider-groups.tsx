@@ -42,7 +42,7 @@ export const ToolSliderGroup = ({ id, label, tools, options }: ToolSliderGroupPr
     <section className="space-y-4 border border-stone-700 p-2 rounded-lg">
       {/* Header dengan label dan tombol View All */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{label}</h2>
+        <h2 className="text-xl ">{label}</h2>
         {showViewAll && viewAllUrl && (
           <Button asChild variant="outline">
             <Link href={viewAllUrl}>View All</Link>

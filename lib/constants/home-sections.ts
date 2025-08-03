@@ -1,13 +1,13 @@
 // src/config/homeSections.ts
 
-import { findFeaturedTool, findToolsWithCategories, findRecentTools, findToolsByStack } from "@/server/web/tools/queries";
-import { ToolMany } from "@/server/web/tools/payloads";
+// import { findFeaturedTool, findToolsWithCategories, findRecentTools, findToolsByStack } from "@/server/web/tools/queries";
+// import { ToolMany } from "@/server/web/tools/payloads";
 
 export type HomeSection = {
   id: string;
   label: string;
   type: "slider" | "favicon" | "gallery";
-  fetchFn: () => Promise<ToolMany[]>;
+  actionName: string;
   options: {
     showScroll?: boolean;
     showViewAll?: boolean;
@@ -17,10 +17,19 @@ export type HomeSection = {
 };
 export const homeSections: HomeSection[] = [
   {
+    id: "recent",
+    label: "Recently Added",
+    type: "gallery",
+    actionName: "getRecentTools", // Reference ke server action
+    options: {
+      loadMore: true,
+    },
+  },
+  {
     id: "featured",
     label: "Featured Tools",
     type: "slider",
-    fetchFn: () => findFeaturedTool({ take: 8 }),
+    actionName: "getFeaturedTools",
     options: {
       showScroll: true,
       showViewAll: true,
@@ -28,23 +37,10 @@ export const homeSections: HomeSection[] = [
     },
   },
   {
-    id: "recent",
-    label: "Recently Added",
-    type: "gallery",
-    fetchFn: () => findRecentTools({ take: 6 }),
-    options: {
-      loadMore: true,
-    },
-  },
-  // --- Category Sections ---
-  {
     id: "design",
     label: "Design Tools",
     type: "slider",
-    fetchFn: () =>
-      findToolsWithCategories({
-        where: { categories: { some: { slug: "design" } } },
-      }),
+    actionName: "getDesignTools",
     options: {
       showScroll: true,
       showViewAll: true,
@@ -52,42 +48,15 @@ export const homeSections: HomeSection[] = [
     },
   },
   {
-    id: "video",
-    label: "Video Tools",
+    id: "development",
+    label: "Development Tools",
     type: "slider",
-    fetchFn: () => findToolsWithCategories({ where: { categories: { some: { slug: "video" } } }, take: 8 }),
+    actionName: "getDevelopmentTools",
     options: {
-      showScroll: false,
-      showViewAll: false,
+      showScroll: true,
+      showViewAll: true,
+      viewAllUrl: "/categories/development",
     },
   },
-  // --- Stack Sections ---
-  {
-    id: "react",
-    label: "Made with React",
-    type: "favicon",
-    fetchFn: () => findToolsByStack("react", { take: 10 }),
-    options: {},
-  },
-  {
-    id: "shadcn",
-    label: "Built using shadcn/ui",
-    type: "favicon",
-    fetchFn: () => findToolsByStack("shadcn", { take: 10 }),
-    options: {},
-  },
-  // --- Manual List Example ---
-  {
-    id: "recording",
-    label: "Recording Tools",
-    type: "slider",
-    fetchFn: async () => {
-      const slugs = ["cleanvoice", "audacity", "descript"];
-      return findToolsWithCategories({ where: { slug: { in: slugs } } });
-    },
-    options: {
-      showScroll: false,
-      showViewAll: false,
-    },
-  },
+  // Add more sections as needed
 ];

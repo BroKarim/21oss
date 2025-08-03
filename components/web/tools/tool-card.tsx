@@ -54,7 +54,7 @@ const ToolCard = ({ tool, ...props }: ToolCardProps) => {
         </CardHeader>
 
         <div className="p-0">
-          <h2 className="text-base font-semibold text-foreground">{tool.name}</h2>
+          <p className="text-base  text-foreground">{tool.name}</p>
         </div>
       </Link>
     </Card>
