@@ -8,24 +8,24 @@ import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
 
 export const fetchRepositoryData = adminProcedure.createServerAction().handler(async () => {
-  const contents = await db.content.findMany({
+  const tools = await db.tool.findMany({
     where: {
       repositoryUrl: { not: null },
     },
   });
 
-  if (contents.length === 0) {
+  if (tools.length === 0) {
     return { success: false, message: "No tools found" };
   }
 
   await Promise.allSettled(
-    contents.map(async (content) => {
-      const result = await tryCatch(getToolRepositoryData(content.repositoryUrl));
+    tools.map(async (tool) => {
+      const result = await tryCatch(getToolRepositoryData(tool.repositoryUrl));
 
       if (result.error) {
-        console.error(`Failed to fetch repository data for ${content.name}`, {
+        console.error(`Failed to fetch repository data for ${tool.name}`, {
           error: result.error,
-          slug: content.slug,
+          slug: tool.slug,
         });
 
         return null;
@@ -35,8 +35,8 @@ export const fetchRepositoryData = adminProcedure.createServerAction().handler(a
         return null;
       }
 
-      await db.content.update({
-        where: { id: content.id },
+      await db.tool.update({
+        where: { id: tool.id },
         data: result.data,
       });
     })

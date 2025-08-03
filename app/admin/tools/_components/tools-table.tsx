@@ -16,7 +16,7 @@ import { toolsTableParamsSchema } from "@/server/admin/tools/schema";
 import type { DataTableFilterField } from "@/types";
 import { getColumns } from "./tools-table-columns";
 import { ToolsTableToolbarActions } from "./tools-table-toolbar-actions";
-import { Circle, CircleDashed, CircleDotDashed, Plus } from "lucide-react";
+import { Circle, CircleDashed, Plus } from "lucide-react";
 
 type ToolsTableProps = {
   toolsPromise: ReturnType<typeof findTools>;
@@ -44,11 +44,6 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
           label: "Published",
           value: ToolStatus.Published,
           icon: <Circle className="text-green-500" />,
-        },
-        {
-          label: "Scheduled",
-          value: ToolStatus.Scheduled,
-          icon: <CircleDotDashed className="text-blue-500" />,
         },
         {
           label: "Draft",

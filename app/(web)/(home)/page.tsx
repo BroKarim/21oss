@@ -1,9 +1,7 @@
 import { cn } from "@/lib/utils";
 
 import { AnimatePresence } from "motion/react";
-import React, { Suspense } from "react";
-
-import { HomeTabLayout } from "@/components/web/main-page/home-layout";
+import React from "react";
 import { BoltBanner } from "@/components/web/ui/banner";
 import { homeSections, HomeSection } from "@/lib/constants/home-sections";
 import { sectionComponents } from "@/lib/constants/section-components";
@@ -18,12 +16,12 @@ export default async function Page() {
 
   return (
     <main className={cn("flex flex-1 flex-col ")}>
-      <div className="container p-4">
+      <div className="container space-y-2 p-4">
         <AnimatePresence>
           <BoltBanner />
         </AnimatePresence>
-        <HomeTabLayout />
-        <div className="space-y-12">
+        {/* <HomeTabLayout /> */}
+        <div className="space-y-10">
           {sectionsWithData.map((section, idx) => {
             if (!section.tools?.length) {
               return (
@@ -34,11 +32,7 @@ export default async function Page() {
             }
 
             const SectionComponent = sectionComponents[section.type];
-            return (
-              <Suspense key={idx} fallback={<div className="text-center text-gray-500">Loading {section.label}...</div>}>
-                <SectionComponent {...section} />
-              </Suspense>
-            );
+            return <SectionComponent key={idx} {...section} />;
           })}
         </div>
       </div>

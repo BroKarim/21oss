@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { AudioWaveform, BookOpen, PenTool, Command, Frame, GalleryVerticalEnd, Map, PieChart, LayoutGrid } from "lucide-react";
+import { AudioWaveform, BookOpen, PenTool, Command, Palette, GalleryVerticalEnd, SquareKanban, Bitcoin, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac, Workflow, Database, EarthLock } from "lucide-react";
 
 import { NavMain } from "./nav-main";
-import { NavProjects } from "./nav-projects";
+import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
 import { NavLogo } from "./nav-logo";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
@@ -36,13 +36,11 @@ const data = {
   navMain: [
     {
       title: "Explore",
-      url: "#",
+      url: "/",
       icon: LayoutGrid,
       isActive: true,
     },
     {
-      //opensource creative tools to help you develop what you love
-      // inspired by https://minimal.gallery/tools/
       title: "Tools",
       url: "/tools",
       icon: PenTool,
@@ -53,21 +51,96 @@ const data = {
       icon: BookOpen,
     },
   ],
-  projects: [
+  navSecondary: [
     {
-      name: "Website",
-      url: "/platforms/website",
-      icon: Frame,
+      title: "AI",
+      icon: BotMessageSquare,
+      isActive: true,
+      items: [
+        { title: "Models & Training", url: "/categories/models-and-training" },
+        { title: "Agents & Automation", url: "/categories/agents-and-automation" },
+        { title: "AI Infra / Tools", url: "/categories/ai-infra-tools" },
+      ],
     },
     {
-      name: "Android",
-      url: "#",
-      icon: PieChart,
+      title: "Marketing",
+      icon: DiamondPercent,
+      isActive: true,
+      items: [
+        { title: "SEO Tools", url: "/categories/seo-tools" },
+        { title: "Email & Campaigns", url: "/categories/email-campaigns" },
+        { title: "Analytics & Tracking", url: "/categories/analytics-tracking" },
+      ],
     },
     {
-      name: "iOS",
-      url: "#",
-      icon: Map,
+      title: "Design",
+      icon: Palette,
+      isActive: true,
+      items: [
+        { title: "UI Kits & Libraries", url: "/categories/ui-kits-libraries" },
+        { title: "Design Tools", url: "/categories/design-tools" },
+        { title: "Asset Generators", url: "/categories/asset-generators" },
+      ],
+    },
+    {
+      title: "Development",
+      icon: AppWindowMac,
+      isActive: true,
+      items: [
+        { title: "Libraries / SDKs", url: "/categories/libraries-sdks" },
+        { title: "Frameworks", url: "/categories/frameworks" },
+        { title: "CLI / Dev Tools", url: "/categories/cli-dev-tools" },
+      ],
+    },
+    {
+      title: "Finance",
+      icon: Bitcoin,
+      isActive: true,
+      items: [
+        { title: "Budget & Expense", url: "/categories/budget-expense" },
+        { title: "Accounting Tools", url: "/categories/accounting-tools" },
+        { title: "Crypto & DeFi", url: "/categories/crypto-defi" },
+      ],
+    },
+    {
+      title: "Productivity",
+      icon: SquareKanban,
+      isActive: true,
+      items: [
+        { title: "Notes & Docs", url: "/categories/notes-docs" },
+        { title: "Task Management", url: "/categories/task-management" },
+        { title: "Calendars & Schedulers", url: "/categories/calendars-schedulers" },
+      ],
+    },
+    {
+      title: "Security",
+      icon: EarthLock,
+      isActive: true,
+      items: [
+        { title: "Password Manager", url: "/categories/password-manager" },
+        { title: "Audit & Scanner", url: "/categories/audit-scanner" },
+        { title: "Privacy Tools", url: "/categories/privacy-tools" },
+      ],
+    },
+    {
+      title: "Data & Analytics",
+      icon: Database,
+      isActive: true,
+      items: [
+        { title: "BI Dashboards", url: "/categories/bi-dashboards" },
+        { title: "Data Processing", url: "/categories/data-processing" },
+        { title: "Database Tools", url: "/categories/database-tools" },
+      ],
+    },
+    {
+      title: "DevOps / Infrastructure",
+      icon: Workflow,
+      isActive: true,
+      items: [
+        { title: "CI/CD", url: "/categories/ci-cd" },
+        { title: "Monitoring & Logs", url: "/categories/monitoring-logs" },
+        { title: "Container & VM", url: "/categories/container-vm" },
+      ],
     },
   ],
 };
@@ -78,9 +151,9 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
       <SidebarHeader>
         <NavLogo teams={data.teams} />
       </SidebarHeader>
-      <SidebarContent >
+      <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavSecondary items={data.navSecondary} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

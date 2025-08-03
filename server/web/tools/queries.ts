@@ -1,7 +1,7 @@
 import { type Prisma, ToolStatus } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
-import { ToolManyPayload, toolOnePayload, toolManyExtendedPayload } from "./payloads";
+import { ToolManyPayload, toolOnePayload } from "./payloads";
 import type { FilterSchema } from "../shared/schema";
 // sederhanya ini fungsi2 untuk fetch data mirip seperti API GET
 export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {

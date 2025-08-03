@@ -44,7 +44,7 @@ export const ToolGalleryGroup = ({ id, label, tools, options }: ToolGalleryGroup
   };
 
   return (
-    <section className="space-y-4" id={id}>
+    <section className="space-y-4 border-3 border-stone-700 p-2 rounded-lg" id={id}>
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{label}</h2>
         {showViewAll && viewAllUrl && (
@@ -55,9 +55,9 @@ export const ToolGalleryGroup = ({ id, label, tools, options }: ToolGalleryGroup
       </div>
 
       {/* Grid 3 kolom */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {displayedTools.map((tool, index) => (
-          <div key={tool.id} className="min-w-[300px] max-w-[300px]">
+          <div key={tool.id} className="min-w-[350px] max-w-[350px]">
             <ToolCard tool={tool} style={{ order: index }} />
           </div>
         ))}

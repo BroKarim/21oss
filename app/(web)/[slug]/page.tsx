@@ -35,11 +35,6 @@ export const generateStaticParams = async () => {
 
 export default async function ToolPage(props: PageProps) {
   const tool = await getTool(props);
-  const sampleImages = [
-    "https://openlayout-web-storage.s3.us-east-1.amazonaws.com/affilmory/aff-1.png",
-    "https://openlayout-web-storage.s3.us-east-1.amazonaws.com/affilmory/aff-col-set.png",
-    "https://openlayout-web-storage.s3.us-east-1.amazonaws.com/affilmory/aff-photo-location.png",
-  ];
 
   return (
     <>
@@ -62,10 +57,6 @@ export default async function ToolPage(props: PageProps) {
               </div>
               <div className="flex gap-8">
                 <Stack size="lg" direction="column">
-                  <Note>Platform:</Note>
-                  web, Android
-                </Stack>
-                <Stack size="lg" direction="column">
                   <Note>Category:</Note>
                   {tool.categories?.length > 0 ? (
                     tool.categories.map((category) => (
@@ -82,7 +73,7 @@ export default async function ToolPage(props: PageProps) {
                   web, Android
                 </Stack>
                 <Stack size="lg" direction="column">
-                  <Note>Stacks:</Note>
+                  <Note>Tech Stack:</Note>
                   {tool.stacks && tool.stacks.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {tool.stacks.map((stack) => (
@@ -109,7 +100,7 @@ export default async function ToolPage(props: PageProps) {
           <ToolDisplay screenshots={tool.screenshots ?? []} />
         </div> */}
         <div className="w-full flex  min-h-[500px]">
-          <ImageGallery images={sampleImages} />
+          <ImageGallery images={(tool.screenshots ?? []).map((s) => s.imageUrl)} />
         </div>
         <ShareButtons title="tess" direction="column" className="max-md:order-9" />
         <p>- tinggal tambahin -source (i)-</p>

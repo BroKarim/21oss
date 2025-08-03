@@ -39,7 +39,7 @@ export const ToolSliderGroup = ({ id, label, tools, options }: ToolSliderGroupPr
   }
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 border border-stone-700 p-2 rounded-lg">
       {/* Header dengan label dan tombol View All */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">{label}</h2>
@@ -56,7 +56,7 @@ export const ToolSliderGroup = ({ id, label, tools, options }: ToolSliderGroupPr
           <ScrollArea className="w-full -mx-1 px-1">
             <div className="flex space-x-4" style={{ minWidth: "100%", paddingLeft: "1px", paddingRight: "1px" }}>
               {displayedTools.map((tool, index) => (
-                <div key={tool.id} className="min-w-[250px] max-w-[250px]">
+                <div key={tool.id} className="min-w-[300px] max-w-[300px]">
                   <ToolCard tool={tool} style={{ order: index }} />
                 </div>
               ))}
