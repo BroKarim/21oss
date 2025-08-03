@@ -5,13 +5,14 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { SearchParams } from "nuqs/server";
 import { Suspense, cache } from "react";
+import { BoltBanner } from "@/components/web/ui/banner";
 import { ToolListSkeleton } from "@/components/web/tools/tool-list";
-import { Intro, IntroDescription, IntroTitle } from "@/components/ui/intro";
 import { metadataConfig } from "@/config/metadata";
 import { categoryRedirects } from "@/lib/categories";
 import type { CategoryOne } from "@/server/web/categories/payloads";
 import { findCategoryByPath, findCategoryDescendants, findCategorySlugs, findCategoryTree } from "@/server/web/categories/queries";
 import { ToolQuery } from "@/components/web/tools/tool-query";
+import { cn } from "@/lib/utils";
 type PageProps = {
   params: Promise<{ slug: string[] }>;
   searchParams: Promise<SearchParams>;
@@ -62,19 +63,19 @@ export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
 
 export default async function CategoryPage(props: PageProps) {
   const category = await getCategory(props);
-  const { title, description } = getMetadata(category);
 
   const [descendants] = await Promise.all([findCategoryDescendants(category.slug), findCategoryTree(category.fullPath)]);
   return (
     <>
-      <Intro>
-        {" "}
-        <IntroTitle>{`${title}`}</IntroTitle>
-        <IntroDescription className="max-w-2xl">{description}</IntroDescription>
-        <Suspense fallback={<ToolListSkeleton />}>
-          <ToolQuery searchParams={props.searchParams} where={{ categories: { some: { slug: { in: descendants } } } }} />
-        </Suspense>
-      </Intro>
+      <main className={cn("flex flex-1 flex-col ")}>
+        <div className="container space-y-2 p-4">
+          <BoltBanner />
+
+          <Suspense fallback={<ToolListSkeleton />}>
+            <ToolQuery searchParams={props.searchParams} where={{ categories: { some: { slug: { in: descendants } } } }} />
+          </Suspense>
+        </div>
+      </main>
     </>
   );
 }
