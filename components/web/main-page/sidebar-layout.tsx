@@ -53,13 +53,26 @@ const data = {
   ],
   navSecondary: [
     {
+      title: "Programming",
+      icon: AppWindowMac,
+      isActive: true,
+      items: [
+        { title: "Frontend", url: "/categories/models-and-training" },
+        { title: "Backend", url: "/categories/agents-and-automation" },
+        { title: "Components", url: "/categories/ai-infra-tools" },
+        { title: "Dev Tools", url: "/categories/ai-infra-tools" },
+        { title: "APIs & Integration", url: "/categories/ai-infra-tools" },
+      ],
+    },
+    {
       title: "AI",
       icon: BotMessageSquare,
       isActive: true,
       items: [
-        { title: "Models & Training", url: "/categories/models-and-training" },
-        { title: "Agents & Automation", url: "/categories/agents-and-automation" },
-        { title: "AI Infra / Tools", url: "/categories/ai-infra-tools" },
+        { title: "Images & Videos", url: "/categories/models-and-training" },
+        { title: "Text & Speech", url: "/categories/agents-and-automation" },
+        { title: "Productivity", url: "/categories/ai-infra-tools" },
+        { title: "LLM Ecosystem", url: "/categories/ai-infra-tools" },
       ],
     },
     {
@@ -77,69 +90,12 @@ const data = {
       icon: Palette,
       isActive: true,
       items: [
-        { title: "UI Kits & Libraries", url: "/categories/ui-kits-libraries" },
-        { title: "Design Tools", url: "/categories/design-tools" },
-        { title: "Asset Generators", url: "/categories/asset-generators" },
-      ],
-    },
-    {
-      title: "Development",
-      icon: AppWindowMac,
-      isActive: true,
-      items: [
-        { title: "Libraries / SDKs", url: "/categories/libraries-sdks" },
-        { title: "Frameworks", url: "/categories/frameworks" },
-        { title: "CLI / Dev Tools", url: "/categories/cli-dev-tools" },
-      ],
-    },
-    {
-      title: "Finance",
-      icon: Bitcoin,
-      isActive: true,
-      items: [
-        { title: "Budget & Expense", url: "/categories/budget-expense" },
-        { title: "Accounting Tools", url: "/categories/accounting-tools" },
-        { title: "Crypto & DeFi", url: "/categories/crypto-defi" },
-      ],
-    },
-    {
-      title: "Productivity",
-      icon: SquareKanban,
-      isActive: true,
-      items: [
-        { title: "Notes & Docs", url: "/categories/notes-docs" },
-        { title: "Task Management", url: "/categories/task-management" },
-        { title: "Calendars & Schedulers", url: "/categories/calendars-schedulers" },
-      ],
-    },
-    {
-      title: "Security",
-      icon: EarthLock,
-      isActive: true,
-      items: [
-        { title: "Password Manager", url: "/categories/password-manager" },
-        { title: "Audit & Scanner", url: "/categories/audit-scanner" },
-        { title: "Privacy Tools", url: "/categories/privacy-tools" },
-      ],
-    },
-    {
-      title: "Data & Analytics",
-      icon: Database,
-      isActive: true,
-      items: [
-        { title: "BI Dashboards", url: "/categories/bi-dashboards" },
-        { title: "Data Processing", url: "/categories/data-processing" },
-        { title: "Database Tools", url: "/categories/database-tools" },
-      ],
-    },
-    {
-      title: "DevOps / Infrastructure",
-      icon: Workflow,
-      isActive: true,
-      items: [
-        { title: "CI/CD", url: "/categories/ci-cd" },
-        { title: "Monitoring & Logs", url: "/categories/monitoring-logs" },
-        { title: "Container & VM", url: "/categories/container-vm" },
+        { title: "Colors", url: "/categories/ui-kits-libraries" },
+        { title: "Typography", url: "/categories/design-tools" },
+        { title: "Asset", url: "/categories/asset-generators" },
+        { title: "UI/UX", url: "/categories/asset-generators" },
+        { title: "Utility & Software", url: "/categories/asset-generators" },
+        { title: "3D & Motion", url: "/categories/asset-generators" },
       ],
     },
   ],
