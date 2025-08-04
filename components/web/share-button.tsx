@@ -1,89 +1,80 @@
 "use client";
 
-import { usePathname } from "next/navigation";
-import type { ComponentProps, ReactNode } from "react";
-import { Button } from "@/components/ui/button";
-import { H5 } from "@/components/ui/heading";
-import { Stack } from "@/components/ui/stack";
-import { Tooltip } from "@/components/ui/tooltip";
-import { Twitter, Twitch, Github } from "lucide-react";
-import { ExternalLink } from "@/components/web/external-link";
-import { config } from "@/config";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button-shadcn";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Icons } from "./icons";
+import { Check, Copy } from "lucide-react";
+import { useId, useRef, useState } from "react";
 
-type Platform = "X" | "Bluesky" | "Mastodon" | "Facebook" | "LinkedIn" | "HackerNews" | "Reddit" | "WhatsApp";
+function Share() {
+  const id = useId();
+  const [copied, setCopied] = useState<boolean>(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-type ShareOption = {
-  platform: Platform;
-  url: (shareUrl: string, shareTitle: string) => string;
-  icon: ReactNode;
-};
-
-const shareOptions: ShareOption[] = [
-  {
-    platform: "X",
-    url: (url, title) => `https://x.com/intent/post?text=${title}&url=${url}`,
-    icon: <Twitter />,
-  },
-  {
-    platform: "Bluesky",
-    url: (url, title) => `https://bsky.app/intent/compose?text=${title}+${url}`,
-    icon: <Twitter />,
-  },
-  {
-    platform: "Mastodon",
-    url: (url, title) => `https://mastodon.social/share?text=${title}+${url}`,
-    icon: <Twitter />,
-  },
-  {
-    platform: "Facebook",
-    url: (url) => `https://www.facebook.com/sharer/sharer.php?u=${url}`,
-    icon: <Twitter />,
-  },
-  {
-    platform: "LinkedIn",
-    url: (url, title) => `https://linkedin.com/sharing/share-offsite?url=${url}&text=${title}`,
-    icon: <Twitter />,
-  },
-  {
-    platform: "HackerNews",
-    url: (url, title) => `https://news.ycombinator.com/submitlink?u=${url}&t=${title}`,
-    icon: <Twitter />,
-  },
-  {
-    platform: "Reddit",
-    url: (url, title) => `https://reddit.com/submit?url=${url}&title=${title}`,
-    icon: <Twitter />,
-  },
-  {
-    platform: "WhatsApp",
-    url: (url, title) => `https://api.whatsapp.com/send?text=${title}+${url}`,
-    icon: <Twitter />,
-  },
-];
-
-type ShareButtonsProps = Omit<ComponentProps<typeof Stack>, "title"> & {
-  title: string;
-};
-
-export const ShareButtons = ({ title, ...props }: ShareButtonsProps) => {
-  const pathname = usePathname();
-
-  const currentUrl = encodeURIComponent(`${config.site.url}${pathname}`);
-  const shareTitle = encodeURIComponent(`${title} — ${config.site.name}`);
+  const handleCopy = () => {
+    if (inputRef.current) {
+      navigator.clipboard.writeText(inputRef.current.value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    }
+  };
 
   return (
-    <Stack {...props}>
-      <H5 as="strong">Share:</H5>
+    <div className="flex flex-col gap-4">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className="sm:min-w-36">
+            Share
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-72">
+          <div className="flex flex-col gap-3 text-center">
+            <div className="text-sm font-medium">Share code</div>
+            <div className="flex flex-wrap justify-center gap-2">
+              <Button size="icon" variant="outline" aria-label="Embed">
+                <Icons.thread aria-hidden="true" />
+              </Button>
+              <Button size="icon" variant="outline" aria-label="Share on Twitter">
+                <Icons.Xicon aria-hidden="true" />
+              </Button>
 
-      <Stack size="sm">
-        {shareOptions.map(({ platform, url, icon }) => (
-          <Tooltip key={platform} tooltip={platform}>
-            <Button size="sm" variant="secondary" prefix={icon} asChild>
-              <ExternalLink href={url(currentUrl, shareTitle)} eventName="click_share" eventProps={{ url: currentUrl, platform }} />
-            </Button>
-          </Tooltip>
-        ))}
-      </Stack>
-    </Stack>
+              <Button size="icon" variant="outline" aria-label="Share via email">
+                <Icons.mail size={16} strokeWidth={2} aria-hidden="true" />
+              </Button>
+            </div>
+            <div className="space-y-2">
+              <div className="relative">
+                <Input ref={inputRef} id={id} className="pe-9" type="text" defaultValue="https://originui.com/Avx8HD" aria-label="Share link" readOnly />
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={handleCopy}
+                        className="absolute inset-y-0 end-0 flex h-full w-9 items-center justify-center rounded-e-lg border border-transparent text-muted-foreground/80 outline-offset-2 transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-ring/70 disabled:pointer-events-none disabled:cursor-not-allowed"
+                        aria-label={copied ? "Copied" : "Copy to clipboard"}
+                        disabled={copied}
+                      >
+                        <div className={cn("transition-all", copied ? "scale-100 opacity-100" : "scale-0 opacity-0")}>
+                          <Check className="stroke-emerald-500" size={16} strokeWidth={2} aria-hidden="true" />
+                        </div>
+                        <div className={cn("absolute transition-all", copied ? "scale-0 opacity-0" : "scale-100 opacity-100")}>
+                          <Copy size={16} strokeWidth={2} aria-hidden="true" />
+                        </div>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent className="px-2 py-1 text-xs">Copy to clipboard</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </div>
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
   );
-};
+}
+
+export { Share };

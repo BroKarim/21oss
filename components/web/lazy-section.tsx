@@ -8,7 +8,6 @@ import { sectionComponents } from "@/lib/constants/section-components";
 
 interface LazySectionProps {
   section: HomeSection;
-  Component: React.ComponentType<any>;
 }
 
 interface SectionWithData extends Omit<HomeSection, "actionName"> {
@@ -55,7 +54,6 @@ export default function LazySection({ section }: LazySectionProps) {
             setHasLoaded(true);
           } catch (error) {
             console.error(`Error loading section ${section.label}:`, error);
-            // Set empty array on error so section doesn't disappear
             setSectionData((prev) => ({
               ...prev,
               tools: [],
@@ -67,8 +65,8 @@ export default function LazySection({ section }: LazySectionProps) {
         }
       },
       {
-        threshold: 0.1, // Trigger when 10% visible
-        rootMargin: "100px", // Start loading 100px before section is visible
+        threshold: 0.1,
+        rootMargin: "100px",
       }
     );
 
@@ -124,11 +122,10 @@ export default function LazySection({ section }: LazySectionProps) {
     );
   }
 
-  // Render actual component with data
   const Component = sectionComponents[section.type];
   const componentProps = {
     ...sectionData,
-    tools: sectionData.tools || [], // Convert null to empty array
+    tools: sectionData.tools || [],
   };
   return (
     <div ref={sectionRef}>

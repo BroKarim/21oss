@@ -7,7 +7,6 @@ import { MainSidebar } from "@/components/web/main-page/sidebar-layout";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
 import { CommandMenu } from "@/components/web/main-page/command-menu";
-import { ModeSwitcher } from "@/components/web/mode-swithcer";
 import { useAtom } from "jotai";
 
 export function AppProviders({ children }: { children: React.ReactNode }): React.ReactElement {
@@ -25,7 +24,6 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
         <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 justify-between">
           Building Your Application
           <div className="hidden w-full flex-1 md:flex md:w-auto md:flex-none gap-2">
-            <ModeSwitcher />
             <CommandMenu />
           </div>
         </header>

@@ -10,7 +10,7 @@ import { IntroDescription } from "@/components/ui/intro";
 import { FaviconImage } from "@/components/ui/favicon";
 import { RelatedTools } from "./related";
 import { Note } from "@/components/ui/note";
-import { Share } from "@/components/web/share";
+import { Share } from "@/components/web/share-button";
 import { RepositoryDetails } from "@/components/web/repository-detail";
 import ImageGallery from "@/components/web/image-gallery";
 import { Separator } from "@/components/ui/separator";
