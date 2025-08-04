@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { HomeSection } from "@/lib/constants/home-sections";
 import { ToolMany } from "@/server/web/tools/payloads";
-  import * as toolsActions from "@/server/web/tools/actions";
-  import { sectionComponents } from "@/lib/constants/section-components";
+import * as toolsActions from "@/server/web/tools/actions";
+import { sectionComponents } from "@/lib/constants/section-components";
 
   interface LazySectionProps {
     section: HomeSection;
