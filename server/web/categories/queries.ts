@@ -144,3 +144,49 @@ export const findCategoryAncestors = async (slug: string): Promise<string[]> => 
 
   return [...result.map(({ slug }) => slug), slug];
 };
+
+export const getSubcategoriesWithTools = async (slug: string) => {
+  "use cache";
+
+  cacheTag("category", `category-subtools-${slug}`);
+  cacheLife("max");
+
+  const parentCategory = await db.category.findFirst({
+    where: { slug },
+    select: { id: true, slug: true, name: true },
+  });
+
+  if (!parentCategory) throw new Error("Category not found");
+
+  const subcategories = await db.category.findMany({
+    where: { parentId: parentCategory.id },
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      description: true,
+      tools: {
+        where: { status: ToolStatus.Published },
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          tagline: true,
+          description: true,
+          websiteUrl: true,
+          repositoryUrl: true,
+          demoUrl: true,
+          affiliateUrl: true,
+          publishedAt: true,
+          categories: {
+            select: { slug: true, name: true },
+          },
+        },
+        orderBy: { publishedAt: "desc" },
+      },
+    },
+  });
+
+  return subcategories;
+};

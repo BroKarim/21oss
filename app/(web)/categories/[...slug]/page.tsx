@@ -10,8 +10,9 @@ import { ToolListSkeleton } from "@/components/web/tools/tool-list";
 import { metadataConfig } from "@/config/metadata";
 import { categoryRedirects } from "@/lib/categories";
 import type { CategoryOne } from "@/server/web/categories/payloads";
-import { findCategoryByPath, findCategoryDescendants, findCategorySlugs, findCategoryTree } from "@/server/web/categories/queries";
-import { ToolQuery } from "@/components/web/tools/tool-query";
+import Link from "next/link";
+import { findCategoryByPath, findCategorySlugs, getSubcategoriesWithTools } from "@/server/web/categories/queries";
+import { ToolListing } from "@/components/web/tools/tool-listing";
 import { cn } from "@/lib/utils";
 type PageProps = {
   params: Promise<{ slug: string[] }>;
@@ -64,15 +65,45 @@ export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
 export default async function CategoryPage(props: PageProps) {
   const category = await getCategory(props);
 
-  const [descendants] = await Promise.all([findCategoryDescendants(category.slug), findCategoryTree(category.fullPath)]);
+  const subcategories = await getSubcategoriesWithTools(category.slug);
+
   return (
     <>
-      <main className={cn("flex flex-1 flex-col ")}>
-        <div className="container space-y-2 p-4">
+      <main className={cn("flex flex-1 flex-col")}>
+        <div className="container p-4 space-y-6">
           <BoltBanner />
 
+          {/* Navigasi Anchor */}
+          {subcategories.length > 1 && (
+            <nav className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border">
+              <ul className="flex gap-4 overflow-x-auto py-2 px-1">
+                {subcategories.map((sub) => (
+                  <li key={sub.slug}>
+                    <Link href={`#${sub.slug}`} className="text-sm hover:underline whitespace-nowrap">
+                      {sub.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
+
+          {/* Section per Subkategori */}
           <Suspense fallback={<ToolListSkeleton />}>
-            <ToolQuery searchParams={props.searchParams} where={{ categories: { some: { slug: { in: descendants } } } }} />
+            {subcategories.map((sub) => (
+              <section key={sub.slug} id={sub.slug} className="scroll-mt-24 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">{sub.name}</h2>
+                  {sub.description && <p className="text-muted-foreground text-sm max-w-[75%]">{sub.description}</p>}
+                </div>
+
+                {sub.tools.length > 0 ? (
+                  <ToolListing list={{ tools: sub.tools }} pagination={{ totalCount: sub.tools.length, pageSize: sub.tools.length }} />
+                ) : (
+                  <p className="text-muted-foreground text-sm">No tools found in this category.</p>
+                )}
+              </section>
+            ))}
           </Suspense>
         </div>
       </main>
