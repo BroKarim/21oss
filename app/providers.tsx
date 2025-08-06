@@ -8,6 +8,7 @@ import { AdminSidebar } from "@/components/admin/sidebar";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
 import { CommandMenu } from "@/components/web/main-page/command-menu";
 import { useAtom } from "jotai";
+import Footer4Col from "@/components/web/footers";
 
 export function AppProviders({ children }: { children: React.ReactNode }): React.ReactElement {
   const [open, setOpen] = useAtom(sidebarOpenAtom);
@@ -28,6 +29,7 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
           </div>
         </header>
         {children}
+        {!isAdmin && <Footer4Col />}
       </MainLayout>
     </SidebarProvider>
   );

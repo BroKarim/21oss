@@ -10,6 +10,7 @@ interface ToolsBySubcategoryLazyProps {
   subcategoryLabel?: string;
 }
 
+// TODO : Jangan pakai scroll, tpi gallery sja
 export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLabel }: ToolsBySubcategoryLazyProps) {
   const [tools, setTools] = useState<ToolMany[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
