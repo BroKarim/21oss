@@ -1,8 +1,3 @@
-// src/config/homeSections.ts
-
-// import { findFeaturedTool, findToolsWithCategories, findRecentTools, findToolsByStack } from "@/server/web/tools/queries";
-// import { ToolMany } from "@/server/web/tools/payloads";
-
 export type HomeSection = {
   id: string;
   label: string;
@@ -20,7 +15,7 @@ export const homeSections: HomeSection[] = [
     id: "recent",
     label: "Recently Added",
     type: "gallery",
-    actionName: "getRecentTools", // Reference ke server action
+    actionName: "getRecentTools",
     options: {
       loadMore: true,
     },

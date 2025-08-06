@@ -11,9 +11,10 @@ import { metadataConfig } from "@/config/metadata";
 import { categoryRedirects } from "@/lib/categories";
 import type { CategoryOne } from "@/server/web/categories/payloads";
 import Link from "next/link";
-import { findCategoryByPath, findCategorySlugs, getSubcategoriesWithTools } from "@/server/web/categories/queries";
-import { ToolListing } from "@/components/web/tools/tool-listing";
+import ToolsBySubcategoryLazy from "@/components/web/subcat-lazy";
+import { findCategoryByPath, findCategorySlugs, getSubcategories } from "@/server/web/categories/queries";
 import { cn } from "@/lib/utils";
+
 type PageProps = {
   params: Promise<{ slug: string[] }>;
   searchParams: Promise<SearchParams>;
@@ -65,7 +66,7 @@ export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
 export default async function CategoryPage(props: PageProps) {
   const category = await getCategory(props);
 
-  const subcategories = await getSubcategoriesWithTools(category.slug);
+  const subcategories = await getSubcategories(category.slug);
 
   return (
     <>
@@ -97,11 +98,9 @@ export default async function CategoryPage(props: PageProps) {
                   {sub.description && <p className="text-muted-foreground text-sm max-w-[75%]">{sub.description}</p>}
                 </div>
 
-                {sub.tools.length > 0 ? (
-                  <ToolListing list={{ tools: sub.tools }} pagination={{ totalCount: sub.tools.length, pageSize: sub.tools.length }} />
-                ) : (
-                  <p className="text-muted-foreground text-sm">No tools found in this category.</p>
-                )}
+                {subcategories.map((sub) => (
+                  <ToolsBySubcategoryLazy key={sub.slug} subcategorySlug={sub.slug} subcategoryLabel={sub.name} />
+                ))}
               </section>
             ))}
           </Suspense>

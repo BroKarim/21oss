@@ -38,6 +38,12 @@ export const categoryManyNestedPayload = Prisma.validator<Prisma.CategorySelect>
   },
 });
 
+export const categorySubListPayload = Prisma.validator<Prisma.CategorySelect>()({
+  slug: true,
+  name: true,
+  description: true,
+});
+
 export type CategoryOne = Prisma.CategoryGetPayload<{ select: typeof categoryOnePayload }>;
 export type CategoryMany = Prisma.CategoryGetPayload<{ select: typeof categoryManyPayload }>;
 export type CategoryManyNested = Prisma.CategoryGetPayload<{

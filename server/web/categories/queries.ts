@@ -1,6 +1,6 @@
 import { type Prisma, ToolStatus } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
-import { categoryManyNestedPayload, categoryManyPayload, categoryOnePayload, categoryWithTools } from "@/server/web/categories/payloads";
+import { categoryManyNestedPayload, categoryManyPayload, categoryOnePayload, categoryWithTools, categorySubListPayload } from "@/server/web/categories/payloads";
 import { db } from "@/services/db";
 
 export const findCategories = async ({ where, orderBy, ...args }: Prisma.CategoryFindManyArgs) => {
@@ -145,7 +145,7 @@ export const findCategoryAncestors = async (slug: string): Promise<string[]> => 
   return [...result.map(({ slug }) => slug), slug];
 };
 
-export const getSubcategoriesWithTools = async (slug: string) => {
+export const getSubcategories = async (slug: string) => {
   "use cache";
 
   cacheTag("category", `category-subtools-${slug}`);
@@ -161,31 +161,7 @@ export const getSubcategoriesWithTools = async (slug: string) => {
   const subcategories = await db.category.findMany({
     where: { parentId: parentCategory.id },
     orderBy: { name: "asc" },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      description: true,
-      tools: {
-        where: { status: ToolStatus.Published },
-        select: {
-          id: true,
-          name: true,
-          slug: true,
-          tagline: true,
-          description: true,
-          websiteUrl: true,
-          repositoryUrl: true,
-          demoUrl: true,
-          affiliateUrl: true,
-          publishedAt: true,
-          categories: {
-            select: { slug: true, name: true },
-          },
-        },
-        orderBy: { publishedAt: "desc" },
-      },
-    },
+    select: categorySubListPayload,
   });
 
   return subcategories;
