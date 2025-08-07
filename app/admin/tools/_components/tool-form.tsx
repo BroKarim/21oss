@@ -73,7 +73,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       publishedAt: tool?.publishedAt ?? null,
       categories: tool?.categories.map((c) => c.id) ?? [],
       platforms: tool?.platforms.map((p) => p.id) ?? [],
-      stacks: tool?.stacks.map((s) => s.slug) ?? [],
+      stacks: tool?.stacks.map((s) => ({ id: s.id })) ?? [],
       screenshots:
         tool?.screenshots?.map((img) => ({
           imageUrl: img.imageUrl,
@@ -210,16 +210,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
         <H3 className="flex-1 truncate">{title}</H3>
       </Stack>
 
-      <form
-        // onSubmit={(e) => {
-        //   console.log("🔥 FORM onSubmit triggered!", e);
-        //   handleSubmit(e);
-        // }}
-        onSubmit={handleFormSubmit}
-        className={cx("grid gap-4 @sm:grid-cols-2", className)}
-        noValidate
-        {...props}
-      >
+      <form onSubmit={handleFormSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>
         <FormField
           control={form.control}
           name="name"
@@ -328,7 +319,14 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                 name={`stacks.${index}`}
                 render={({ field }) => (
                   <FormControl>
-                    <Input placeholder="Enter stack (e.g., React)" {...field} />
+                    <Input
+                      placeholder="Enter stack (e.g., React)"
+                      value={field.value?.name || ""}
+                      onChange={(e) => {
+                        const name = e.target.value;
+                        field.onChange({ name, id: "", slug: name.toLowerCase() });
+                      }}
+                    />
                   </FormControl>
                 )}
               />
@@ -337,7 +335,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
               </Button>
             </div>
           ))}
-          <StackCombobox options={stackOptions} onSelect={(slug) => appendStack(slug)} />
+          <StackCombobox options={stackOptions} onSelect={(stackObj) => appendStack(stackObj)} />
 
           <FormMessage />
         </FormItem>
@@ -393,7 +391,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
             </div>
           ))}
 
-          <Button type="button" variant="secondary" onClick={() => appendScreenshot({ imageUrl: "", caption: "", githubUrl: "" })}>
+          <Button type="button" variant="secondary" onClick={() => appendScreenshot({ imageUrl: "", caption: "" })}>
             + Tambah Screenshot
           </Button>
         </div>

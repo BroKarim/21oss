@@ -16,7 +16,7 @@ type StackOption = {
 
 type StackComboboxProps = {
   options: StackOption[];
-  onSelect: (slug: string) => void;
+  onSelect: (stack: StackOption) => void; // ✅ Ubah dari slug ke StackOption
 };
 
 export function StackCombobox({ options, onSelect }: StackComboboxProps) {
@@ -24,20 +24,24 @@ export function StackCombobox({ options, onSelect }: StackComboboxProps) {
   const [inputValue, setInputValue] = React.useState("");
 
   const createStackAction = useServerAction(createStack, {
-    onSuccess: (data) => {
-      onSelect(data.slug); // langsung append slug
+    onSuccess: ({ data }) => {
+      onSelect({
+        id: data.id,
+        name: data.name,
+        slug: data.slug,
+      });
       setOpen(false);
       setInputValue("");
     },
     onError: (err) => {
-      toast.error("Gagal menambahkan stack: " + err.message);
+      console.log("Gagal menambahkan stack: ", err);
     },
   });
 
   const handleSelect = (value: string) => {
     const existing = options.find((opt) => opt.slug === value);
     if (existing) {
-      onSelect(existing.slug);
+      onSelect(existing);
       setOpen(false);
       setInputValue("");
     } else {

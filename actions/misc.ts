@@ -1,8 +1,8 @@
 "use server";
 
+import { ToolStatus } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { getToolRepositoryData } from "@/lib/repositories";
-
 import { adminProcedure } from "@/lib/safe-actions";
 import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
@@ -10,7 +10,7 @@ import { tryCatch } from "@/utils/helpers";
 export const fetchRepositoryData = adminProcedure.createServerAction().handler(async () => {
   const tools = await db.tool.findMany({
     where: {
-      repositoryUrl: { not: null },
+      status: { in: [ToolStatus.Published] },
     },
   });
 
@@ -20,7 +20,7 @@ export const fetchRepositoryData = adminProcedure.createServerAction().handler(a
 
   await Promise.allSettled(
     tools.map(async (tool) => {
-      const result = await tryCatch(getToolRepositoryData(tool.repositoryUrl!));
+      const result = await tryCatch(getToolRepositoryData(tool.repositoryUrl));
 
       if (result.error) {
         console.error(`Failed to fetch repository data for ${tool.name}`, {

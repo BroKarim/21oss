@@ -39,7 +39,13 @@ export const toolSchema = z.object({
   status: z.nativeEnum(ToolStatus).default("Draft"),
   categories: z.array(z.string()).optional(),
   platforms: z.array(z.string()).optional(),
-  stacks: z.array(z.string()).optional(),
+  stacks: z.array(
+  z.object({
+    id: z.string(),
+    name: z.string(),
+    slug: z.string(),
+  })
+).optional(),
   screenshots: z
     .array(
       z.object({

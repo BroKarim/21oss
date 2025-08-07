@@ -1,6 +1,5 @@
 import { AnalyticsCard } from "./_components/analytics-card";
 import { StatsCard } from "./_components/stats-card";
-import { ScheduledCard } from "./_components/scheduled-card";
 import { SubscribersCard } from "./_components/subscribers-card";
 import { UsersCard } from "./_components/users-card";
 // import { withAdminPage } from "@/components/admin/auth-hoc";
@@ -16,7 +15,7 @@ const DashboardPage = () => {
           <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
             <StatsCard />
           </div>
-          <ScheduledCard />
+          
         </div>
 
         <div className="grid gap-4 lg:col-span-2">

@@ -12,7 +12,7 @@ export async function getFeaturedTools() {
 
 export async function getDesignTools() {
   return await findToolsWithCategories({
-    where: { categories: { some: { slug: "design" } } },
+    where: { categories: { some: { slug: "colors" } } },
   });
 }
 
