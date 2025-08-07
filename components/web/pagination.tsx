@@ -16,7 +16,11 @@ export const Pagination = ({ className, totalCount, pageSize = 1, siblingCount, 
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
-  const currentPage = useMemo(() => getCurrentPage(params.get("page")), [params]);
+  const currentPage = useMemo(() => {
+    const params = new URLSearchParams(searchParams);
+    return getCurrentPage(params.get("page"));
+  }, [searchParams]);
+
   const pageCount = Math.ceil(totalCount / pageSize);
 
   const paginationRange = usePagination({

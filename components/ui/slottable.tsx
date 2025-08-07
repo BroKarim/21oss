@@ -18,7 +18,7 @@ export const Slottable = forwardRef<HTMLElement, SlottableProps>((props, ref) =>
     return null;
   }
 
-  // @ts-expect-error
+  // @ts-expect-error: forwarding ref to cloned element, type mismatch expected
   return cloneElement(child, { ref, ...rest }, children(child.props?.children));
 });
 

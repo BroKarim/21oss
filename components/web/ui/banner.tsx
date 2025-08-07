@@ -3,15 +3,6 @@
 import { memo } from "react";
 import { AnimatedGridPattern } from "../background/grid-pattern";
 
-const floatingElements = [
-  { label: "Video", count: "67+", position: "top-20 left-20", color: "bg-blue-600" },
-  { label: "Libraries", count: "269+", position: "top-32 left-40", color: "bg-blue-700" },
-  { label: "Startup", count: "81+", position: "top-40 right-80", color: "bg-blue-500" },
-  { label: "Design", count: "244+", position: "top-60 left-32", color: "bg-blue-600" },
-  { label: "Marketing", count: "104+", position: "top-16 right-40", color: "bg-blue-700" },
-  { label: "AI", count: "115+", position: "top-48 right-20", color: "bg-blue-500" },
-  { label: "Coding", count: "76+", position: "bottom-20 right-32", color: "bg-blue-600" },
-];
 //from 21
 const BoltBannerContent = memo(function BoltBannerContent() {
   return (

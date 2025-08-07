@@ -20,7 +20,7 @@ export const fetchRepositoryData = adminProcedure.createServerAction().handler(a
 
   await Promise.allSettled(
     tools.map(async (tool) => {
-      const result = await tryCatch(getToolRepositoryData(tool.repositoryUrl));
+      const result = await tryCatch(getToolRepositoryData(tool.repositoryUrl!));
 
       if (result.error) {
         console.error(`Failed to fetch repository data for ${tool.name}`, {

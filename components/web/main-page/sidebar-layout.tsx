@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { AudioWaveform, BookOpen, PenTool, Command, Palette, GalleryVerticalEnd, SquareKanban, Bitcoin, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac, Workflow, Database, EarthLock } from "lucide-react";
+import { AudioWaveform, BookOpen, PenTool, Command, Palette, GalleryVerticalEnd, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac } from "lucide-react";
 
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";

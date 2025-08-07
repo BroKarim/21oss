@@ -82,7 +82,7 @@ model User {
     name            String    @db.Citext
     slug            String    @unique
     websiteUrl      String?   @unique 
-    repositoryUrl   String?   @unique
+    repositoryUrl   String   @unique
     demoUrl         String?
     affiliateUrl    String?
     tagline         String?

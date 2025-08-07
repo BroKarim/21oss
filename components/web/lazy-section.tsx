@@ -6,22 +6,22 @@ import { ToolMany } from "@/server/web/tools/payloads";
 import * as toolsActions from "@/server/web/tools/actions";
 import { sectionComponents } from "@/lib/constants/section-components";
 
-  interface LazySectionProps {
-    section: HomeSection;
-  }
+interface LazySectionProps {
+  section: HomeSection;
+}
 
-  interface SectionWithData extends Omit<HomeSection, "actionName"> {
-    tools: ToolMany[] | null;
-  }
+interface SectionWithData extends Omit<HomeSection, "actionName"> {
+  tools: ToolMany[] | null;
+}
 
-  export default function LazySection({ section }: LazySectionProps) {
-    const [sectionData, setSectionData] = useState<SectionWithData>({
-      id: section.id,
-      label: section.label,
-      type: section.type,
-      options: section.options,
-      tools: null, // Initially null
-    });
+export default function LazySection({ section }: LazySectionProps) {
+  const [sectionData, setSectionData] = useState<SectionWithData>({
+    id: section.id,
+    label: section.label,
+    type: section.type,
+    options: section.options,
+    tools: null, // Initially null
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ import { sectionComponents } from "@/lib/constants/section-components";
               throw new Error(`Action ${section.actionName} not found`);
             }
 
-            const tools = await actionFn();
+            const tools = await actionFn(section.label);
 
             setSectionData((prev) => ({
               ...prev,
