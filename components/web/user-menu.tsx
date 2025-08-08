@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Icon } from "../ui/icon";
 import Link from "next/link";
-import { NavLink } from "./nav-link";
+import { NavLink } from "@/components/ui/nav-link";
 import { UserLogout } from "./user-logout";
 import type { auth } from "@/lib/auth";
 import { useSession } from "@/lib/auth-client";

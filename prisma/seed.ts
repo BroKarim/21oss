@@ -1,8 +1,7 @@
-
 import { db } from "@/services/db";
 
 async function main() {
-  const content = await db.content.upsert({
+  const content = await db.tool.upsert({
     where: { slug: "shadcn-ui" },
     update: {},
     create: {

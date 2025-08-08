@@ -23,7 +23,7 @@ const FrameScrambleText = ({ value, className, as, ...props }: CornerFrameScramb
       {...props}
     >
       <TextScramble as={as} className="relative z-10">
-        {value}
+        {value as string}
       </TextScramble>
     </div>
   );

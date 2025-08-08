@@ -16,11 +16,6 @@ export const getColumns = (): ColumnDef<Tool>[] => {
     [ToolStatus.Draft]: {
       variant: "soft",
     },
-
-    [ToolStatus.Scheduled]: {
-      variant: "info",
-    },
-
     [ToolStatus.Published]: {
       variant: "success",
     },

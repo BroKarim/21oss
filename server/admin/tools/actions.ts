@@ -27,20 +27,27 @@ export const upsertTool = adminProcedure
     const platformIds = platforms?.map((id) => ({ id }));
     const stackIds = stacks
       ? await Promise.all(
-          stacks.map(async (stackName) => {
-            const stackSlug = slugify(stackName);
+          stacks.map(async (stack) => {
+            if (stack.id) {
+              return { id: stack.id };
+            }
+
+            const stackSlug = slugify(stack.name);
             const existingStack = await db.stack.findUnique({
               where: { slug: stackSlug },
             });
+
             if (existingStack) {
               return { id: existingStack.id };
             }
+
             const newStack = await db.stack.create({
               data: {
-                name: stackName,
+                name: stack.name,
                 slug: stackSlug,
               },
             });
+
             return { id: newStack.id };
           })
         )

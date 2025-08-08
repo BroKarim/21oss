@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { toast } from "sonner";
 import { Icon } from "../ui/icon";
-import { navLinkVariants } from "./nav-link";
+import { navLinkVariants } from "../ui/nav-link";
 import { signOut } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
