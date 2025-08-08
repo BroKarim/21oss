@@ -14,7 +14,8 @@
     "db:studio": "prisma studio",
     "db:push": "prisma db push --skip-generate",
     "db:reset": "prisma migrate reset",
-    "email": "cp .env ../../node_modules/react-email/dist/preview && email dev"
+    "email": "cp .env ../../node_modules/react-email/dist/preview && email dev",
+    "postinstall": "pnpm run db:generate"
   },
   "dependencies": {
     "@ai-sdk/react": "^1.2.12",
