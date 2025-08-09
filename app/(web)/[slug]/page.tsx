@@ -56,24 +56,6 @@ export default async function ToolPage(props: PageProps) {
                 {tool.description && <IntroDescription>{tool.description}</IntroDescription>}
               </div>
               <div className="flex flex-col gap-2">
-                {/* <Stack size="lg" direction="column">
-                  <Note>Category:</Note>
-                  <div className="flex w-full gap-2">
-                    {tool.categories?.length > 0 ? (
-                      tool.categories.map((category) => (
-                        <Link href={category.slug} key={category.slug} className="text-sm flex border">
-                          {category.name}
-                        </Link>
-                      ))
-                    ) : (
-                      <span className="text-sm">No categories</span>
-                    )}
-                  </div>
-                </Stack> */}
-                {/* <Stack size="lg" direction="column">
-                  <Note>Licenses:</Note>
-                  web, Android
-                </Stack> */}
                 <Stack size="lg" direction="column">
                   <Note>Tech Stack:</Note>
                   {tool.stacks && tool.stacks.length > 0 && (

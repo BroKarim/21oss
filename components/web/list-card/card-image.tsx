@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
+import Image from "next/image";
 interface ComponentPreviewImageProps {
   src: string | null;
   alt: string;
@@ -11,30 +11,24 @@ interface ComponentPreviewImageProps {
 
 export default function ComponentPreviewImage({ src, alt, fallbackSrc, className }: ComponentPreviewImageProps) {
   const [imgSrc, setImgSrc] = useState(src || fallbackSrc);
-  const [isPlaceholder, setIsPlaceholder] = useState(src === fallbackSrc);
 
   useEffect(() => {
-    const finalSrc = src || fallbackSrc;
-    setImgSrc(finalSrc);
-    setIsPlaceholder(!src || src === fallbackSrc);
+    setImgSrc(src || fallbackSrc);
   }, [src, fallbackSrc]);
 
-
   return (
-    <img
+    <Image
       src={imgSrc}
       alt={alt}
-      className={`object-cover w-full h-full rounded-t-lg ${className}`}
-      onError={() => {
-        setImgSrc(fallbackSrc);
-        setIsPlaceholder(true);
-      }}
+      width={350}
+      height={190}
+      className={`object-cover rounded-t-lg ${className}`}
+      placeholder="blur"
+      blurDataURL={fallbackSrc}
+      onError={() => setImgSrc(fallbackSrc)}
       style={{
-        width: "100%",
-        height: "100%",
         objectFit: "cover",
-        objectPosition: "center center",
-        backgroundColor: isPlaceholder ? "transparent" : "",
+        objectPosition: "center",
       }}
     />
   );

@@ -44,10 +44,10 @@ export const ToolGalleryGroup = ({ id, label, tools, options }: ToolGalleryGroup
   };
 
   return (
-    <section className="space-y-4 border-[0.75px] relative h-full border-border md:rounded-[1.5rem] p-2 rounded-lg md:p-3" id={id}>
-      <div className="border-[0.75px] md:rounded-[1.5rem] md:p-6">
+    <section className="space-y-4 border-[0.75px] relative h-full border-border md:rounded-[1.5rem] p-1 rounded-lg md:p-2" id={id}>
+      <div className="border-[0.75px] md:rounded-[1.5rem] md:p-4 lg:p-4 overflow-hidden">
         <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} borderWidth={3} />
-        <div className="flex items-center mb-2 justify-between">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 justify-between gap-2">
           <h2 className="text-2xl ">{label}</h2>
           {showViewAll && viewAllUrl && (
             <Button asChild variant="outline">
@@ -56,11 +56,12 @@ export const ToolGalleryGroup = ({ id, label, tools, options }: ToolGalleryGroup
           )}
         </div>
 
-        {/* Grid 3 kolom */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 auto-cols-fr">
           {displayedTools.map((tool, index) => (
-            <div key={tool.id} className="min-w-[350px] max-w-[350px]">
-              <ToolCard tool={tool} style={{ order: index }} />
+            <div key={tool.id} className="w-full min-w-0 flex-shrink-0" style={{ order: index }}>
+              <div className="w-full max-w-full">
+                <ToolCard tool={tool} />
+              </div>
             </div>
           ))}
         </div>
