@@ -18,7 +18,12 @@ export async function getDesignTools() {
 
 export async function getDevelopmentTools() {
   return await findToolsWithCategories({
-    where: { categories: { some: { slug: "development" } } },
+    where: { categories: { some: { slug: "dev-tools" } } },
+  });
+}
+export async function getLlmTools() {
+  return await findToolsWithCategories({
+    where: { categories: { some: { slug: "llm-ecosystem" } } },
   });
 }
 

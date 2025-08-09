@@ -32,10 +32,21 @@ export const homeSections: HomeSection[] = [
     },
   },
   {
-    id: "design",
-    label: "Design Tools",
-    type: "slider",
-    actionName: "getDesignTools",
+    id: "dev",
+    label: "Dev Tools",
+    type: "favicon",
+    actionName: "getDevelopmentTools",
+    options: {
+      showScroll: true,
+      showViewAll: true,
+      viewAllUrl: "/categories/design",
+    },
+  },
+  {
+    id: "dev",
+    label: "Llm Tools",
+    type: "favicon",
+    actionName: "getLlmTools",
     options: {
       showScroll: true,
       showViewAll: true,

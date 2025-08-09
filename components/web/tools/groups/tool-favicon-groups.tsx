@@ -36,12 +36,12 @@ export const ToolFaviconGroup = ({ id, label, tools, options }: ToolFaviconGroup
   }
 
   return (
-    <section className="space-y-4">
+    <section className="rounded-2xl p-6 space-y-4 border">
       {/* Header dengan judul dan tombol View All */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">{label}</h2>
+        <h2 className="text-lg font-semibold">{label}</h2>
         {showViewAll && viewAllUrl && (
-          <Button asChild variant="outline">
+          <Button asChild variant="outline" className="border-neutral-700 text-sm">
             <Link href={viewAllUrl}>View All</Link>
           </Button>
         )}
@@ -50,11 +50,11 @@ export const ToolFaviconGroup = ({ id, label, tools, options }: ToolFaviconGroup
       {/* Grid 2 kolom, masing-masing 5 baris */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {displayedTools.map((tool) => (
-          <Link key={tool.id} href={`/${tool.slug}`} className="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg transition">
-            <Image src={tool.faviconUrl || "/placeholder.svg"} alt={`${tool.name} favicon`} width={32} height={32} className="rounded-sm" />
+          <Link key={tool.id} href={`/${tool.slug}`} className="flex items-center gap-3 p-2   rounded-lg transition">
+            <Image src={tool.faviconUrl || "/placeholder.svg"} alt={`${tool.name} favicon`} width={48} height={48} className="rounded-sm border" />
             {/* Nama dan kategori pertama */}
             <div className="flex-1 flex-col">
-              <h3 className="text-base font-semibold text-foreground">{tool.name}</h3>
+              <h3 className="text-sm font-medium text-white leading-tight">{tool.name}</h3>
               {tool.categories?.[0] && <p className="text-sm text-gray-500">{tool.categories[0].name}</p>}
             </div>
           </Link>

@@ -1,24 +1,28 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  reactStrictMode: false,
   experimental: {
     useCache: true,
   },
   images: {
-    domains: ["picsum.photos", "images.unsplash.com"],
+    minimumCacheTTL: 31536000,
+    deviceSizes: [640, 768, 1024, 1280],
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
+        hostname: `${process.env.S3_BUCKET}.s3.${process.env.S3_REGION}.amazonaws.com`,
+      },
+      {
+        protocol: "https",
+        hostname: "**", // sementara izinkan semua domain
       },
       {
         protocol: "http",
-        hostname: "**",
+        hostname: "**", // kalau ada og-image non-https
       },
     ],
   },
-
-  /* config options here */
 };
 
 export default nextConfig;

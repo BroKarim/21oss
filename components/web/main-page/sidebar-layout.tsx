@@ -102,7 +102,7 @@ const data = {
 
 export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props} >
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <NavLogo teams={data.teams} />
       </SidebarHeader>
