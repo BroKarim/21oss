@@ -7,6 +7,7 @@ export default function Page() {
   const groupedSections: (typeof homeSections | (typeof homeSections)[number])[] = [];
   let tempFaviconGroup: (typeof homeSections)[number][] = [];
   homeSections.forEach((section, index) => {
+    console.log(homeSections.map((s) => s.id));
     if (section.type === "favicon") {
       tempFaviconGroup.push(section);
       const next = homeSections[index + 1];
@@ -31,11 +32,10 @@ export default function Page() {
         <div className="space-y-10 overflow-x-hidden">
           {groupedSections.map((group, idx) => {
             if (Array.isArray(group)) {
-              // group favicon
               return (
                 <div key={`favicon-group-${idx}`} className="flex gap-4">
-                  {group.map((section) => (
-                    <div key={section.id} className="flex-1">
+                  {group.map((section, secIdx) => (
+                    <div key={`${section.id}-${secIdx}`} className="flex-1">
                       <LazySection section={section} />
                     </div>
                   ))}
@@ -44,7 +44,7 @@ export default function Page() {
             }
 
             // section biasa
-            return <LazySection key={group.id} section={group} />;
+            return <LazySection key={`${group.id}-${idx}`} section={group} />;
           })}
         </div>
       </div>
