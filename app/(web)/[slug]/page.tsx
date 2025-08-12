@@ -8,6 +8,7 @@ import { Section } from "@/components/ui/section";
 import { findTool, findToolSlugs } from "@/server/web/tools/queries";
 import { IntroDescription } from "@/components/ui/intro";
 import { FaviconImage } from "@/components/ui/favicon";
+import { ToolStacks } from "@/components/web/tools/tool-stacks";
 import { RelatedTools } from "./related";
 import { Note } from "@/components/ui/note";
 import { Share } from "@/components/web/share-button";

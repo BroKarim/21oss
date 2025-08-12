@@ -12,7 +12,6 @@ export default function Page() {
       tempFaviconGroup.push(section);
       const next = homeSections[index + 1];
       if (!next || next.type !== "favicon") {
-        // push group favicon sekaligus
         groupedSections.push(tempFaviconGroup);
         tempFaviconGroup = [];
       }
