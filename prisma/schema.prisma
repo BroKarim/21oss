@@ -61,9 +61,6 @@ model User {
   emailVerified Boolean   @default(false)
   image         String?
   role          String    @default("user")
-  banned        Boolean?  @default(false)
-  banReason     String?
-  banExpires    DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
