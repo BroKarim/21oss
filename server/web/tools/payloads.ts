@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client";
 import { categoryManyPayload } from "../categories/payloads";
-
+import { stackManyPayload } from "../stacks/payloads";
 export const toolCategoriesPayload = Prisma.validator<Prisma.Tool$categoriesArgs>()({
   select: categoryManyPayload,
   orderBy: { name: "asc" },
@@ -27,11 +27,7 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   updatedAt: true,
   license: true,
   stacks: {
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-    },
+    select: stackManyPayload,
   },
   categories: toolCategoriesPayload,
   inspiredBy: {
@@ -96,7 +92,6 @@ export const toolManyExtendedPayload = Prisma.validator<Prisma.ToolSelect>()({
   createdAt: true,
   updatedAt: true,
   categories: toolCategoriesPayload,
-  
 });
 
 export type ToolOne = Prisma.ToolGetPayload<{ select: typeof toolOnePayload }>;

@@ -1,101 +1,97 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import * as React from "react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ImageGalleryProps {
-  images: string[];
+  items: string[]; 
   className?: string;
 }
 
-export default function ImageGallery({ images, className = "" }: ImageGalleryProps) {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+export function ImageGallery({ items, className }: ImageGalleryProps) {
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const autoPlay = true; 
+  const autoPlayInterval = 5000;
+  const showThumbnails = true;
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.key === "ArrowLeft") {
-        setSelectedImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1));
-      } else if (event.key === "ArrowRight") {
-        setSelectedImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0));
-      }
+  const isVideo = (url: string) => /\.(mp4|webm|ogg)$/i.test(url);
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev === 0 ? items.length - 1 : prev - 1));
+  };
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev === items.length - 1 ? 0 : prev + 1));
+  };
+
+  // Auto play
+  React.useEffect(() => {
+    if (!autoPlay) return;
+    const interval = setInterval(() => {
+      nextSlide();
+    }, autoPlayInterval);
+    return () => clearInterval(interval);
+  }, [currentIndex, autoPlay, autoPlayInterval]);
+
+  // Keyboard nav
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") nextSlide();
+      else if (e.key === "ArrowLeft") prevSlide();
     };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [images.length]);
-
-  if (!images || images.length === 0) {
-    return null;
-  }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
-    <div className={`w-full max-w-6xl mx-auto ${className}`}>
-      {/* Preview Utama */}
-      <div className="relative mb-4 overflow-hidden rounded-2xl bg-gray-100">
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-          </div>
-        )}
+    <div className={cn("w-full border", className)}>
+      {/* Main Carousel */}
+      <div className="relative overflow-hidden rounded-lg">
+        <div className="relative aspect-video w-full overflow-hidden">
+          {items.map((src, index) => (
+            <div
+              key={`slide-${index}`}
+              className={cn("absolute inset-0 transform transition-all duration-500 ease-in-out", index === currentIndex ? "translate-x-0 opacity-100" : index < currentIndex ? "-translate-x-full opacity-0" : "translate-x-full opacity-0")}
+            >
+              {isVideo(src) ? <video src={src} className="h-full w-full object-cover" controls /> : <Image src={src} alt={`Media ${index + 1}`} fill className="object-cover" sizes="100vw" />}
+            </div>
+          ))}
+        </div>
 
-        <img
-          src={images[selectedImageIndex]}
-          alt={`Preview ${selectedImageIndex + 1}`}
-          className="w-full h-[600px] object-cover transition-all duration-300 ease-in-out"
-          onLoad={() => setIsLoading(false)}
-          onLoadStart={() => setIsLoading(true)}
-        />
-
-        {/* Navigation Arrows */}
-        {images.length > 1 && (
+        {/* Navigation buttons */}
+        {items.length > 1 && (
           <>
-            <button
-              onClick={() => setSelectedImageIndex((prev) => (prev > 0 ? prev - 1 : images.length - 1))}
-              className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+            <Button className="absolute top-1/2 left-2 -translate-y-1/2" onClick={prevSlide} variant="secondary">
+              <ChevronLeftIcon className="h-6 w-6" />
+            </Button>
 
-            <button
-              onClick={() => setSelectedImageIndex((prev) => (prev < images.length - 1 ? prev + 1 : 0))}
-              className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all duration-200"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            <Button className="absolute top-1/2 right-2 -translate-y-1/2" onClick={nextSlide} variant="secondary">
+              <ChevronRightIcon className="h-6 w-6" />
+            </Button>
           </>
         )}
 
-        {/* Image Counter */}
+        {/* Counter */}
         <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
-          {selectedImageIndex + 1} / {images.length}
+          {currentIndex + 1} / {items.length}
         </div>
       </div>
 
       {/* Thumbnails */}
-      {images.length > 1 && (
-        <div className="space-y-2">
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {images.map((image, index) => (
-              <button
-                key={`${image}-${index}`}
-                onClick={() => setSelectedImageIndex(index)}
-                className={`
-                  relative flex-shrink-0 overflow-hidden rounded-lg transition-all duration-200
-                  ${selectedImageIndex === index ? "ring-2 ring-blue-500 scale-105" : "ring-1 ring-gray-200 hover:ring-gray-300 hover:scale-102"}
-                `}
-              >
-                <img src={image} alt={`Thumbnail ${index + 1}`} className="w-20 h-20 object-cover" />
-
-                {/* Active Indicator */}
-                {selectedImageIndex === index && <div className="absolute inset-0 bg-blue-500/20" />}
-              </button>
-            ))}
-          </div>
+      {showThumbnails && items.length > 1 && (
+        <div className="mt-4 flex gap-2 overflow-x-auto px-2 py-2">
+          {items.map((src, index) => (
+            <button
+              key={`thumb-${index}`}
+              className={cn("relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md transition-all duration-200 border", index === currentIndex ? "border-blue-500 ring-2 ring-blue-500" : "border-gray-200 hover:border-gray-300")}
+              onClick={() => setCurrentIndex(index)}
+            >
+              {isVideo(src) ? <video src={src} className="h-full w-full object-cover" muted preload="metadata" /> : <Image src={src} alt={`Thumbnail ${index + 1}`} fill className="object-cover" sizes="80px" />}
+            </button>
+          ))}
         </div>
       )}
     </div>

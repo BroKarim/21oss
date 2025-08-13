@@ -20,7 +20,7 @@ export function NavSecondary({
       <SidebarGroupLabel>Filter</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
-          <Collapsible key={item.title} asChild defaultOpen={false}>
+          <Collapsible key={item.title} asChild defaultOpen={true}>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title}>
