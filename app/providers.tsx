@@ -22,7 +22,7 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
       <SidebarInset>
         <MainLayout>
           {/* TODO : MAKE COMMAND MENU LIKE 21ST.DEV */}
-          <Header />
+          {!isAdmin && <Header />}
           {children}
           {!isAdmin && <Footer4Col />}
         </MainLayout>
