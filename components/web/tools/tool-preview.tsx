@@ -8,7 +8,6 @@ import { findFeaturedTool } from "@/server/web/tools/queries";
 const ToolPreview = async () => {
   
 const tools = await findFeaturedTool({});
-  // console.log("🔥 Showcase data:", tools);
 
   if (!tools.length) {
     return null;

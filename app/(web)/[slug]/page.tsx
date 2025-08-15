@@ -38,7 +38,7 @@ export default async function ToolPage(props: PageProps) {
 
   return (
     <>
-      <div className="flex w-full flex-col overflow-hidden">
+      <div className="flex w-full flex-col overflow-x-hidden">
         {/* Main Content Container */}
         <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
           {/* Hero Section */}

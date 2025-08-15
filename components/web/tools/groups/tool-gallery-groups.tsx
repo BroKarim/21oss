@@ -6,9 +6,12 @@ import { ToolCard } from "../tool-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button-shadcn";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { cx } from "@/lib/utils";
+
 type ToolGalleryGroupProps = {
   id: string;
   label: string;
+  className?: string;
   tools: ToolMany[];
   options: {
     showViewAll?: boolean;
@@ -17,7 +20,7 @@ type ToolGalleryGroupProps = {
   };
 };
 
-export const ToolGalleryGroup = ({ id, label, tools, options }: ToolGalleryGroupProps) => {
+export const ToolGalleryGroup = ({ id, label, tools, options, className }: ToolGalleryGroupProps) => {
   const { showViewAll = false, viewAllUrl, loadMore = false } = options;
   const [visibleCount, setVisibleCount] = useState(6);
 
@@ -44,7 +47,7 @@ export const ToolGalleryGroup = ({ id, label, tools, options }: ToolGalleryGroup
   };
 
   return (
-    <section className="space-y-4 border-[0.75px] relative h-full border-border md:rounded-[1.5rem] p-1 rounded-lg md:p-2" id={id}>
+    <section id={id} className={cx("space-y-4 border-[0.75px] relative h-full border-border md:rounded-[1.5rem] p-1 rounded-lg md:p-2", className)}>
       <div className="border-[0.75px] md:rounded-[1.5rem] md:p-4 lg:p-4 overflow-hidden">
         <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} borderWidth={3} />
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 justify-between gap-2">

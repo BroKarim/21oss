@@ -1,18 +1,28 @@
 import { Listing } from "@/components/web/ui/listing";
-import { ToolList } from "@/components/web/tools/tool-list";
 import { findFeaturedTool } from "@/server/web/tools/queries";
 import { ToolOne } from "@/server/web/tools/payloads";
-
+import { ToolGalleryGroup } from "@/components/web/tools/groups/tool-gallery-groups";
 export const RelatedTools = async ({ tool }: { tool: ToolOne }) => {
-  const tools = await findFeaturedTool({});
+  const tools = await findFeaturedTool({
+    orderBy: { name: "asc" },
+  });
 
   if (!tools.length) {
     return null;
   }
 
   return (
-    <Listing title={`Open source alternatives similar to ${tool.name}:`}>
-      <ToolList tools={tools} />
+    <Listing>
+      <ToolGalleryGroup
+        id="related-tools"
+        className="border-none p-0"
+        label={`Open source alternatives similar to ${tool.name}:`}
+        tools={tools}
+        options={{
+          showViewAll: false,
+          loadMore: true,
+        }}
+      />
     </Listing>
   );
 };

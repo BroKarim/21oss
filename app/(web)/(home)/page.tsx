@@ -7,7 +7,6 @@ export default function Page() {
   const groupedSections: (typeof homeSections | (typeof homeSections)[number])[] = [];
   let tempFaviconGroup: (typeof homeSections)[number][] = [];
   homeSections.forEach((section, index) => {
-    console.log(homeSections.map((s) => s.id));
     if (section.type === "favicon") {
       tempFaviconGroup.push(section);
       const next = homeSections[index + 1];

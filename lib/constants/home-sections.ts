@@ -21,17 +21,6 @@ export const homeSections: HomeSection[] = [
     },
   },
   {
-    id: "featured",
-    label: "Featured Tools",
-    type: "slider",
-    actionName: "getFeaturedTools",
-    options: {
-      showScroll: true,
-      showViewAll: true,
-      viewAllUrl: "/featured",
-    },
-  },
-  {
     id: "dev",
     label: "Dev Tools",
     type: "favicon",
@@ -43,20 +32,44 @@ export const homeSections: HomeSection[] = [
     },
   },
   {
-    id: "dev",
-    label: "Llm Tools",
+    id: "llm",
+    label: "AI Assistant Toolkit",
     type: "favicon",
     actionName: "getLlmTools",
     options: {
       showScroll: true,
       showViewAll: true,
-      viewAllUrl: "/categories/design",
+      viewAllUrl: "/categories/ai",
     },
   },
   {
+    id: "ai tools",
+    label: "AI Tools Collection",
+    type: "gallery",
+    actionName: "getAiTools",
+    options: {
+      showScroll: true,
+      loadMore: true,
+      showViewAll: true,
+      viewAllUrl: "/categories/images-and-videos",
+    },
+  },
+  {
+    id: "ui/ux",
+    label: "Interface Design Toolkit",
+    type: "slider",
+    actionName: "getUiUxTools",
+    options: {
+      showScroll: true,
+      showViewAll: true,
+      viewAllUrl: "/featured",
+    },
+  },
+
+  {
     id: "development",
     label: "Development Tools",
-    type: "slider",
+    type: "gallery",
     actionName: "getDevelopmentTools",
     options: {
       showScroll: true,

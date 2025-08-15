@@ -1,13 +1,9 @@
 "use server";
 
-import { findFeaturedTool, findToolsWithCategories, findRecentTools } from "@/server/web/tools/queries";
+import { findToolsWithCategories, findRecentTools } from "@/server/web/tools/queries";
 // import { getSubcategories } from "../categories/queries";
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
-}
-
-export async function getFeaturedTools() {
-  return await findFeaturedTool({ take: 8 });
 }
 
 export async function getDesignTools() {
@@ -27,9 +23,29 @@ export async function getLlmTools() {
   });
 }
 
+export async function getUiUxTools() {
+  return await findToolsWithCategories({
+    where: {
+      categories: {
+        some: { slug: "ui-ux" },
+      },
+    },
+  });
+}
+
 export async function getAiTools() {
   return await findToolsWithCategories({
-    where: { categories: { some: { slug: "ai" } } },
+    where: {
+      categories: {
+        some: {
+          OR: [
+            { slug: "ai" },
+            { parent: { slug: "ai" } }, // cek kategori anak
+          ],
+        },
+      },
+    },
+    take: 9,
   });
 }
 

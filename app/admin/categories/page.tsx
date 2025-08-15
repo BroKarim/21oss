@@ -1,6 +1,6 @@
 import type { SearchParams } from "nuqs/server";
 import { Suspense } from "react";
-// import { withAdminPage } from "@/components/admin/auth-hoc";
+import { withAdminPage } from "@/components/admin/auth-hoc";
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton";
 import { findCategories } from "@/server/admin/categories/queries";
 import { categoriesTableParamsCache } from "@/server/admin/categories/schema";
@@ -21,5 +21,4 @@ const CategoriesPage = async ({ searchParams }: CategoriesPageProps) => {
   );
 };
 
-export default CategoriesPage;
-// export default withAdminPage(CategoriesPage);
+export default withAdminPage(CategoriesPage);

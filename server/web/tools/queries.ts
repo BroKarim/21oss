@@ -67,7 +67,6 @@ export const findFeaturedTool = async ({ where, ...args }: Prisma.ToolFindManyAr
     orderBy: {
       createdAt: "desc",
     },
-    take: 10,
     ...args,
   });
 };
