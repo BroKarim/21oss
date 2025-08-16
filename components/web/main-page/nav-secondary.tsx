@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "@/components/ui/sidebar";
 import { ChevronRight } from "lucide-react";
@@ -15,12 +18,24 @@ export function NavSecondary({
     }[];
   }[];
 }) {
+  const [activeItem, setActiveItem] = useState(0);
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Filter</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <Collapsible key={item.title} asChild defaultOpen={true}>
+        {items.map((item, index) => (
+          <Collapsible
+            key={item.title}
+            asChild
+            open={activeItem === index}
+            onOpenChange={(isOpen) => {
+              if (isOpen) {
+                setActiveItem(index);
+              } else if (activeItem === index) {
+                setActiveItem(-1);
+              }
+            }}
+          >
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title}>
