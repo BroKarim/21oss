@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ToolListing } from "@/components/web/tools/tool-listing";
 import { ToolMany } from "@/server/web/tools/payloads";
+import { ToolGalleryGroup } from "./tools/groups/tool-gallery-groups";
 import * as toolsActions from "@/server/web/tools/actions";
 
 interface ToolsBySubcategoryLazyProps {
@@ -10,7 +10,6 @@ interface ToolsBySubcategoryLazyProps {
   subcategoryLabel?: string;
 }
 
-// TODO : Jangan pakai scroll, tpi gallery sja
 export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLabel }: ToolsBySubcategoryLazyProps) {
   const [tools, setTools] = useState<ToolMany[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +43,6 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
 
   return (
     <div ref={ref} className="space-y-2">
-      <h2 className="text-xl font-semibold">{subcategoryLabel}</h2>
       {isLoading || !hasLoaded ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -52,7 +50,7 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
           ))}
         </div>
       ) : tools && tools.length > 0 ? (
-        <ToolListing list={{ tools }} pagination={{ totalCount: tools.length, pageSize: tools.length }} />
+        <ToolGalleryGroup id={subcategorySlug} label={subcategoryLabel ?? ""} tools={tools} showGlowingEffect={false} options={{ showViewAll: false, loadMore: true }} />
       ) : (
         <p className="text-muted-foreground text-sm">No tools found in this category.</p>
       )}

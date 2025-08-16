@@ -70,7 +70,6 @@ export const ToolGalleryGroup = ({ id, label, tools, options, className, showGlo
           ))}
         </div>
 
-        {/* Tombol Load More */}
         {loadMore && visibleCount < tools.length && (
           <div className="flex justify-center">
             <Button onClick={handleLoadMore} variant="outline">

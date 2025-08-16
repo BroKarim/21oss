@@ -20,7 +20,7 @@ export default function LazySection({ section }: LazySectionProps) {
     label: section.label,
     type: section.type,
     options: section.options,
-    tools: null, // Initially null
+    tools: null, 
   });
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);

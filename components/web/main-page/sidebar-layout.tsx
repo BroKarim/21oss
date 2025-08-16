@@ -57,11 +57,11 @@ const data = {
       icon: AppWindowMac,
       isActive: true,
       items: [
-        { title: "Frontend", url: "/categories/programming#frontend" },
+        { title: "APIs & Integration", url: "/categories/programming#programming/apis-and-integration" },
         { title: "Backend", url: "/categories/programming#backend" },
         { title: "Components", url: "/categories/programming#components" },
         { title: "Dev Tools", url: "/categories/programming#dev-tools" },
-        { title: "APIs & Integration", url: "/categories/programming#programming/apis-and-integration" },
+        { title: "Frontend", url: "/categories/programming#frontend" },
       ],
     },
     {
@@ -69,9 +69,9 @@ const data = {
       icon: BotMessageSquare,
       isActive: true,
       items: [
+        { title: "Images & Videos", url: "/categories/ai#images-and-videos" },
         { title: "LLM Ecosystem", url: "/categories/ai#llm-ecosystem" },
         { title: "Text & Speech", url: "/categories/ai#text-and-speech" },
-        { title: "Images & Videos", url: "/categories/ai#images-and-videos" },
       ],
     },
     {
@@ -79,9 +79,9 @@ const data = {
       icon: DiamondPercent,
       isActive: true,
       items: [
-        { title: "SEO Tools", url: "/categories/marketing#seo-tools" },
-        { title: "Email", url: "/categories/marketing#email" },
         { title: "Analytics & Tracking", url: "/categories/marketing#analytics" },
+        { title: "Email", url: "/categories/marketing#email" },
+        { title: "SEO Tools", url: "/categories/marketing#seo-tools" },
       ],
     },
     {
@@ -89,12 +89,12 @@ const data = {
       icon: Palette,
       isActive: true,
       items: [
+        { title: "3D & Motion", url: "/categories/design#3d-and-motion" },
+        { title: "Asset Generators", url: "/categories/design#asset" },
         { title: "Colors", url: "/categories/design#colors" },
         { title: "Typography", url: "/categories/design#typography" },
-        { title: "Asset Generators", url: "/categories/design#asset" },
         { title: "UI/UX", url: "/categories/design#ui-ux" },
         { title: "Utility & Software", url: "/categories/design#utility-and-software" },
-        { title: "3D & Motion", url: "/categories/design#3d-and-motion" },
       ],
     },
   ],
