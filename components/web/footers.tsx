@@ -79,8 +79,8 @@ const designLinks = [
 
 export default function Footer4Col() {
   return (
-    <footer className=" mt-16 w-full place-self-end ">
-      <div className="mx-auto max-w-screen-xl px-4 pt-16 pb-6 sm:px-6 lg:px-8 lg:pt-24">
+    <footer className=" w-full md:mt-4 place-self-end border">
+      <div className="mx-auto max-w-screen-xl px-4 pt-8 pb-6 sm:px-6 lg:px-8 ">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           <div>
             <div className="text-primary flex justify-center gap-2 sm:justify-start">

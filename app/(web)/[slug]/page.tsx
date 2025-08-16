@@ -13,7 +13,7 @@ import { Note } from "@/components/ui/note";
 import { Share } from "@/components/web/share-button";
 import { RepositoryDetails } from "@/components/web/repository-detail";
 import { ImageGallery } from "@/components/web/image-gallery";
-import { Separator } from "@/components/ui/separator";
+
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -39,10 +39,8 @@ export default async function ToolPage(props: PageProps) {
   return (
     <>
       <div className="flex w-full flex-col overflow-x-hidden">
-        {/* Main Content Container */}
         <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-          {/* Hero Section */}
-          <Section>
+          <Section className="overflow-hidden">
             <Section.Content className="max-md:contents">
               <div className="flex flex-1 flex-col items-start space-y-6 max-md:order-1">
                 {/* Tool Header */}
@@ -78,23 +76,18 @@ export default async function ToolPage(props: PageProps) {
 
             {/* Sidebar */}
             <Section.Sidebar className="max-md:contents">
-              <div className="max-md:order-3 max-md:mt-6">
+              <div className="max-md:order-3 ">
                 <RepositoryDetails showcase={tool} />
               </div>
             </Section.Sidebar>
           </Section>
 
-          {/* Image Gallery Section */}
           <div className="w-full">
             <div className="min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] rounded-lg overflow-hidden">
               <ImageGallery items={(tool.screenshots ?? []).map((s) => s.imageUrl)} className="w-full h-full" />
             </div>
           </div>
 
-          {/* Separator */}
-          <Separator className="my-8" />
-
-          {/* Related Tools Section */}
           <div className="w-full">
             <Suspense
               fallback={
