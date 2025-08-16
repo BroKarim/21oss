@@ -18,6 +18,7 @@ export const RelatedTools = async ({ tool }: { tool: ToolOne }) => {
         className="border-none p-0"
         label={`Open source alternatives similar to ${tool.name}:`}
         tools={tools}
+        showGlowingEffect={false}
         options={{
           showViewAll: false,
           loadMore: true,

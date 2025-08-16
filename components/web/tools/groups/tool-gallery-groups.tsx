@@ -13,6 +13,7 @@ type ToolGalleryGroupProps = {
   label: string;
   className?: string;
   tools: ToolMany[];
+  showGlowingEffect?: boolean;
   options: {
     showViewAll?: boolean;
     viewAllUrl?: string;
@@ -20,7 +21,7 @@ type ToolGalleryGroupProps = {
   };
 };
 
-export const ToolGalleryGroup = ({ id, label, tools, options, className }: ToolGalleryGroupProps) => {
+export const ToolGalleryGroup = ({ id, label, tools, options, className, showGlowingEffect = true }: ToolGalleryGroupProps) => {
   const { showViewAll = false, viewAllUrl, loadMore = false } = options;
   const [visibleCount, setVisibleCount] = useState(6);
 
@@ -49,7 +50,7 @@ export const ToolGalleryGroup = ({ id, label, tools, options, className }: ToolG
   return (
     <section id={id} className={cx("space-y-4 border-[0.75px] relative h-full border-border md:rounded-[1.5rem] p-1 rounded-lg md:p-2", className)}>
       <div className="border-[0.75px] md:rounded-[1.5rem] md:p-4 lg:p-4 overflow-hidden">
-        <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} borderWidth={3} />
+        {showGlowingEffect && <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} borderWidth={3} />}
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 justify-between gap-2">
           <h2 className="text-2xl ">{label}</h2>
           {showViewAll && viewAllUrl && (

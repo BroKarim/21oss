@@ -148,7 +148,6 @@ export function ImageGallery({ items, className, autoPlay = true, autoPlayInterv
                   playsInline
                   preload="metadata"
                   onLoadStart={() => {
-                    // Pause autoplay when video is interacted with
                     if (isCurrentSlide) setIsPlaying(false);
                   }}
                 />
@@ -172,14 +171,12 @@ export function ImageGallery({ items, className, autoPlay = true, autoPlayInterv
           </>
         )}
 
-        {/* Counter */}
         {hasMultipleItems && (
           <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-sm">
             {currentIndex + 1} / {items.length}
           </div>
         )}
 
-        {/* Play/Pause Indicator */}
         {hasMultipleItems && autoPlay && (
           <div className="absolute top-4 left-4">
             <div className={cn("h-2 w-2 rounded-full transition-colors", isPlaying ? "bg-green-500" : "bg-gray-400")} />
@@ -197,9 +194,14 @@ export function ImageGallery({ items, className, autoPlay = true, autoPlayInterv
               onClick={() => goToSlide(index)}
               aria-label={`Go to slide ${index + 1}`}
             >
-              {isVideo(src) ? <video src={src} className="h-full w-full object-cover" muted preload="metadata" playsInline /> : <Image src={src} alt={`Thumbnail ${index + 1}`} fill className="object-cover" sizes="64px" quality={60} />}
+              {isVideo(src) ? (
+                <video src={src} className="h-full w-full object-cover" muted preload="metadata" playsInline />
+              ) : isGif(src) ? (
+                <img src={src} alt={`Thumbnail ${index + 1}`} className="h-full w-full object-cover" />
+              ) : (
+                <Image src={src} alt={`Thumbnail ${index + 1}`} fill className="object-cover" sizes="64px" quality={60} />
+              )}
 
-              {/* Video play icon overlay */}
               {isVideo(src) ? <video src={src} className="h-full w-full object-cover" muted preload="metadata" /> : <Image src={src} alt={`Thumbnail ${index + 1}`} fill className="object-cover" sizes="80px" />}
             </button>
           ))}
