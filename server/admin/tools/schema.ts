@@ -4,8 +4,6 @@ import { z } from "zod";
 import { getSortingStateParser } from "@/lib/parsers";
 import { repositorySchema } from "@/server/web/shared/schema";
 
-//Mendefinisikan skema query parameter untuk tabel di admin (search, sort, filter, pagination)
-// agar parameter URL aman, tervalidasi, dan punya nilai default.
 export const toolsTableParamsSchema = {
   name: parseAsString.withDefault(""),
   sort: getSortingStateParser<Tool>().withDefault([{ id: "createdAt", desc: true }]),
@@ -17,13 +15,10 @@ export const toolsTableParamsSchema = {
   status: parseAsArrayOf(z.nativeEnum(ToolStatus)).withDefault([]),
 };
 
-// helper untuk parsing + cache query
 export const toolsTableParamsCache = createSearchParamsCache(toolsTableParamsSchema);
 
 export type ToolsTableSchema = Awaited<ReturnType<typeof toolsTableParamsCache.parse>>;
 
-//Validasi data form satu tool
-// untuk tambah/edit tool di admin
 export const toolSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Name is required"),

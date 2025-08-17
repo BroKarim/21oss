@@ -156,23 +156,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     onError: ({ err }) => toast.error(err.message),
   });
 
-  // const handleSubmit = form.handleSubmit((data, event) => {
-  //   console.log("🔥 handleSubmit DIPANGGIL!");
-  //   console.log("🔥 Data yang akan dikirim:", data);
-  //   console.log("🔥 tool?.id:", tool?.id);
-
-  //   const submitter = (event?.nativeEvent as SubmitEvent)?.submitter;
-  //   const isStatusChange = submitter?.getAttribute("name") !== "submit";
-
-  //   console.log("🔥 submitter:", submitter);
-  //   console.log("🔥 submitter name:", submitter?.getAttribute("name"));
-  //   console.log("🔥 isStatusChange:", isStatusChange);
-
-  //   if (isStatusChange) {
-  //     setIsStatusPending(true);
-  //   }
-  //   upsertAction.execute({ id: tool?.id, ...data });
-  // });
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -200,14 +183,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     // Submit directly
     await upsertAction.execute({ id: tool?.id, ...formData });
   };
-  // const handleStatusSubmit = (status: ToolStatus, publishedAt: Date | null) => {
-  //   form.setValue("status", status);
-  //   form.setValue("publishedAt", publishedAt);
-  //   handleSubmit({
-  //     preventDefault: () => {},
-  //     nativeEvent: { submitter: { getAttribute: () => "submit" } },
-  //   } as unknown as React.BaseSyntheticEvent); // Panggil tanpa parameter - ini akan trigger form submit
-  // };
 
   return (
     <Form {...form}>

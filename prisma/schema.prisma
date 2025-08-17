@@ -20,9 +20,7 @@ enum ReportType {
 
 enum AdType {
   Banner
-  Alternatives
   AlternativePage
-  Tools
   ToolPage
   SelfHosted
   BlogPost
@@ -82,7 +80,27 @@ model Verification {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
-  model Tool {
+
+model Ad {
+  id             String   @id @default(cuid())
+  email          String?
+  name           String
+  description    String?
+  websiteUrl     String
+  affiliateUrl   String?
+  imageUrl       String?
+  buttonLabel    String?
+  faviconUrl     String?
+  type           AdType   @default(All)
+  startsAt       DateTime
+  endsAt         DateTime
+  subscriptionId String?  @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+
+model Tool {
     id              String    @id @default(cuid())
     name            String    @db.Citext
     slug            String    @unique
