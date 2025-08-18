@@ -59,6 +59,7 @@ export function AdForm({ className, title, ad, ...props }: AdsFormProps) {
       const isValid = await form.trigger();
       if (!isValid) {
         console.log("🔥 Validation errors:", JSON.stringify(form.formState.errors, null, 2));
+        toast.error("Please fix the form errors before submitting.");
         return;
       }
 
@@ -67,6 +68,7 @@ export function AdForm({ className, title, ad, ...props }: AdsFormProps) {
       await upsertAction.execute({ id: ad?.id, ...formData });
     } catch (error) {
       console.error("Submission error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to submit the form. Please try again.");
     }
   };
 
