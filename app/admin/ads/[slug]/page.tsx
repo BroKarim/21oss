@@ -6,7 +6,7 @@ import { findAdById } from "@/server/admin/ads/queries";
 type PageProps = { params: { slug: string } };
 
 const UpdateAdPage = async ({ params }: PageProps) => {
-  const { slug } = await params;
+  const { slug } = params;
   const ad = await findAdById(slug);
 
   if (!ad) {
