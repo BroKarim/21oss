@@ -150,3 +150,98 @@ export const fetchToolRepositoryData = adminProcedure
     revalidateTag("tools");
     revalidateTag(`tool-${tool.slug}`);
   });
+
+export const fetchAllToolRepositoryData = adminProcedure
+  .createServerAction()
+  .input(z.object({ limit: z.number().optional() }).optional()) // bisa kasih limit per-run
+  .handler(async ({ input }) => {
+    const startTime = Date.now();
+    const limit = input?.limit;
+
+    console.log("🚀 Starting fetchAllToolRepositoryData...");
+    console.log(`📊 Limit: ${limit || "No limit (fetch all)"}`);
+
+    const tools = await db.tool.findMany({
+      take: limit ?? undefined,
+    });
+
+    console.log(`📋 Found ${tools.length} tools to process`);
+    console.log(`⏱️  Estimated time: ~${tools.length * 1.5} seconds`);
+    console.log("─".repeat(50));
+
+    let successCount = 0;
+    let errorCount = 0;
+    let processedCount = 0;
+
+    for (const tool of tools) {
+      processedCount++;
+      const toolStartTime = Date.now();
+
+      console.log(`[${processedCount}/${tools.length}] Processing: ${tool.name}`);
+      console.log(`  📁 Repository: ${tool.repositoryUrl}`);
+      console.log(`  🏷️  Slug: ${tool.slug}`);
+
+      const result = await tryCatch(getToolRepositoryData(tool.repositoryUrl));
+
+      const toolEndTime = Date.now();
+      const toolDuration = toolEndTime - toolStartTime;
+
+      if (result.error || !result.data) {
+        errorCount++;
+        console.error(`  ❌ FAILED (${toolDuration}ms)`, {
+          error: result.error,
+          slug: tool.slug,
+        });
+        console.log(`  💡 Skipping to next tool...`);
+        continue;
+      }
+
+      await db.tool.update({
+        where: { id: tool.id },
+        data: result.data,
+      });
+
+      successCount++;
+      console.log(`  ✅ SUCCESS (${toolDuration}ms)`);
+      console.log(`  📈 Updated data: stars=${result.data.stars || "N/A"}, forks=${result.data.forks || "N/A"}`);
+
+      revalidateTag("tools");
+      revalidateTag(`tool-${tool.slug}`);
+
+      // Progress summary every 10 items or on last item
+      if (processedCount % 10 === 0 || processedCount === tools.length) {
+        const currentTime = Date.now();
+        const elapsedTime = Math.round((currentTime - startTime) / 1000);
+        const progress = Math.round((processedCount / tools.length) * 100);
+
+        console.log("📊 PROGRESS SUMMARY:");
+        console.log(`  🎯 Progress: ${processedCount}/${tools.length} (${progress}%)`);
+        console.log(`  ✅ Success: ${successCount}`);
+        console.log(`  ❌ Errors: ${errorCount}`);
+        console.log(`  ⏱️  Elapsed: ${elapsedTime}s`);
+        console.log("─".repeat(50));
+      }
+    }
+
+    const endTime = Date.now();
+    const totalDuration = Math.round((endTime - startTime) / 1000);
+    const avgTimePerTool = Math.round((totalDuration / tools.length) * 100) / 100;
+
+    console.log("🎉 FINAL SUMMARY:");
+    console.log(`  📊 Total Tools: ${tools.length}`);
+    console.log(`  ✅ Successful Updates: ${successCount}`);
+    console.log(`  ❌ Failed Updates: ${errorCount}`);
+    console.log(`  📈 Success Rate: ${Math.round((successCount / tools.length) * 100)}%`);
+    console.log(`  ⏱️  Total Duration: ${totalDuration}s`);
+    console.log(`  📊 Average Time per Tool: ${avgTimePerTool}s`);
+    console.log(`  🔄 Cache Revalidated: tools + ${successCount} individual tool tags`);
+    console.log("🎯 fetchAllToolRepositoryData completed!");
+    console.log("=".repeat(50));
+
+    return {
+      updated: successCount,
+      errors: errorCount,
+      total: tools.length,
+      duration: totalDuration,
+    };
+  });

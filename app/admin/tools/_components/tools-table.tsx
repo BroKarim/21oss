@@ -17,7 +17,7 @@ import type { DataTableFilterField } from "@/types";
 import { getColumns } from "./tools-table-columns";
 import { ToolsTableToolbarActions } from "./tools-table-toolbar-actions";
 import { Circle, CircleDashed, Plus } from "lucide-react";
-
+import { FetchButton } from "@/components/admin/fetch-button";
 type ToolsTableProps = {
   toolsPromise: ReturnType<typeof findTools>;
 };
@@ -85,6 +85,7 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
       >
         <DataTableToolbar table={table} filterFields={filterFields}>
           <ToolsTableToolbarActions table={table} />
+          <FetchButton />
           <DateRangePicker align="end" />
           <DataTableViewOptions table={table} />
         </DataTableToolbar>
