@@ -40,6 +40,7 @@ export const findAds = async (search: AdsTableSchema, where?: Prisma.AdWhereInpu
 };
 
 export const findAdById = async (id: string) => {
+  console.log("findAdById received id:", id);
   return db.ad.findUnique({
     where: { id },
   });
