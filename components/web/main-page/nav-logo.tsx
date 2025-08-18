@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { ChevronsUpDown } from "lucide-react";
-
+import { LogoSymbol } from "@/components/ui/logo-symbol-2";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
 export function NavLogo({
@@ -24,12 +24,11 @@ export function NavLogo({
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton size="lg" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-          <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-            <activeTeam.logo className="size-4" />
+          <div className="  aspect-square ">
+            <LogoSymbol />
           </div>
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <span className="truncate font-medium">{activeTeam.name}</span>
-            <span className="truncate text-xs">{activeTeam.plan}</span>
+          <div className="text-left md:text-4xl leading-tight">
+            <span className="truncate font-bold font-mono">{activeTeam.name}</span>
           </div>
           <ChevronsUpDown className="ml-auto" />
         </SidebarMenuButton>
