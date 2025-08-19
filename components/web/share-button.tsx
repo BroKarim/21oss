@@ -26,7 +26,7 @@ function Share() {
     <div className="flex flex-col gap-4">
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="sm:min-w-36">
+          <Button variant="outline" className="w-full sm:w-auto sm:min-w-36">
             Share
           </Button>
         </PopoverTrigger>

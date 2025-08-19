@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { cache, Suspense } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button-shadcn";
 import { H2 } from "@/components/ui/heading";
+import Link from "next/link";
+import { AdButton } from "@/components/web/ads/ad-button";
 import { Stack } from "@/components/ui/stack";
 import { Section } from "@/components/ui/section";
 import { findTool, findToolSlugs } from "@/server/web/tools/queries";
@@ -10,7 +12,6 @@ import { FaviconImage } from "@/components/ui/favicon";
 import { ToolStacks } from "@/components/web/tools/tool-stacks";
 import { RelatedTools } from "./related";
 import { Note } from "@/components/ui/note";
-import { Share } from "@/components/web/share-button";
 import { RepositoryDetails } from "@/components/web/repository-detail";
 import { ImageGallery } from "@/components/web/image-gallery";
 
@@ -68,8 +69,15 @@ export default async function ToolPage(props: PageProps) {
 
                 {/* Action Buttons */}
                 <Stack className="w-full flex-col gap-3 sm:flex-row sm:gap-4">
-                  <Button className="w-full sm:w-auto sm:min-w-36 order-1">Visit {tool.name}</Button>
-                  <Share />
+                  {tool.websiteUrl && (
+                    <Button asChild>
+                      <Link href={tool.websiteUrl} target="_blank" rel="noopener noreferrer">
+                        Visit {tool.name}
+                      </Link>
+                    </Button>
+                  )}
+
+                  <AdButton type="All" />
                 </Stack>
               </div>
             </Section.Content>

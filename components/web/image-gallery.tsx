@@ -151,6 +151,8 @@ export function ImageGallery({ items, className, autoPlay = true, autoPlayInterv
                     if (isCurrentSlide) setIsPlaying(false);
                   }}
                 />
+              ) : isGif(src) ? (
+                <img src={src} alt={`Media ${index + 1}`} className="h-full w-full object-cover" loading={index === 0 ? "eager" : "lazy"} />
               ) : (
                 <Image src={src} alt={`Media ${index + 1}`} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw" priority={index === 0} quality={index === currentIndex ? 90 : 75} />
               )}
