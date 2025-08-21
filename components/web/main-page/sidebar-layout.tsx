@@ -2,20 +2,13 @@
 
 import * as React from "react";
 import { AudioWaveform, BookOpen, PenTool, Command, Palette, GalleryVerticalEnd, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac } from "lucide-react";
-
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
-import { NavUser } from "./nav-user";
 import { NavLogo } from "./nav-logo";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
       name: "21OSS",
@@ -110,9 +103,6 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         <NavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

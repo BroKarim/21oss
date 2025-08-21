@@ -6,7 +6,7 @@ import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/s
 import { MainSidebar } from "@/components/web/main-page/sidebar-layout";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
-import { CommandMenu } from "@/components/web/main-page/command-menu";
+import { InfoDialog } from "@/components/web/ui/info-dialog";
 import { useAtom } from "jotai";
 import Footer4Col from "@/components/web/footers";
 
@@ -40,7 +40,7 @@ function Header() {
       </div>
 
       <div className="hidden md:flex md:w-auto md:flex-none">
-        <CommandMenu />
+        <InfoDialog />
       </div>
     </header>
   );
