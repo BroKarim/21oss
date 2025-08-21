@@ -15,7 +15,6 @@ export default function Page() {
         tempFaviconGroup = [];
       }
     } else {
-      // kalau ada favicon group yang belum di-push, push dulu
       if (tempFaviconGroup.length) {
         groupedSections.push(tempFaviconGroup);
         tempFaviconGroup = [];
@@ -29,8 +28,11 @@ export default function Page() {
         <BoltBanner />
         <div className="space-y-10 overflow-x-hidden">
           {groupedSections.map((group, idx) => {
+            const elements = [];
+
+            // Render grup section normal
             if (Array.isArray(group)) {
-              return (
+              elements.push(
                 <div key={`favicon-group-${idx}`} className="flex gap-4">
                   {group.map((section, secIdx) => (
                     <div key={`${section.id}-${secIdx}`} className="flex-1">
@@ -39,10 +41,22 @@ export default function Page() {
                   ))}
                 </div>
               );
+            } else {
+              // section biasa
+              elements.push(<LazySection key={`${group.id}-${idx}`} section={group} />);
             }
 
-            // section biasa
-            return <LazySection key={`${group.id}-${idx}`} section={group} />;
+            // Sisipkan AdBanner/hello world setiap 3 grup (idx dimulai dari 0)
+            // Jadi akan muncul setelah grup ke-3, ke-6, ke-9, dst
+            if ((idx + 1) % 3 === 0 && idx < groupedSections.length - 1) {
+              elements.push(
+                <div key={`ad-banner-${idx}`} className="w-full bg-gray-100 p-4 text-center rounded-lg border border-gray-200">
+                  Hello World - Ad Banner {Math.floor((idx + 1) / 3)}
+                </div>
+              );
+            }
+
+            return elements;
           })}
         </div>
       </div>

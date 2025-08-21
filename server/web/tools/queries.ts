@@ -5,7 +5,7 @@ import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "
 import { db } from "@/services/db";
 import { ToolManyPayload, toolOnePayload } from "./payloads";
 import type { FilterSchema } from "../shared/schema";
-// sederhanya ini fungsi2 untuk fetch data mirip seperti API GET
+
 export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {
   "use cache";
 
