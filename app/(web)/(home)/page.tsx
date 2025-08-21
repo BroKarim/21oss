@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Banner } from "@/components/web/ui/banner";
 import { homeSections } from "@/lib/constants/home-sections";
 import LazySection from "@/components/web/lazy-section";
-
+import { AdBanner } from "@/components/web/ads/ad-banner";
 export default function Page() {
   const groupedSections: (typeof homeSections | (typeof homeSections)[number])[] = [];
   let tempFaviconGroup: (typeof homeSections)[number][] = [];
@@ -50,8 +50,8 @@ export default function Page() {
             // Jadi akan muncul setelah grup ke-3, ke-6, ke-9, dst
             if ((idx + 1) % 3 === 0 && idx < groupedSections.length - 1) {
               elements.push(
-                <div key={`ad-banner-${idx}`} className="w-full bg-black p-4 text-center rounded-lg border border-gray-200">
-                  Hello World - Ad Banner {Math.floor((idx + 1) / 3)}
+                <div key={`ad-banner-${idx}`}>
+                  <AdBanner type="All" />
                 </div>
               );
             }
