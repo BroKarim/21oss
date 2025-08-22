@@ -3,6 +3,8 @@ import { Banner } from "@/components/web/ui/banner";
 import { homeSections } from "@/lib/constants/home-sections";
 import LazySection from "@/components/web/lazy-section";
 import { AdBanner } from "@/components/web/ads/ad-banner";
+
+
 export default function Page() {
   const groupedSections: (typeof homeSections | (typeof homeSections)[number])[] = [];
   let tempFaviconGroup: (typeof homeSections)[number][] = [];
@@ -30,7 +32,6 @@ export default function Page() {
           {groupedSections.map((group, idx) => {
             const elements = [];
 
-            // Render grup section normal
             if (Array.isArray(group)) {
               elements.push(
                 <div key={`favicon-group-${idx}`} className="flex gap-4">
@@ -42,12 +43,9 @@ export default function Page() {
                 </div>
               );
             } else {
-              // section biasa
               elements.push(<LazySection key={`${group.id}-${idx}`} section={group} />);
             }
 
-            // Sisipkan AdBanner/hello world setiap 3 grup (idx dimulai dari 0)
-            // Jadi akan muncul setelah grup ke-3, ke-6, ke-9, dst
             if ((idx + 1) % 3 === 0 && idx < groupedSections.length - 1) {
               elements.push(
                 <div key={`ad-banner-${idx}`}>

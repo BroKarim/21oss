@@ -5,6 +5,8 @@ import { findAd } from "@/server/web/ads/queries";
 import { adOnePayload } from "@/server/web/ads/payloads";
 import { Prisma } from "@prisma/client";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
+
 type Ad = Prisma.AdGetPayload<{ select: typeof adOnePayload }>;
 
 interface BannerContentProps {
@@ -21,7 +23,7 @@ const AdBanner = async ({ type }: BannerContentProps) => {
     description: "Turn repetitive text into shortcuts using",
     buttonLabel: "Download, It's free",
     websiteUrl: "#",
-    imageUrl: "https://singapore-openlayout.s3.ap-southeast-1.amazonaws.com/ads/hostinger-ads.png",
+    imageUrl: "https://singapore-openlayout.s3.ap-southeast-1.amazonaws.com/ads/hostinger-ad.png",
     type,
     faviconUrl: "https://singapore-openlayout.s3.ap-southeast-1.amazonaws.com/ads/hostinger-favicon.png",
   };
@@ -35,19 +37,22 @@ const AdBanner = async ({ type }: BannerContentProps) => {
         <div className="flex-1 space-y-6">
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-gray-900 leading-tight">
-              Turn repetitive text into shortcuts, <span className="text-blue-600">write 10x faster</span> using Slashit.
+              Get <span className="text-blue-600">20% Extra Off</span> with Hostinger Hosting!
             </h1>
+            <p className="mt-2 text-lg text-gray-600">Free domain, free migration, and 24/7 support. Starting from Rp12.900/month + 3 extra months.</p>
           </div>
 
-          <Button className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium" size="lg">
-            Download, It's free
-          </Button>
+          <Link href="https://hostinger.co.id?REFERRALCODE=HILYASTRAZW5" passHref>
+            <Button className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium mt-4" size="lg">
+              Get Started Now
+            </Button>
+          </Link>
         </div>
 
         {/* Right side - Hi Alex message as image */}
         <div className="flex-shrink-0">
           <div className="relative">
-            <Image src="https://singapore-openlayout.s3.ap-southeast-1.amazonaws.com/ads/hostinger-ads.png" alt="Hi Alex message" width={400} height={200} className="rounded-lg shadow-sm" />
+            <Image src="https://singapore-openlayout.s3.ap-southeast-1.amazonaws.com/ads/hostinger-ad.png" alt="Hi Alex message" width={400} height={200} className="rounded-lg shadow-sm" />
           </div>
         </div>
       </div>
