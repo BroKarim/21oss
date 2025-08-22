@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+# 🚀 Welcome to 21OSS.com!
 
-First, run the development server:
+**[21OSS.com](https://21oss.com)** is open-source catalog designed to make discovering tools easier.  Whether you’re looking for a library, a framework, or an everyday utility, the goal is simple: make open-source tools accessible, clear, and useful for daily life.
+ 
+(gambar og-image)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🌟 Why I Built This
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+I’ve always believed that open-source tools have the power to change how we work, create, and live. But too often, they’re scattered across the internet, hard to discover, and even harder to compare.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+I built this platform because I wanted to help people like me—students, developers, researchers, and creators—find the right tools without wasting hours searching. It’s not just about software, it’s about empowering people to learn, build, and solve real problems faster.
 
-## Learn More
+**If even one person finds a tool here that makes their day easier, this project is worth it.**
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🏗 Architecture
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The project uses a modern stack:
 
-## Deploy on Vercel
+- **Frontend**: Next.js 15
+- **Database**: Supabase 
+- **Authentication**: Better Auth
+- **Storage**: AWS S3
+- prisma
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+--- 
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Project Structure
+
+OpenAlternative is built in Next.js App Router. The project structure is organized as follows:
+
+- `/app` - Application routes and layouts (Next.js App Router)
+- `/components` - Reusable React components
+- `/lib` - Core utilities and business logic
+- `/actions` - Server actions
+- `/utils` - Helper functions and utilities
+- `/hooks` - React hooks
+- `/contexts` - React context providers
+- `/services` - Service integrations
+- `/emails` - Email templates
+- `/server` - Server-side code
+- `/config` - Configuration files
+- `/prisma` - Prisma schema and utilities
+- `/types` - TypeScript type definitions
+- `/public` - Static assets
+
+--- 
+
+## License
+
+OpenAlternative is licensed under the [GPL-3.0 License](LICENSE).
