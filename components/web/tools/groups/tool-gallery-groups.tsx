@@ -44,7 +44,7 @@ export const ToolGalleryGroup = ({ id, label, tools, options, className, showGlo
   }
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 3); // Tambah 3 item
+    setVisibleCount((prev) => prev + 3); 
   };
 
   return (

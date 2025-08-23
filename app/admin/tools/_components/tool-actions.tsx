@@ -76,7 +76,15 @@ export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => 
         </DropdownMenuItem>
       </DropdownMenuContent>
 
-      <ToolsDeleteDialog open={isDeleteOpen} onOpenChange={() => setIsDeleteOpen(false)} tools={[tool]} showTrigger={false} onSuccess={() => router.push("/admin/tools")} />
+      <ToolsDeleteDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        tools={[tool]}
+        showTrigger={false}
+        onSuccess={() => {
+          router.push("/admin/tools");
+        }}
+      />
     </DropdownMenu>
   );
 };

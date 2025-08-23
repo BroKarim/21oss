@@ -1,10 +1,12 @@
 "use client";
 
 import { Suspense } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { ArrowLeft } from "lucide-react";
 import { MainSidebar } from "@/components/web/main-page/sidebar-layout";
 import { AdminSidebar } from "@/components/admin/sidebar";
+import { Button } from "@/components/ui/button-shadcn";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
 import { InfoDialog } from "@/components/web/ui/info-dialog";
 import { useAtom } from "jotai";
@@ -21,7 +23,6 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
       <Suspense fallback={null}>{isAdmin ? <AdminSidebar /> : <MainSidebar />}</Suspense>
       <SidebarInset>
         <MainLayout>
-          {/* TODO : MAKE COMMAND MENU LIKE 21ST.DEV */}
           {!isAdmin && <Header />}
           {children}
           {!isAdmin && <Footer4Col />}
@@ -32,11 +33,19 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
 }
 
 function Header() {
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const isBaseUrl = pathname === "/";
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 justify-between">
       <div className="flex w-full items-center gap-2">
         <SidebarTrigger className="lg:hidden p-0" />
-        <h1 className="md:text-lg font-semibold">Building Your Application</h1>
+        {!isBaseUrl && (
+          <Button variant="ghost" size="icon" className=" flex gap-1 " onClick={() => router.back()}>
+            <ArrowLeft className="h-5 w-5" />back
+          </Button>
+        )}
       </div>
 
       <div className="hidden md:flex md:w-auto md:flex-none">

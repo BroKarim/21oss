@@ -107,23 +107,76 @@ export const deleteTools = adminProcedure
   .createServerAction()
   .input(z.object({ ids: z.array(z.string()) }))
   .handler(async ({ input: { ids } }) => {
+    console.log("🗑️ Delete tools called with ids:", ids);
+
     const tools = await db.tool.findMany({
       where: { id: { in: ids } },
-      select: { slug: true },
+      select: { slug: true, id: true },
     });
 
-    await db.tool.deleteMany({
-      where: { id: { in: ids } },
+    console.log("🔍 Found tools:", tools);
+
+    if (tools.length === 0) {
+      throw new Error("No tools found to delete");
+    }
+
+    // Gunakan transaction untuk memastikan semua operasi berhasil atau rollback
+    const result = await db.$transaction(async (tx) => {
+      console.log("🔄 Starting transaction to delete tools...");
+
+      // 1. Hapus screenshots terlebih dahulu
+      console.log("🗑️ Deleting screenshots...");
+      await tx.toolScreenshot.deleteMany({
+        where: { toolId: { in: ids } },
+      });
+
+      // 2. Hapus likes
+      console.log("🗑️ Deleting likes...");
+      await tx.like.deleteMany({
+        where: { toolId: { in: ids } },
+      });
+
+      // 3. Hapus reports
+      console.log("🗑️ Deleting reports...");
+      await tx.report.deleteMany({
+        where: { toolId: { in: ids } },
+      });
+
+      // 4. Putuskan hubungan many-to-many (categories, platforms, stacks)
+      console.log("🗑️ Disconnecting many-to-many relations...");
+      for (const toolId of ids) {
+        await tx.tool.update({
+          where: { id: toolId },
+          data: {
+            categories: { set: [] },
+            platforms: { set: [] },
+            stacks: { set: [] },
+          },
+        });
+      }
+
+      // 5. Akhirnya, hapus tools
+      console.log("🗑️ Deleting tools...");
+      const deleteResult = await tx.tool.deleteMany({
+        where: { id: { in: ids } },
+      });
+
+      console.log("✅ Delete result:", deleteResult);
+      return deleteResult;
     });
 
+    // Revalidate cache
     revalidatePath("/admin/tools");
     revalidateTag("tools");
 
+    // Hapus S3 directories
     after(async () => {
+      console.log("🗑️ Cleaning up S3 directories...");
       await removeS3Directories(tools.map((tool) => `tools/${tool.slug}`));
     });
 
-    return true;
+    console.log("🎉 Tools deletion completed successfully");
+    return result;
   });
 
 // ✅ Ambil data dari repository tool

@@ -57,7 +57,6 @@ export default function RootLayout({
             <SearchProvider>
               <AppProviders>
                 {children}
-                {/* component search kayaknya buat sendiri aja, punya dia bnayk kli lib */}
               </AppProviders>
             </SearchProvider>
           </NuqsAdapter>
