@@ -90,7 +90,10 @@ const WidgetBanner = memo(function WidgetBanner() {
   );
 });
 
-export const Banner = memo(function Banner() {
+export const Banner = memo(function Banner({ variant = "widget" }: { variant?: "widget" | "content" }) {
+  if (variant === "content") {
+    return <BannerContent />;
+  }
   return <WidgetBanner />;
 });
 
