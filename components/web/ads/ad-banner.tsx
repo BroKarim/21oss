@@ -14,7 +14,7 @@ const AdBanner = async ({ className, ...props }: ComponentProps<typeof Card>) =>
   }
 
   return (
-    <Card className={cx("relative overflow-hidden bg-gradient-to-r from-gray-100 to-yellow-100 p-8 rounded-2xl shadow-lg", className)} {...props}>
+    <Card className={cx("relative overflow-hidden bg-gradient-to-r from-gray-100 to-[#826ce8] p-8 rounded-2xl shadow-lg", className)} {...props}>
       <div className="flex items-center justify-between gap-8">
         {/* Left side content */}
         <div className="flex-1 space-y-6">

@@ -31,7 +31,7 @@ export const Icons = {
   help: HelpCircle,
   pizza: Pizza,
   twitter: (props: IconProps) => (
-    <svg {...props} height="23" viewBox="0 0 1200 1227" width="23" xmlns="http://www.w3.org/2000/svg">
+    <svg {...props} height="23" viewBox="0 0 1200 1227" width="23" xmlns="http://www.w3.org/2000/svg" fill="#ffff">
       <path d="M714.163 519.284L1160.89 0H1055.03L667.137 450.887L357.328 0H0L468.492 681.821L0 1226.37H105.866L515.491 750.218L842.672 1226.37H1200L714.137 519.284H714.163ZM569.165 687.828L521.697 619.934L144.011 79.6944H306.615L611.412 515.685L658.88 583.579L1055.08 1150.3H892.476L569.165 687.854V687.828Z" />
     </svg>
   ),
@@ -41,6 +41,14 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  logo: (props: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width={17} height={31} fill="none" {...props}>
+      <path
+        fill="#fff"
+        d="M10.75 31H7.61v-3.1h3.14V31Zm-3.14-3.1H4.47v-3.1h3.14v3.1Zm6.278-3.1v3.1h-3.139v-3.1h3.139ZM17 21.758h-3.14v-9.3h-3.139v-3.1H17v12.4ZM9.417 12.4v4.65H3.14v1.55h6.278v3.1H0v-7.75h6.278V12.4H0V9.3h9.417v3.1ZM7.61 6.2H4.47V3.1h3.14v3.1Zm6.278 0h-3.14V3.1h3.14v3.1Zm-3.14-3.1H7.61V0h3.14l-.001 3.1Z"
+      />
+    </svg>
+  ),
   gitHub: (props: IconProps) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>
       <path

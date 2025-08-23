@@ -3,7 +3,7 @@
 import React, { useState, useEffect, memo } from "react";
 import { AnimatedGridPattern } from "@/components/web/background/grid-pattern";
 import TVNoise from "../background/tv-noise";
-
+import { AdCompact } from "../ads/ad-compact";
 const BannerContent = memo(function BannerContent() {
   return (
     <section className="relative min-h-[160px] sm:min-h-[200px] lg:min-h-[240px] border rounded-md overflow-hidden bg-black">
@@ -33,14 +33,6 @@ const WidgetBanner = memo(function WidgetBanner() {
     return () => clearInterval(timer);
   }, []);
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour12: true,
-      hour: "numeric",
-      minute: "2-digit",
-    });
-  };
-
   const formatDate = (date: Date) => {
     const dayOfWeek = date.toLocaleDateString("en-US", {
       weekday: "long",
@@ -55,35 +47,24 @@ const WidgetBanner = memo(function WidgetBanner() {
 
   const dateInfo = formatDate(currentTime);
 
-  const widgetData = {
-    temperature: "24°C",
-    location: "Medan, ID",
-    timezone: "WIB",
-  };
-
   return (
     <section className="relative min-h-[160px] sm:min-h-[200px] lg:min-h-[240px] border rounded-md overflow-hidden bg-black">
-      <TVNoise opacity={1} intensity={0.2} speed={40} />
-      <div className="bg-accent/30 flex-1 flex flex-col justify-between text-sm font-medium uppercase relative z-20 p-4 sm:p-6 lg:p-8 h-full min-h-[160px] sm:min-h-[200px] lg:min-h-[240px]">
-        <div className="flex justify-between items-center">
-          <span className="opacity-50 text-white">{dateInfo.dayOfWeek}</span>
+      <TVNoise opacity={0.5} intensity={0.2} speed={40} />
+      <div className="bg-accent/30 relative z-20 p-4 sm:p-6 h-full min-h-[160px] sm:min-h-[200px] lg:min-h-[240px] flex flex-col">
+        {/* DateInfo - Always at top */}
+        <div className="flex opacity-50 justify-between items-center text-sm font-medium uppercase">
+          <span className=" text-white">{dateInfo.dayOfWeek}</span>
+          {/* <AdCompact className="w-full"/> */}
           <span className="text-white">{dateInfo.restOfDate}</span>
         </div>
 
-        <div className="text-center">
-          <div className="text-3xl sm:text-4xl lg:text-5xl font-display text-white" suppressHydrationWarning>
-            {formatTime(currentTime)}
+        {/* Content - Centered vertically in remaining space */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-3xl sm:text-4xl lg:text-5xl font-display text-white" suppressHydrationWarning>
+              open-source catalog designed to make discovering tools easier
+            </div>
           </div>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <span className="opacity-50 text-white">{widgetData.temperature}</span>
-          <span className="text-white">{widgetData.location}</span>
-          <div className="bg-accent px-2 py-1 rounded text-xs">{widgetData.timezone}</div>
-        </div>
-
-        <div className="absolute inset-0 -z-[1] opacity-20">
-          <div className="size-full bg-[url('/assets/pc_blueprint.gif')] bg-contain bg-center bg-no-repeat" />
         </div>
       </div>
     </section>

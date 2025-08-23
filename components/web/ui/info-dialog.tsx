@@ -34,11 +34,8 @@ export function InfoDialog() {
           <div className="flex flex-col gap-3 flex-1 text-[13px] text-gray-11 leading-relaxed">
             <DialogTitle>About</DialogTitle>
             <p>
-              This platform is an open-source catalog designed to make discovering tools easier. Every tool is organized by category and subcategory, complete with details like license, stack, and links—so you can find exactly what you
-              need, faster.
-            </p>
-            <p>
-              Whether you’re looking for a library, a framework, or an everyday utility, the goal is simple: <span className="italic">make open-source tools accessible, clear, and useful for daily life.</span>
+              This platform is an open-source catalog designed to make discovering tools easier. Whether you’re looking for a library, a framework, or an everyday utility, the goal is simple:{" "}
+              <span className="italic">make open-source tools accessible, clear, and useful for daily life.</span>
             </p>
 
             <DialogTitle>Roadmap 🚧</DialogTitle>

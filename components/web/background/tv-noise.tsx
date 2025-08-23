@@ -102,7 +102,7 @@ export default function TVNoise({ className, opacity = 0.03, intensity = 0.1, sp
       className={cn("pointer-events-none absolute inset-0 w-full h-full z-10", className)}
       style={{
         opacity,
-        mixBlendMode: "overlay",
+        mixBlendMode: "normal",
       }}
     />
   );
