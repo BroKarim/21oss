@@ -1,50 +1,30 @@
-import type { AdType } from "@prisma/client";
+import type { ComponentProps } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { findAd } from "@/server/web/ads/queries";
-import { adOnePayload } from "@/server/web/ads/payloads";
-import { Prisma } from "@prisma/client";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
+import { cx } from "@/lib/utils";
 
-type Ad = Prisma.AdGetPayload<{ select: typeof adOnePayload }>;
+const AdBanner = async ({ className, ...props }: ComponentProps<typeof Card>) => {
+  const ad = await findAd({ where: { type: "Banner" } });
 
-interface BannerContentProps {
-  ad?: Ad;
-  type: AdType;
-}
-
-const AdBanner = async ({ type }: BannerContentProps) => {
-  const ad = await findAd({ where: { type } });
-
-  // fallback data
-  const fallbackAd: Ad = {
-    name: "Slashit",
-    description: "Turn repetitive text into shortcuts using",
-    buttonLabel: "Download, It's free",
-    websiteUrl: "#",
-    imageUrl: "https://singapore-openlayout.s3.ap-southeast-1.amazonaws.com/ads/hostinger-ad.png",
-    type,
-    faviconUrl: "https://singapore-openlayout.s3.ap-southeast-1.amazonaws.com/ads/hostinger-favicon.png",
-  };
-
-  const data = ad || fallbackAd;
+  if (!ad) {
+    return null;
+  }
 
   return (
-    <Card className="relative overflow-hidden bg-gradient-to-r from-gray-100 to-yellow-100 p-8 rounded-2xl shadow-lg">
+    <Card className={cx("relative overflow-hidden bg-gradient-to-r from-gray-100 to-yellow-100 p-8 rounded-2xl shadow-lg", className)} {...props}>
       <div className="flex items-center justify-between gap-8">
         {/* Left side content */}
         <div className="flex-1 space-y-6">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900 leading-tight">
-              Get <span className="text-blue-600">20% Extra Off</span> with Hostinger Hosting!
-            </h1>
-            <p className="mt-2 text-lg text-gray-600">Free domain, free migration, and 24/7 support. Starting from Rp12.900/month + 3 extra months.</p>
+            <h1 className="text-4xl font-bold text-gray-900 leading-tight">{ad.description}</h1>
           </div>
 
-          <Link href="https://hostinger.co.id?REFERRALCODE=HILYASTRAZW5" passHref>
+          <Link href={ad.websiteUrl} passHref>
             <Button className="bg-black hover:bg-gray-800 text-white px-6 py-3 rounded-lg font-medium mt-4" size="lg">
-              Get Started Now
+              {ad.buttonLabel}
             </Button>
           </Link>
         </div>

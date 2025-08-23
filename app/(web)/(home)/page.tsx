@@ -49,7 +49,7 @@ export default function Page() {
             if ((idx + 1) % 3 === 0 && idx < groupedSections.length - 1) {
               elements.push(
                 <div key={`ad-banner-${idx}`}>
-                  <AdBanner type="All" />
+                  <AdBanner />
                 </div>
               );
             }

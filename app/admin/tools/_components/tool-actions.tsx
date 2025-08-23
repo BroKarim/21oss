@@ -17,8 +17,7 @@ import { Ellipsis } from "lucide-react";
 type ToolActionsProps = ComponentProps<typeof Button> & {
   tool: Tool;
 };
-// menampilkan dropdown menu tindakan untuk satu tool di halaman admin, seperti:
-// edit tool, hapus tool dll
+
 export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => {
   const pathname = usePathname();
   const router = useRouter();
