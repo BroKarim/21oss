@@ -99,7 +99,7 @@ export default function TVNoise({ className, opacity = 0.03, intensity = 0.1, sp
   return (
     <canvas
       ref={canvasRef}
-      className={cn("pointer-events-none absolute inset-0 w-full h-full z-10", className)}
+      className={cn("pointer-events-none absolute inset-0 w-full h-full z-5", className)}
       style={{
         opacity,
         mixBlendMode: "normal",

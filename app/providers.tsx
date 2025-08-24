@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button-shadcn";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
 import { InfoDialog } from "@/components/web/ui/info-dialog";
 import { useAtom } from "jotai";
-import { Footer } from "@/components/web/footer-2";
+import { Footer } from "@/components/web/footer";
 
 export function AppProviders({ children }: { children: React.ReactNode }): React.ReactElement {
   const [open, setOpen] = useAtom(sidebarOpenAtom);
