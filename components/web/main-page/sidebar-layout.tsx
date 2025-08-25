@@ -34,12 +34,12 @@ const data = {
       isActive: true,
     },
     {
-      title: "Tools",
+      title: "Awesome List",
       url: "/tools",
       icon: PenTool,
     },
     {
-      title: "Blog",
+      title: "Top 5",
       url: "/blog",
       icon: BookOpen,
     },
@@ -50,7 +50,7 @@ const data = {
       icon: AppWindowMac,
       isActive: true,
       items: [
-        { title: "APIs & Integration", url: "/categories/programming#programming/apis-and-integration" },
+        { title: "APIs & Integration", url: "/categories/programming#apis-and-integration" },
         { title: "Backend", url: "/categories/programming#backend" },
         { title: "Components", url: "/categories/programming#components" },
         { title: "Dev Tools", url: "/categories/programming#dev-tools" },

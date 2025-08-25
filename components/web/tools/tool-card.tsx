@@ -60,8 +60,9 @@ const ToolCard = ({ tool, ...props }: ToolCardProps) => {
           </div>
         </CardHeader>
 
-        <div className="p-0">
+        <div className="p-0 flex flex-col">
           <p className="text-base  text-foreground">{tool.name}</p>
+          <p className="text-xs opacity-50  text-foreground">{tool.platforms?.length ? tool.platforms.map((p) => p.name).join(", ") : ""}</p>
         </div>
       </Link>
     </Card>

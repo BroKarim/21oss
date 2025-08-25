@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { SearchParams } from "nuqs/server";
 import { Suspense, cache } from "react";
-import { Banner } from "@/components/web/ui/banner";
+import WidgetBanner from "@/components/web/ui/banner";
 import { ToolListSkeleton } from "@/components/web/tools/tool-list";
 import { metadataConfig } from "@/config/metadata";
 import { categoryRedirects } from "@/lib/categories";
@@ -72,7 +72,7 @@ export default async function CategoryPage(props: PageProps) {
     <>
       <main className={cn("flex flex-1 flex-col")}>
         <div className="container p-4 space-y-6">
-          <Banner />
+          <WidgetBanner />
 
           {/* Navigasi Anchor */}
           {subcategories.length > 1 && (

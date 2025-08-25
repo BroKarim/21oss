@@ -67,7 +67,7 @@ function Footer() {
             <div className="space-y-4">
               <p className="text-muted-foreground">
                 Build by{" "}
-                <Link href="https://x.com/arihantCodes" className="text-blue-500 hover:text-blue-600 transition-colors duration-200">
+                <Link href="https://x.com/BroKariim" className="text-blue-500 hover:text-blue-600 transition-colors duration-200">
                   @Brokarim
                 </Link>
               </p>
