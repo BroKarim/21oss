@@ -50,7 +50,7 @@ const data = {
       icon: AppWindowMac,
       isActive: true,
       items: [
-        { title: "APIs & Integration", url: "/categories/programming#programming/apis-and-integration" },
+        { title: "APIs & Integration", url: "/categories/programming#apis-and-integration" },
         { title: "Backend", url: "/categories/programming#backend" },
         { title: "Components", url: "/categories/programming#components" },
         { title: "Dev Tools", url: "/categories/programming#dev-tools" },
@@ -74,7 +74,7 @@ const data = {
       items: [
         { title: "Analytics & Tracking", url: "/categories/marketing#analytics" },
         { title: "Email", url: "/categories/marketing#email" },
-        { title: "SEO Tools", url: "/categories/marketing#seo-tools" },
+        { title: "Content", url: "/categories/marketing#seo-tools" },
       ],
     },
     {
