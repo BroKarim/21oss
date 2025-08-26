@@ -17,13 +17,27 @@ export async function getDevelopmentTools() {
     where: { categories: { some: { slug: "dev-tools" } } },
   });
 }
+export async function getApiTools() {
+  return await findToolsWithCategories({
+    where: { categories: { some: { slug: "apis-and-integration" } } },
+  });
+}
 export async function getLlmTools() {
   return await findToolsWithCategories({
     where: { categories: { some: { slug: "llm-ecosystem" } } },
   });
 }
 
-export async function getUiUxTools() {
+export async function getUtilityTools() {
+  return await findToolsWithCategories({
+    where: {
+      categories: {
+        some: { slug: "utility-and-software" },
+      },
+    },
+  });
+}
+export async function getUIUXTools() {
   return await findToolsWithCategories({
     where: {
       categories: {

@@ -93,7 +93,6 @@ export default async function CategoryPage(props: PageProps) {
           <Suspense fallback={<ToolListSkeleton />}>
             {subcategories.map((sub) => (
               <section key={sub.slug} id={sub.slug} className="scroll-mt-24 space-y-4">
-                <div className="flex items-center justify-between">{sub.description && <p className="text-muted-foreground text-sm max-w-[75%]">{sub.description}</p>}</div>
                 <ToolsBySubcategoryLazy subcategorySlug={sub.slug} subcategoryLabel={sub.name} />
               </section>
             ))}
