@@ -8,14 +8,11 @@ export const findCategories = async (search: CategoriesTableSchema) => {
   const { name, page, perPage, sort, from, to, operator } = search;
 
   const offset = (page - 1) * perPage;
-  const orderBy = sort.map((item) => ({ [item.id]: item.desc ? "desc" : "asc" }) as const);
+  const orderBy = sort.map((item: any) => ({ [item.id]: item.desc ? "desc" : "asc" }) as const);
   const fromDate = from ? startOfDay(new Date(from)) : undefined;
   const toDate = to ? endOfDay(new Date(to)) : undefined;
 
-  const expressions: (Prisma.CategoryWhereInput | undefined)[] = [
-    name ? { name: { contains: name, mode: "insensitive" } } : undefined,
-    fromDate || toDate ? { createdAt: { gte: fromDate, lte: toDate } } : undefined,
-  ];
+  const expressions: (Prisma.CategoryWhereInput | undefined)[] = [name ? { name: { contains: name, mode: "insensitive" } } : undefined, fromDate || toDate ? { createdAt: { gte: fromDate, lte: toDate } } : undefined];
 
   const where: Prisma.CategoryWhereInput = {
     [operator.toUpperCase()]: expressions.filter(isTruthy),

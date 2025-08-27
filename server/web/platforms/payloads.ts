@@ -1,13 +1,8 @@
 import { Prisma, ToolStatus } from "@prisma/client";
 
-/* ---------- Helpers ---------- */
-
-/** Digunakan untuk mem‑filter hanya platform yang punya tool ber‑status Published */
 export const platformWithTools = Prisma.validator<Prisma.PlatformWhereInput>()({
   tools: { some: { status: ToolStatus.Published } },
 });
-
-/* ---------- SELECT payloads ---------- */
 
 export const platformOnePayload = Prisma.validator<Prisma.PlatformSelect>()({
   id: true,
@@ -31,8 +26,6 @@ export const platformManyPayload = Prisma.validator<Prisma.PlatformSelect>()({
     },
   },
 });
-
-/* ---------- Type helpers ---------- */
 
 export type PlatformOne = Prisma.PlatformGetPayload<{
   select: typeof platformOnePayload;

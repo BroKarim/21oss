@@ -1,5 +1,3 @@
-
-
 import { type Prisma, ToolStatus } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
@@ -71,7 +69,6 @@ export const findFeaturedTool = async ({ where, ...args }: Prisma.ToolFindManyAr
   });
 };
 
-// Mengambil semua data dari model content, dengan kondisi dan urutan tertentu.
 export const findTools = async ({ where, orderBy, ...args }: Prisma.ToolFindManyArgs) => {
   "use cache";
 
@@ -107,7 +104,6 @@ export const findTool = async ({ where, ...args }: Prisma.ToolFindFirstArgs = {}
   cacheLife("max");
 
   try {
-    // Pastikan koneksi di-release dengan proper error handling
     const result = await db.tool.findFirst({
       ...args,
       where: { ...where },

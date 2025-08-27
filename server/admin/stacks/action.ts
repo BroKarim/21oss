@@ -7,14 +7,9 @@ import { adminProcedure } from "@/lib/safe-actions";
 import { stackSchema } from "./schema";
 import { db } from "@/services/db";
 
-// Create stack (tanpa update)
 export const createStack = adminProcedure
   .createServerAction()
-  .input(
-    stackSchema
-      .extend({ id: z.string().optional() }) // opsional agar bisa reuse
-      .pick({ name: true }) // hanya input "name"
-  )
+  .input(stackSchema.extend({ id: z.string().optional() }).pick({ name: true }))
   .handler(async ({ input: { name } }) => {
     const slug = slugify(name);
 

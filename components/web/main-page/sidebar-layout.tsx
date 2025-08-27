@@ -1,31 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { AudioWaveform, BookOpen, PenTool, Command, Palette, GalleryVerticalEnd, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac } from "lucide-react";
+import { BookOpen, PenTool, Palette, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac } from "lucide-react";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavLogo } from "./nav-logo";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 
-// This is sample data.
 const data = {
-  teams: [
-    {
-      name: "21OSS",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Explore",
@@ -35,12 +17,12 @@ const data = {
     },
     {
       title: "Awesome List",
-      url: "/tools",
+      url: "/awesome-list",
       icon: PenTool,
     },
     {
       title: "Top 5",
-      url: "/blog",
+      url: "/top-5",
       icon: BookOpen,
     },
   ],
@@ -97,7 +79,7 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavLogo teams={data.teams} />
+        <NavLogo />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

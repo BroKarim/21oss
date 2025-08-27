@@ -1,7 +1,6 @@
 "use server";
 
 import { findToolsWithCategories, findRecentTools } from "@/server/web/tools/queries";
-// import { getSubcategories } from "../categories/queries";
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
 }
@@ -52,10 +51,7 @@ export async function getAiTools() {
     where: {
       categories: {
         some: {
-          OR: [
-            { slug: "ai" },
-            { parent: { slug: "ai" } }, // cek kategori anak
-          ],
+          OR: [{ slug: "ai" }, { parent: { slug: "ai" } }],
         },
       },
     },
@@ -79,4 +75,3 @@ export async function getToolsBySubcategory(slug: string) {
     orderBy: { publishedAt: "desc" },
   });
 }
-// Add more as needed based on your homeSections

@@ -11,7 +11,7 @@ export const findAds = async (search: AdsTableSchema, where?: Prisma.AdWhereInpu
 
   const offset = (page - 1) * perPage;
 
-  const orderBy = sort.map((item) => ({ [item.id]: item.desc ? "desc" : "asc" }) as const);
+  const orderBy = sort.map((item:any) => ({ [item.id]: item.desc ? "desc" : "asc" }) as const);
   const fromDate = from ? startOfDay(new Date(from)) : undefined;
   const toDate = to ? endOfDay(new Date(to)) : undefined;
 

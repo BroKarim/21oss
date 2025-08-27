@@ -8,7 +8,6 @@ export const toolCategoriesPayload = Prisma.validator<Prisma.Tool$categoriesArgs
   orderBy: { name: "asc" },
 });
 
-//Mendefinisikan field-field yang akan diambil dari satu entitas Tool
 export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   id: true,
   name: true,
@@ -49,7 +48,6 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   },
 });
 
-//Mendefinisikan field yang lebih ringkas untuk list banyak Tool
 export const ToolManyPayload: Prisma.ToolSelect = {
   id: true,
   name: true,
