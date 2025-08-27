@@ -1,6 +1,5 @@
 // schema.ts
 
-// belm jalani pnpm db
 import { type Ad, AdType } from "@prisma/client";
 import { createSearchParamsCache, parseAsArrayOf, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
 import { z } from "zod";

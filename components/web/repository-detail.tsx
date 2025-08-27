@@ -68,7 +68,7 @@ export const RepositoryDetails = ({ className, showcase, ...props }: RepositoryD
       </CardContent>
       <CardFooter>
         <p className="text-muted-foreground/75 text-[11px]">
-          Auto-fetched from GitHub{" "}
+          Fetched from GitHub{" "}
           <time dateTime={formatISO(showcase.updatedAt)} className="font-medium text-muted-foreground">
             {formatDistanceToNowStrict(showcase.updatedAt, { addSuffix: true })}
           </time>

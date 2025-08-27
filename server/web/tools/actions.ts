@@ -1,7 +1,6 @@
 "use server";
 
 import { findToolsWithCategories, findRecentTools } from "@/server/web/tools/queries";
-// import { getSubcategories } from "../categories/queries";
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
 }
@@ -17,13 +16,27 @@ export async function getDevelopmentTools() {
     where: { categories: { some: { slug: "dev-tools" } } },
   });
 }
+export async function getApiTools() {
+  return await findToolsWithCategories({
+    where: { categories: { some: { slug: "apis-and-integration" } } },
+  });
+}
 export async function getLlmTools() {
   return await findToolsWithCategories({
     where: { categories: { some: { slug: "llm-ecosystem" } } },
   });
 }
 
-export async function getUiUxTools() {
+export async function getUtilityTools() {
+  return await findToolsWithCategories({
+    where: {
+      categories: {
+        some: { slug: "utility-and-software" },
+      },
+    },
+  });
+}
+export async function getUIUXTools() {
   return await findToolsWithCategories({
     where: {
       categories: {
@@ -38,10 +51,7 @@ export async function getAiTools() {
     where: {
       categories: {
         some: {
-          OR: [
-            { slug: "ai" },
-            { parent: { slug: "ai" } }, // cek kategori anak
-          ],
+          OR: [{ slug: "ai" }, { parent: { slug: "ai" } }],
         },
       },
     },
@@ -65,4 +75,3 @@ export async function getToolsBySubcategory(slug: string) {
     orderBy: { publishedAt: "desc" },
   });
 }
-// Add more as needed based on your homeSections

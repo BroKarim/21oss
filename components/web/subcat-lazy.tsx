@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { ToolMany } from "@/server/web/tools/payloads";
 import { ToolGalleryGroup } from "./tools/groups/tool-gallery-groups";
 import * as toolsActions from "@/server/web/tools/actions";
@@ -15,31 +15,52 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchTools = useCallback(async () => {
+    if (hasLoaded || isLoading) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const fetched = await toolsActions.getToolsBySubcategory(subcategorySlug);
+      setTools(fetched);
+      setHasLoaded(true);
+    } catch (err) {
+      console.error(`Failed to load tools for subcategory: ${subcategorySlug}`, err);
+      setError("Failed to load tools");
+      setTools([]);
+      setHasLoaded(true);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [subcategorySlug, hasLoaded, isLoading]);
 
   useEffect(() => {
+    const currentRef = ref.current;
+    if (!currentRef || hasLoaded) return;
+
     const observer = new IntersectionObserver(
-      async ([entry]) => {
-        if (entry.isIntersecting && !hasLoaded && !isLoading) {
-          setIsLoading(true);
-          try {
-            const fetched = await toolsActions.getToolsBySubcategory(subcategorySlug);
-            setTools(fetched);
-            setHasLoaded(true);
-          } catch (error) {
-            console.error(`Failed to load tools for subcategory: ${subcategorySlug}`, error);
-            setTools([]);
-            setHasLoaded(true);
-          } finally {
-            setIsLoading(false);
-          }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          fetchTools();
         }
       },
-      { threshold: 0.1, rootMargin: "100px" }
+      {
+        threshold: 0.1,
+        rootMargin: "200px", // Increased margin for better preloading
+      }
     );
 
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [subcategorySlug, hasLoaded, isLoading]);
+    observer.observe(currentRef);
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [fetchTools, hasLoaded]);
 
   return (
     <div ref={ref} className="space-y-2">
@@ -54,6 +75,7 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
       ) : (
         <p className="text-muted-foreground text-sm">No tools found in this category.</p>
       )}
+      {error && <div className="text-red-500">{error}</div>}
     </div>
   );
 }

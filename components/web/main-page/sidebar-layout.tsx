@@ -1,31 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { AudioWaveform, BookOpen, PenTool, Command, Palette, GalleryVerticalEnd, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac } from "lucide-react";
+import { BookOpen, PenTool, Palette, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac } from "lucide-react";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavLogo } from "./nav-logo";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 
-// This is sample data.
 const data = {
-  teams: [
-    {
-      name: "21OSS",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Explore",
@@ -34,13 +16,13 @@ const data = {
       isActive: true,
     },
     {
-      title: "Tools",
-      url: "/tools",
+      title: "Awesome List",
+      url: "/awesome-list",
       icon: PenTool,
     },
     {
-      title: "Blog",
-      url: "/blog",
+      title: "Top 5",
+      url: "/top-5",
       icon: BookOpen,
     },
   ],
@@ -62,9 +44,9 @@ const data = {
       icon: BotMessageSquare,
       isActive: true,
       items: [
-        { title: "Images & Videos", url: "/categories/ai#images-and-videos" },
+        { title: "Agents & Automation", url: "/categories/ai#agents-and-automation" },
         { title: "LLM Ecosystem", url: "/categories/ai#llm-ecosystem" },
-        { title: "Text & Speech", url: "/categories/ai#text-and-speech" },
+        { title: "Generative AI", url: "/categories/ai#generative-ai" },
       ],
     },
     {
@@ -97,7 +79,7 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <NavLogo teams={data.teams} />
+        <NavLogo />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />

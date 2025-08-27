@@ -5,21 +5,7 @@ import { ChevronsUpDown } from "lucide-react";
 import { LogoSymbol } from "@/components/ui/logo-symbol-2";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
-export function NavLogo({
-  teams,
-}: {
-  teams: {
-    name: string;
-    logo: React.ElementType;
-    plan: string;
-  }[];
-}) {
-  const [activeTeam] = React.useState(teams[0]);
-
-  if (!activeTeam) {
-    return null;
-  }
-
+export function NavLogo() {
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -28,7 +14,7 @@ export function NavLogo({
             <LogoSymbol />
           </div>
           <div className="text-left md:text-4xl leading-tight">
-            <span className="truncate font-bold font-mono">{activeTeam.name}</span>
+            <span className="truncate font-bold font-mono">21OSS</span>
           </div>
           <ChevronsUpDown className="ml-auto" />
         </SidebarMenuButton>

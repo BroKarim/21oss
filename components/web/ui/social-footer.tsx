@@ -14,11 +14,11 @@ const socialLinks = [
   },
 ];
 
-export function SocialFooter({ referral = "ray-so" }: { referral?: string }) {
+export function SocialFooter() {
   return (
     <div className="pt-2 mt-auto">
       <div className="flex items-center gap-2 mt-2 justify-between">
-        <a href={`https://raycast.com/#ref=ray-so-${referral}`} className="flex items-center gap-1.5 text-gray-12 group">
+        <a href="https://www.threads.com/@brokariim" target="_blank" className="flex items-center gap-1.5 text-gray-12 group">
           <Avatar>
             <AvatarImage src="https://github.com/BroKarim.png" />
             <AvatarFallback>DZ</AvatarFallback>

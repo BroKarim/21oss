@@ -4,7 +4,6 @@ import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "
 import { db } from "@/services/db";
 import { adManyPayload, adOnePayload } from "./payloads";
 
-// Ambil semua iklan yg aktif (berdasarkan startDate & endDate)
 export const findActiveAds = async ({ where, orderBy, ...args }: Prisma.AdFindManyArgs = {}) => {
   "use cache";
 

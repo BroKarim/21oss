@@ -3,7 +3,7 @@
 import { getRandomString, slugify } from "@primoui/utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
-import { getCategoryPath } from "@/lib/ategories";
+import { getCategoryPath } from "@/lib/categories";
 import { adminProcedure } from "@/lib/safe-actions";
 import { categorySchema } from "@/server/admin/categories/schema";
 import { db } from "@/services/db";

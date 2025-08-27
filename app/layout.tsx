@@ -7,6 +7,8 @@ import { AppProviders } from "./providers";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import { siteConfig } from "@/config/site";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -55,12 +57,12 @@ export default function RootLayout({
         <div className="h-full">
           <NuqsAdapter>
             <SearchProvider>
-              <AppProviders>
-                {children}
-              </AppProviders>
+              <AppProviders>{children}</AppProviders>
             </SearchProvider>
           </NuqsAdapter>
         </div>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

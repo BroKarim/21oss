@@ -28,7 +28,7 @@ export const homeSections: HomeSection[] = [
     options: {
       showScroll: true,
       showViewAll: true,
-      viewAllUrl: "/categories/design",
+      viewAllUrl: "/categories/programming#dev-tools",
     },
   },
   {
@@ -39,7 +39,7 @@ export const homeSections: HomeSection[] = [
     options: {
       showScroll: true,
       showViewAll: true,
-      viewAllUrl: "/categories/ai",
+      viewAllUrl: "/categories/ai#llm-ecosystem",
     },
   },
   {
@@ -51,18 +51,18 @@ export const homeSections: HomeSection[] = [
       showScroll: true,
       loadMore: true,
       showViewAll: true,
-      viewAllUrl: "/categories/images-and-videos",
+      viewAllUrl: "/categories/ai#images-and-videos",
     },
   },
   {
     id: "ui/ux",
     label: "Interface Design Toolkit",
     type: "slider",
-    actionName: "getUiUxTools",
+    actionName: "getUIUXTools",
     options: {
       showScroll: true,
       showViewAll: true,
-      viewAllUrl: "/featured",
+      viewAllUrl: "/categories/design#ui-ux",
     },
   },
 
@@ -77,5 +77,26 @@ export const homeSections: HomeSection[] = [
       viewAllUrl: "/categories/development",
     },
   },
-  // Add more sections as needed
+  {
+    id: "utilities",
+    label: "Boost Your Creativity with These Utilities",
+    type: "gallery",
+    actionName: "getUtilityTools",
+    options: {
+      showScroll: true,
+      showViewAll: true,
+      viewAllUrl: "/categories/design#utility-and-software",
+    },
+  },
+  {
+    id: "apis",
+    label: "Unlock the Power of Connectivity",
+    type: "gallery",
+    actionName: "getApiTools",
+    options: {
+      showScroll: true,
+      showViewAll: true,
+      viewAllUrl: "/categories/design#apis-and-integration",
+    },
+  },
 ];

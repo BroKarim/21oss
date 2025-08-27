@@ -85,7 +85,6 @@ export default function LazySection({ section }: LazySectionProps) {
           <h2 className="text-2xl font-bold">{section.label}</h2>
         </div>
 
-        {/* Loading skeleton based on section type */}
         {section.type === "gallery" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 6 }).map((_, i) => (

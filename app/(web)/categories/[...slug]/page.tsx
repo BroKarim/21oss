@@ -1,11 +1,10 @@
-// main page : https://github.com/piotrkulpinski/openalternative/blob/main/app/(web)/categories/%5B...slug%5D/page.tsx
 
 import { lcFirst } from "@primoui/utils";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { SearchParams } from "nuqs/server";
 import { Suspense, cache } from "react";
-import { Banner } from "@/components/web/ui/banner";
+import WidgetBanner from "@/components/web/ui/banner";
 import { ToolListSkeleton } from "@/components/web/tools/tool-list";
 import { metadataConfig } from "@/config/metadata";
 import { categoryRedirects } from "@/lib/categories";
@@ -63,16 +62,16 @@ export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
   };
 };
 
-export default async function CategoryPage(props: PageProps) {
-  const category = await getCategory(props);
+  export default async function CategoryPage(props: PageProps) {
+    const category = await getCategory(props);
 
-  const subcategories = await getSubcategories(category.slug);
+    const subcategories = await getSubcategories(category.slug);
 
-  return (
-    <>
-      <main className={cn("flex flex-1 flex-col")}>
+    return (
+      <>
+        <main className={cn("flex flex-1 flex-col")}>
         <div className="container p-4 space-y-6">
-          <Banner />
+          <WidgetBanner />
 
           {/* Navigasi Anchor */}
           {subcategories.length > 1 && (
@@ -93,7 +92,6 @@ export default async function CategoryPage(props: PageProps) {
           <Suspense fallback={<ToolListSkeleton />}>
             {subcategories.map((sub) => (
               <section key={sub.slug} id={sub.slug} className="scroll-mt-24 space-y-4">
-                <div className="flex items-center justify-between">{sub.description && <p className="text-muted-foreground text-sm max-w-[75%]">{sub.description}</p>}</div>
                 <ToolsBySubcategoryLazy subcategorySlug={sub.slug} subcategoryLabel={sub.name} />
               </section>
             ))}

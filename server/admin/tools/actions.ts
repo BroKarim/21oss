@@ -20,7 +20,6 @@ export const upsertTool = adminProcedure
 
     const slug = rest.slug || slugify(rest.name);
 
-    // Format relasi untuk Prisma
     const categoryIds = categories?.map((id) => ({ id }));
     const platformIds = platforms?.map((id) => ({ id }));
     const stackIds = stacks
@@ -102,7 +101,6 @@ export const upsertTool = adminProcedure
     return tool;
   });
 
-// ✅ Hapus Tool
 export const deleteTools = adminProcedure
   .createServerAction()
   .input(z.object({ ids: z.array(z.string()) }))
@@ -120,29 +118,24 @@ export const deleteTools = adminProcedure
       throw new Error("No tools found to delete");
     }
 
-    // Gunakan transaction untuk memastikan semua operasi berhasil atau rollback
     const result = await db.$transaction(async (tx) => {
       console.log("🔄 Starting transaction to delete tools...");
 
-      // 1. Hapus screenshots terlebih dahulu
       console.log("🗑️ Deleting screenshots...");
       await tx.toolScreenshot.deleteMany({
         where: { toolId: { in: ids } },
       });
 
-      // 2. Hapus likes
       console.log("🗑️ Deleting likes...");
       await tx.like.deleteMany({
         where: { toolId: { in: ids } },
       });
 
-      // 3. Hapus reports
       console.log("🗑️ Deleting reports...");
       await tx.report.deleteMany({
         where: { toolId: { in: ids } },
       });
 
-      // 4. Putuskan hubungan many-to-many (categories, platforms, stacks)
       console.log("🗑️ Disconnecting many-to-many relations...");
       for (const toolId of ids) {
         await tx.tool.update({
@@ -155,7 +148,6 @@ export const deleteTools = adminProcedure
         });
       }
 
-      // 5. Akhirnya, hapus tools
       console.log("🗑️ Deleting tools...");
       const deleteResult = await tx.tool.deleteMany({
         where: { id: { in: ids } },
@@ -179,7 +171,6 @@ export const deleteTools = adminProcedure
     return result;
   });
 
-// ✅ Ambil data dari repository tool
 export const fetchToolRepositoryData = adminProcedure
   .createServerAction()
   .input(z.object({ id: z.string() }))

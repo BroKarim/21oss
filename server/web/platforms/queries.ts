@@ -5,7 +5,6 @@ import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "
 import { db } from "@/services/db";
 import { platformManyPayload, platformOnePayload } from "@/server/web/platforms/payloads";
 
-// Untuk listing semua platform (misalnya di halaman eksplorasi)
 export const findPlatforms = async ({ where, orderBy, ...args }: Prisma.PlatformFindManyArgs = {}) => {
   "use cache";
 
@@ -20,7 +19,6 @@ export const findPlatforms = async ({ where, orderBy, ...args }: Prisma.Platform
   });
 };
 
-// Untuk pre-generasi dynamic route atau breadcrumb
 export const findPlatformSlugs = async ({ orderBy, ...args }: Prisma.PlatformFindManyArgs = {}) => {
   "use cache";
 
@@ -34,7 +32,6 @@ export const findPlatformSlugs = async ({ orderBy, ...args }: Prisma.PlatformFin
   });
 };
 
-// Untuk halaman detail platform
 export const findPlatformBySlug = async (slug: string) => {
   "use cache";
 
