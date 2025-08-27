@@ -3,7 +3,7 @@
 
 **[21OSS.com](https://21oss.com)** is open-source catalog designed to make discovering tools easier.  Whether you’re looking for a library, a framework, or an everyday utility, the goal is simple: make open-source tools accessible, clear, and useful for daily life.
  
-(gambar og-image)
+![Preview](./public/og.png)
 
 ---
 
@@ -25,7 +25,7 @@ The project uses a modern stack:
 - **Database**: Supabase 
 - **Authentication**: Better Auth
 - **Storage**: AWS S3
-- prisma
+- **ORM** : Prisma
 
 --- 
 
