@@ -62,9 +62,9 @@ const data = {
       icon: BotMessageSquare,
       isActive: true,
       items: [
-        { title: "Images & Videos", url: "/categories/ai#images-and-videos" },
+        { title: "Agents & Automation", url: "/categories/ai#agents-and-automation" },
         { title: "LLM Ecosystem", url: "/categories/ai#llm-ecosystem" },
-        { title: "Text & Speech", url: "/categories/ai#text-and-speech" },
+        { title: "Generative AI", url: "/categories/ai#generative-ai" },
       ],
     },
     {

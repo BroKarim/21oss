@@ -1,4 +1,3 @@
-// main page : https://github.com/piotrkulpinski/openalternative/blob/main/app/(web)/categories/%5B...slug%5D/page.tsx
 
 import { lcFirst } from "@primoui/utils";
 import type { Metadata } from "next";
@@ -63,14 +62,14 @@ export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
   };
 };
 
-export default async function CategoryPage(props: PageProps) {
-  const category = await getCategory(props);
+  export default async function CategoryPage(props: PageProps) {
+    const category = await getCategory(props);
 
-  const subcategories = await getSubcategories(category.slug);
+    const subcategories = await getSubcategories(category.slug);
 
-  return (
-    <>
-      <main className={cn("flex flex-1 flex-col")}>
+    return (
+      <>
+        <main className={cn("flex flex-1 flex-col")}>
         <div className="container p-4 space-y-6">
           <WidgetBanner />
 
