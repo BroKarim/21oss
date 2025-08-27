@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { linksConfig } from "@/config/links";
 import { siteConfig } from "@/config/site";
 
 export const metadataConfig: Metadata = {
@@ -11,12 +10,7 @@ export const metadataConfig: Metadata = {
     images: { url: `${siteConfig.url}/opengraph.png`, width: 1200, height: 630 },
   },
   twitter: {
-    site: "@ossalternative",
-    creator: "@piotrkulpinski",
+    creator: "@brokariim",
     card: "summary_large_image",
-  },
-  alternates: {
-    canonical: "/",
-    types: { "application/rss+xml": linksConfig.feeds },
   },
 };

@@ -31,7 +31,7 @@ The project uses a modern stack:
 
 ## Project Structure
 
-OpenAlternative is built in Next.js App Router. The project structure is organized as follows:
+21OSS is built in Next.js App Router. The project structure is organized as follows:
 
 - `/app` - Application routes and layouts (Next.js App Router)
 - `/components` - Reusable React components
@@ -52,4 +52,4 @@ OpenAlternative is built in Next.js App Router. The project structure is organiz
 
 ## License
 
-OpenAlternative is licensed under the [GPL-3.0 License](LICENSE).
+21OSS is licensed under the [GPL-3.0 License](LICENSE).

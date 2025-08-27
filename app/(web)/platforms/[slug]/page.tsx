@@ -1,5 +1,3 @@
-// main page : https://github.com/piotrkulpinski/openalternative/blob/main/app/(web)/categories/%5B...slug%5D/page.tsx
-
 import { lcFirst } from "@primoui/utils";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";

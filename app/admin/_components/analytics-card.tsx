@@ -3,8 +3,6 @@ import { Chart } from "./chart";
 import { Card, CardDescription, CardHeader } from "@/components/ui/card";
 import { H2 } from "@/components/ui/heading";
 
-// TODO : nengok ni https://github.com/piotrkulpinski/openalternative/blob/main/app/admin/_components/analytics-card.tsx
-// Data dummy
 const dummyResults = Array.from({ length: 30 }, (_, i) => ({
   date: new Date(2025, 6, i + 1).toISOString(), // Juli 1–30, 2025
   visitors: Math.floor(Math.random() * 200) + 50, // antara 50 - 250
