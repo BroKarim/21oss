@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { ArrowLeft } from "lucide-react";
@@ -20,7 +20,9 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
 
   return (
     <SidebarProvider defaultOpen={open} open={open} onOpenChange={setOpen}>
-      <Suspense fallback={null}>{isAdmin ? <AdminSidebar /> : <MainSidebar />}</Suspense>
+      <Suspense fallback={null}>
+        <SafeSidebar isAdmin={isAdmin} />
+      </Suspense>
       <SidebarInset>
         <MainLayout>
           {!isAdmin && <Header />}
@@ -30,6 +32,16 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
       </SidebarInset>
     </SidebarProvider>
   );
+}
+
+//prevent hydration mismatch
+function SafeSidebar({ isAdmin }: { isAdmin: boolean }) {
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  return isAdmin ? <AdminSidebar /> : <MainSidebar />;
 }
 
 function Header() {
@@ -43,7 +55,8 @@ function Header() {
         <SidebarTrigger className="lg:hidden p-0" />
         {!isBaseUrl && (
           <Button variant="ghost" size="icon" className=" flex gap-1 " onClick={() => router.back()}>
-            <ArrowLeft className="h-5 w-5" />back
+            <ArrowLeft className="h-5 w-5" />
+            back
           </Button>
         )}
       </div>

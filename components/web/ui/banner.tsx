@@ -7,7 +7,7 @@ export default function WidgetBanner() {
       <TVNoise opacity={0.5} intensity={0.2} speed={40} />
       <div className="bg-accent/30 relative z-20 p-3 sm:p-6 h-full min-h-[160px] sm:min-h-[200px] lg:min-h-[240px] flex flex-col">
         {/* Top */}
-        <div className="md:flex justify-center items-center text-xs sm:text-sm font-medium uppercase hidden">
+        <div className="flex justify-center items-center text-xs sm:text-sm font-medium uppercase ">
           <AdCompact />
         </div>
 
