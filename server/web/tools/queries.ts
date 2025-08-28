@@ -130,6 +130,40 @@ export const findToolsWithCategories = async ({ where, ...args }: Prisma.ToolFin
   });
 };
 
+// tool with filtering like searchTools without pagination
+type FilterOptions = {
+  subcategory: string;
+  stack?: string[];
+  license?: string[];
+  platform?: string[];
+};
+
+export const filterToolsBySubcategory = async ({ subcategory, stack, license, platform }: FilterOptions) => {
+  "use cache";
+  cacheTag("tools", `tools-subcat-${subcategory}`);
+  cacheLife("max");
+
+  // Logika 'where' diadaptasi dari searchTools
+  const whereQuery: Prisma.ToolWhereInput = {
+    status: ToolStatus.Published,
+    // Kondisi wajib: harus ada di subkategori ini
+    categories: { some: { slug: subcategory } },
+
+    // Kondisi filter opsional, hanya ditambahkan jika ada nilainya
+    ...(stack?.length ? { stacks: { some: { slug: { in: stack } } } } : {}),
+    ...(license?.length ? { license: { slug: { in: license } } } : {}),
+    ...(platform?.length ? { platforms: { some: { slug: { in: platform } } } } : {}),
+  };
+
+  console.log("[QUERY] Generated where query:", JSON.stringify(whereQuery, null, 2));
+
+  return db.tool.findMany({
+    where: whereQuery,
+    select: ToolManyPayload, // Payload Anda sudah benar
+    orderBy: { publishedAt: "desc" },
+    take: 20, // Anda bisa sesuaikan limit ini atau membuatnya dinamis
+  });
+};
 export const findRecentTools = async ({ take = 12 }: { take?: number } = {}) => {
   return findTools({
     orderBy: { createdAt: "desc" },

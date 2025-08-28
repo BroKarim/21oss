@@ -16,14 +16,10 @@ type ToolQueryProps = Omit<ToolListingProps, "list" | "pagination"> & {
 };
 
 const ToolQuery = async ({ searchParams, overrideParams, where, list, pagination, ...props }: ToolQueryProps) => {
-  // console.log("ToolQuery: Received searchParams:", searchParams); // Debug log
-  // console.log("ToolQuery: Received where:", where);
-
   const parsedParams = filterParamsCache.parse(await searchParams);
-  // console.log("ToolQuery: Parsed params:", parsedParams);
+
   const params = { ...parsedParams, ...overrideParams };
   const { tools, totalCount } = await searchTools(params, where);
-  //  console.log("ToolQuery: Fetched tools:", tools, "Total count:", totalCount);
 
   return <ToolListing list={{ tools, ...list }} pagination={{ totalCount, pageSize: params.perPage, ...pagination }} {...props} />;
 };

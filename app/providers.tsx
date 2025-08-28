@@ -20,9 +20,7 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
 
   return (
     <SidebarProvider defaultOpen={open} open={open} onOpenChange={setOpen}>
-      <Suspense fallback={null}>
-        <SafeSidebar isAdmin={isAdmin} />
-      </Suspense>
+      <Suspense fallback={null}>{isAdmin ? <AdminSidebar /> : <MainSidebar />}</Suspense>
       <SidebarInset>
         <MainLayout>
           {!isAdmin && <Header />}
@@ -34,7 +32,6 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
   );
 }
 
-//prevent hydration mismatch
 function SafeSidebar({ isAdmin }: { isAdmin: boolean }) {
   const [mounted, setMounted] = React.useState(false);
   React.useEffect(() => setMounted(true), []);

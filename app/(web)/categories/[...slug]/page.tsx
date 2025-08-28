@@ -1,4 +1,3 @@
-
 import { lcFirst } from "@primoui/utils";
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -10,7 +9,7 @@ import { metadataConfig } from "@/config/metadata";
 import { categoryRedirects } from "@/lib/categories";
 import type { CategoryOne } from "@/server/web/categories/payloads";
 import Link from "next/link";
-import ToolsBySubcategoryLazy from "@/components/web/subcat-lazy";
+import SubcategoryListContainer from "@/components/web/tools/subcategories/subcategories-container";
 import { findCategoryByPath, findCategorySlugs, getSubcategories } from "@/server/web/categories/queries";
 import { cn } from "@/lib/utils";
 
@@ -62,18 +61,17 @@ export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
   };
 };
 
-  export default async function CategoryPage(props: PageProps) {
-    const category = await getCategory(props);
+export default async function CategoryPage(props: PageProps) {
+  const category = await getCategory(props);
 
-    const subcategories = await getSubcategories(category.slug);
+  const subcategories = await getSubcategories(category.slug);
 
-    return (
-      <>
-        <main className={cn("flex flex-1 flex-col")}>
+  return (
+    <>
+      <main className={cn("flex flex-1 flex-col")}>
         <div className="container p-4 space-y-6">
           <WidgetBanner />
 
-          {/* Navigasi Anchor */}
           {subcategories.length > 1 && (
             <nav className="sticky top-0 z-10 bg-background/80 backdrop-blur border-b border-border">
               <ul className="flex gap-4 overflow-x-auto py-2 px-1">
@@ -88,13 +86,10 @@ export const generateMetadata = async (props: PageProps): Promise<Metadata> => {
             </nav>
           )}
 
-          {/* Section per Subkategori */}
           <Suspense fallback={<ToolListSkeleton />}>
-            {subcategories.map((sub) => (
-              <section key={sub.slug} id={sub.slug} className="scroll-mt-24 space-y-4">
-                <ToolsBySubcategoryLazy subcategorySlug={sub.slug} subcategoryLabel={sub.name} />
-              </section>
-            ))}
+            <Suspense fallback={<ToolListSkeleton />}>
+              <SubcategoryListContainer subcategories={subcategories} />
+            </Suspense>
           </Suspense>
         </div>
       </main>

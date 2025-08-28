@@ -1,6 +1,6 @@
 "use server";
 
-import { findToolsWithCategories, findRecentTools } from "@/server/web/tools/queries";
+import { findToolsWithCategories, findRecentTools, filterToolsBySubcategory } from "@/server/web/tools/queries";
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
 }
@@ -65,13 +65,33 @@ export async function getProductivityTools() {
   });
 }
 
-export async function getToolsBySubcategory(slug: string) {
-  return await findToolsWithCategories({
-    where: {
-      categories: {
-        some: { slug },
-      },
-    },
-    orderBy: { publishedAt: "desc" },
+
+export async function getToolsBySubcategory(
+  subcategorySlug: string, // Ganti nama dari 'subcategory' agar lebih jelas
+  filters?: {
+    stack?: string[];
+    license?: string[];
+    platform?: string[];
+  }
+) {
+  console.log("[SERVER ACTION] getToolsBySubcategory called with:", {
+    subcategorySlug,
+    filters,
   });
+
+  try {
+    // Teruskan semua parameter ke fungsi query
+    const result = await filterToolsBySubcategory({
+      subcategory: subcategorySlug,
+      stack: filters?.stack,
+      license: filters?.license,
+      platform: filters?.platform,
+    });
+
+    console.log("[SERVER ACTION] Query result count:", result?.length || 0);
+    return result;
+  } catch (error) {
+    console.error("[SERVER ACTION] Error in getToolsBySubcategory:", error);
+    throw error; // Lemparkan error agar client bisa menanganinya
+  }
 }
