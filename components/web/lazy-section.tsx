@@ -81,7 +81,7 @@ export default function LazySection({ section }: LazySectionProps) {
   if (isLoading || !hasLoaded) {
     return (
       <div ref={sectionRef} className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between rounded-md">
           <h2 className="text-2xl font-bold">{section.label}</h2>
         </div>
 

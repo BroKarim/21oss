@@ -48,7 +48,7 @@ export const ToolGalleryGroup = ({ id, label, tools, options, className, showGlo
   };
 
   return (
-    <section id={id} className={cx("space-y-4 border-[0.75px] relative h-full border-border md:rounded-[1.5rem] p-1 rounded-lg md:p-2", className)}>
+    <section id={id} className={cx("space-y-4 border-[0.75px] relative h-full border-border rounded-[1.5rem] p-1  md:p-2", className)}>
       <div className="border-[0.75px] md:rounded-[1.5rem] md:p-4 lg:p-4 overflow-hidden">
         {showGlowingEffect && <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} borderWidth={3} />}
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 justify-between gap-2">

@@ -15,14 +15,14 @@ const AdBanner = async ({ className, ...props }: ComponentProps<typeof Card>) =>
   }
 
   return (
-    <Card className={cx("relative overflow-hidden bg-gradient-to-r from-gray-100 to-[#826ce8] p-8 rounded-2xl shadow-lg", className)} {...props}>
+    <Card className={cx("relative overflow-hidden bg-gradient-to-r from-gray-100 to-[#826ce8] p-6 sm:p-8 rounded-2xl shadow-lg", className)} {...props}>
       <AnimatedGridPattern />
-      <div className="flex items-center z-50 justify-between gap-8">
+      <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-8 z-50">
         {/* Left side content */}
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 space-y-4 sm:space-y-6 text-center md:text-left">
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900 leading-tight">{ad.name}</h1>
-            <p className="font-medium text-gray-500 leading-tight">{ad.description}</p>
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 leading-tight">{ad.name}</h1>
+            <p className="text-sm sm:text-base md:text-lg font-medium text-gray-500 leading-tight">{ad.description}</p>
           </div>
 
           <Link href={ad.websiteUrl} passHref>
@@ -32,10 +32,10 @@ const AdBanner = async ({ className, ...props }: ComponentProps<typeof Card>) =>
           </Link>
         </div>
 
-        {/* Right side - Hi Alex message as image */}
-        <div className="flex-shrink-0">
-          <div className="relative">
-            <Image src={ad.imageUrl ?? "/placeholder.svg"} alt="Hi Alex message" width={400} height={200} className="rounded-lg shadow-sm" />
+        {/* Right side - Image */}
+        <div className="flex-shrink-0 w-full md:w-auto">
+          <div className="relative w-full max-w-sm md:max-w-md mx-auto md:mx-0">
+            <Image src={ad.imageUrl ?? "/placeholder.svg"} alt="Hi Alex message" width={400} height={200} className="rounded-lg shadow-sm w-full h-auto object-contain" />
           </div>
         </div>
       </div>

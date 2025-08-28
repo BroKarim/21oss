@@ -34,7 +34,7 @@ export default function Page() {
 
             if (Array.isArray(group)) {
               elements.push(
-                <div key={`favicon-group-${idx}`} className="flex gap-4">
+                <div key={`favicon-group-${idx}`} className="md:flex gap-4">
                   {group.map((section, secIdx) => (
                     <div key={`${section.id}-${secIdx}`} className="flex-1">
                       <LazySection section={section} />

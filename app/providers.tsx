@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { ArrowLeft } from "lucide-react";
-import { MainSidebar } from "@/components/web/main-page/sidebar-layout";
+import { MainSidebar } from "@/components/web/main-page/nav-layout";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { Button } from "@/components/ui/button-shadcn";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
