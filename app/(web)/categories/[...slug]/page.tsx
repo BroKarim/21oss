@@ -9,7 +9,7 @@ import { metadataConfig } from "@/config/metadata";
 import { categoryRedirects } from "@/lib/categories";
 import type { CategoryOne } from "@/server/web/categories/payloads";
 import Link from "next/link";
-import SubcategoryListContainer from "@/components/web/tools/subcategories/subcategories-container";
+import SubcategoryContainer from "@/components/web/tools/subcategories/subcategories-container";
 import { findCategoryByPath, findCategorySlugs, getSubcategories } from "@/server/web/categories/queries";
 import { cn } from "@/lib/utils";
 
@@ -88,7 +88,7 @@ export default async function CategoryPage(props: PageProps) {
 
           <Suspense fallback={<ToolListSkeleton />}>
             <Suspense fallback={<ToolListSkeleton />}>
-              <SubcategoryListContainer subcategories={subcategories} />
+              <SubcategoryContainer subcategories={subcategories} />
             </Suspense>
           </Suspense>
         </div>

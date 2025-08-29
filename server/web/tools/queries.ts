@@ -146,7 +146,6 @@ export const filterToolsBySubcategory = async ({ subcategory, stack, license, pl
   // Logika 'where' diadaptasi dari searchTools
   const whereQuery: Prisma.ToolWhereInput = {
     status: ToolStatus.Published,
-    // Kondisi wajib: harus ada di subkategori ini
     categories: { some: { slug: subcategory } },
 
     // Kondisi filter opsional, hanya ditambahkan jika ada nilainya
@@ -164,6 +163,7 @@ export const filterToolsBySubcategory = async ({ subcategory, stack, license, pl
     take: 20, // Anda bisa sesuaikan limit ini atau membuatnya dinamis
   });
 };
+
 export const findRecentTools = async ({ take = 12 }: { take?: number } = {}) => {
   return findTools({
     orderBy: { createdAt: "desc" },

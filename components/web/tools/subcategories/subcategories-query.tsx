@@ -74,42 +74,7 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [stack, license, platform, hasLoaded]);
-
-  useEffect(() => {
-    const currentRef = ref.current;
-    if (!currentRef || hasLoaded) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasLoaded) {
-          fetchTools();
-        }
-      },
-      {
-        threshold: 0.1,
-        rootMargin: "200px",
-      }
-    );
-
-    observer.observe(currentRef);
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, [fetchTools, hasLoaded]);
-
-  useEffect(() => {
-    if (hasLoaded && (stack || license || platform)) {
-      const timeoutId = setTimeout(() => {
-        fetchTools({ stack, license, platform });
-      }, 300);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [stack, license, platform, hasLoaded]);
+  }, [stack, license, platform, hasLoaded, fetchTools]);
 
   return (
     <div ref={ref} className="space-y-2">

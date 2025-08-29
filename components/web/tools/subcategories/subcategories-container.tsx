@@ -3,12 +3,11 @@
 import { useState } from "react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import ToolsBySubcategoryLazy from "@/components/web/tools/subcategories/subcategories-query";
-// import { type Subcategory } from "@/server/web/categories/queries"; 
-interface SubcategoryListContainerProps {
-  subcategories: any[]; 
+interface SubcategoryContainerProps {
+  subcategories: any[];
 }
 
-export default function SubcategoryListContainer({ subcategories }: SubcategoryListContainerProps) {
+export default function SubcategoryContainer({ subcategories }: SubcategoryContainerProps) {
   const [stack, setStack] = useState<string | undefined>();
   const [license, setLicense] = useState<string | undefined>();
   const [platform, setPlatform] = useState<string | undefined>();
@@ -21,7 +20,6 @@ export default function SubcategoryListContainer({ subcategories }: SubcategoryL
 
   return (
     <div className="space-y-6">
-      
       <div className="p-4 border rounded-lg ">
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-semibold">Filters:</span>
@@ -68,14 +66,7 @@ export default function SubcategoryListContainer({ subcategories }: SubcategoryL
       <div className="space-y-8">
         {subcategories.map((sub) => (
           <section key={sub.slug} id={sub.slug} className="scroll-mt-24 space-y-4">
-            <ToolsBySubcategoryLazy
-              subcategorySlug={sub.slug}
-              subcategoryLabel={sub.name}
-              // Teruskan state filter sebagai props
-              stack={stack}
-              license={license}
-              platform={platform}
-            />
+            <ToolsBySubcategoryLazy subcategorySlug={sub.slug} subcategoryLabel={sub.name} stack={stack} license={license} platform={platform} />
           </section>
         ))}
       </div>
