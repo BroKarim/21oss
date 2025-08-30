@@ -87,9 +87,7 @@ export default async function CategoryPage(props: PageProps) {
           )}
 
           <Suspense fallback={<ToolListSkeleton />}>
-            <Suspense fallback={<ToolListSkeleton />}>
-              <SubcategoryContainer subcategories={subcategories} />
-            </Suspense>
+            <SubcategoryContainer subcategories={subcategories} />
           </Suspense>
         </div>
       </main>

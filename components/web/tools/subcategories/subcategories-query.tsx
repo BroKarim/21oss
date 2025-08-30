@@ -4,24 +4,22 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { ToolMany } from "@/server/web/tools/payloads";
 import { ToolGalleryGroup } from "../groups/tool-gallery-groups";
 import * as toolsActions from "@/server/web/tools/actions";
-
+import { useFilters } from "@/contexts/filter-context";
 interface ToolsBySubcategoryLazyProps {
   subcategorySlug: string;
   subcategoryLabel?: string;
-  stack?: string;
-  license?: string;
-  platform?: string;
 }
 
-export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLabel, stack, license, platform }: ToolsBySubcategoryLazyProps) {
+export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLabel }: ToolsBySubcategoryLazyProps) {
   const [tools, setTools] = useState<ToolMany[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const { filters } = useFilters();
 
   const fetchTools = useCallback(
-    async (filters?: { stack?: string; license?: string; platform?: string }) => {
+    async (currentFilters: typeof filters) => {
       if (isLoading) return;
 
       setIsLoading(true);
@@ -29,9 +27,10 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
 
       try {
         const fetched = await toolsActions.getToolsBySubcategory(subcategorySlug, {
-          stack: filters?.stack ? [filters.stack] : undefined,
-          license: filters?.license ? [filters.license] : undefined,
-          platform: filters?.platform ? [filters.platform] : undefined,
+          q: currentFilters.q || undefined,
+          stack: currentFilters.stack,
+          license: currentFilters.license,
+          platform: currentFilters.platform,
         });
 
         setTools(fetched);
@@ -53,7 +52,7 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasLoaded) {
-          fetchTools();
+          fetchTools(filters);
         }
       },
       { threshold: 0.1, rootMargin: "200px" }
@@ -64,17 +63,17 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
     return () => {
       if (currentRef) observer.unobserve(currentRef);
     };
-  }, [fetchTools, hasLoaded]);
+  }, [fetchTools, hasLoaded, filters]);
 
   useEffect(() => {
     if (!hasLoaded) return;
 
     const timeoutId = setTimeout(() => {
-      fetchTools({ stack, license, platform });
+      fetchTools(filters);
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [stack, license, platform, hasLoaded, fetchTools]);
+  }, [filters, hasLoaded, fetchTools]);
 
   return (
     <div ref={ref} className="space-y-2">
@@ -87,7 +86,7 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
       ) : error ? (
         <div className="text-center py-8 text-muted-foreground">
           <p>{error}</p>
-          <button onClick={() => fetchTools()} className="mt-2 px-4 py-2 border rounded-md hover:bg-muted">
+          <button onClick={() => fetchTools(filters)} className="mt-2 px-4 py-2 border rounded-md hover:bg-muted">
             Try Again
           </button>
         </div>
@@ -95,7 +94,7 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
         <ToolGalleryGroup id={subcategorySlug} label={subcategoryLabel ?? ""} tools={tools} showGlowingEffect={false} options={{ showViewAll: false, loadMore: true }} />
       ) : hasLoaded ? (
         <div className="text-center py-8 text-muted-foreground">
-          <p>No tools found{stack || license || platform ? " with current filters" : ""}.</p>
+          <p>No tools found{filters ? " with current filters" : ""}.</p>
         </div>
       ) : null}
     </div>

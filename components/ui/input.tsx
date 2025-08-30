@@ -1,30 +1,21 @@
-import type { ComponentProps } from "react";
-import { Box, type boxVariants } from "@/components/ui/box";
-import { cx, type VariantProps, cva } from "@/lib/utils";
-const inputVariants = cva({
-  base: "appearance-none min-h-0 w-full self-stretch bg-background text-foreground text-[0.8125rem] leading-tight break-words transition duration-150 disabled:text-secondary-foreground/50",
+import * as React from "react";
 
-  variants: {
-    size: {
-      sm: "px-2 py-1 font-normal rounded-md",
-      md: "px-3 py-2 rounded-md",
-      lg: "px-4 py-2.5 rounded-lg sm:text-sm",
-    },
-  },
+import { cn } from "@/lib/utils";
 
-  defaultVariants: {
-    size: "md",
-  },
-});
-
-type InputProps = Omit<ComponentProps<"input">, "size"> & VariantProps<typeof inputVariants> & VariantProps<typeof boxVariants>;
-
-const Input = ({ className, size, hover = false, focus = true, ...props }: InputProps) => {
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
-    <Box hover={hover} focus={focus}>
-      <input className={cx(inputVariants({ size, className }))} {...props} />
-    </Box>
+    <input
+      type={type}
+      data-slot="input"
+      className={cn(
+        "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+        "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+        className
+      )}
+      {...props}
+    />
   );
-};
+}
 
-export { Input, inputVariants };
+export { Input };

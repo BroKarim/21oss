@@ -13,6 +13,7 @@ export const filterParamsSchema = {
   category: parseAsArrayOf(parseAsString).withDefault([]),
   stack: parseAsArrayOf(parseAsString).withDefault([]),
   license: parseAsArrayOf(parseAsString).withDefault([]),
+  platform: parseAsArrayOf(parseAsString).withDefault([]),
 };
 
 export const filterParamsCache = createSearchParamsCache(filterParamsSchema);

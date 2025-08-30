@@ -30,9 +30,9 @@ export const AnimatedContainer = (props: AnimatedContainerProps) => {
   };
 
   return (
-    <motion.div className={cx("overflow-hidden", className)} {...motionProps} {...rest}>
-      <div ref={ref} className={cx(height && "h-max", width && "w-max")}>
-        <Slot.Root className="animate-fade-in">{children}</Slot.Root>
+    <motion.div className={cx(" w-full", className)} {...motionProps} {...rest}>
+      <div ref={ref} className={cx(height && "h-max", width && "w-max", "w-full")}>
+        <Slot.Root className="w-full flex">{children}</Slot.Root>
       </div>
     </motion.div>
   );

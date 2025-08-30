@@ -65,10 +65,10 @@ export async function getProductivityTools() {
   });
 }
 
-
 export async function getToolsBySubcategory(
-  subcategorySlug: string, // Ganti nama dari 'subcategory' agar lebih jelas
+  subcategorySlug: string,
   filters?: {
+    q?: string;
     stack?: string[];
     license?: string[];
     platform?: string[];
@@ -80,9 +80,9 @@ export async function getToolsBySubcategory(
   });
 
   try {
-    // Teruskan semua parameter ke fungsi query
     const result = await filterToolsBySubcategory({
       subcategory: subcategorySlug,
+      q: filters?.q,
       stack: filters?.stack,
       license: filters?.license,
       platform: filters?.platform,
@@ -92,6 +92,6 @@ export async function getToolsBySubcategory(
     return result;
   } catch (error) {
     console.error("[SERVER ACTION] Error in getToolsBySubcategory:", error);
-    throw error; // Lemparkan error agar client bisa menanganinya
+    throw error;
   }
 }
