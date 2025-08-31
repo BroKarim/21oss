@@ -2,13 +2,13 @@
 
 import { createServerAction } from "zsa";
 import { findLicenses } from "@/server/web/licenses/queries";
-import { findStacks } from "@/server/web/stacks/queries";
+import { findLanguageStacks } from "@/server/web/stacks/queries";
+import { findPlatforms } from "@/server/web/platforms/queries";
 
 export const findFilterOptions = createServerAction().handler(async () => {
-  const filters = await Promise.all([ findStacks({}), findLicenses({})]);
+  const filters = await Promise.all([findLanguageStacks({}), findLicenses({}), findPlatforms({})]);
 
-  // Map the filters to the expected format
-  const [stack, license] = filters.map((r) => r.map(({ slug, name, _count }) => ({ slug, name, count: _count.tools })));
+  const [stack, license, platform] = filters.map((r) => r.map(({ slug, name, _count }) => ({ slug, name, count: _count.tools })));
 
-  return { stack, license } as const;
+  return { stack, license, platform } as const;
 });

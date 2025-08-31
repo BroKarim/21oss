@@ -30,13 +30,18 @@ export const ToolFilters = ({ className, ...props }: React.ComponentProps<"div">
     updateFilters(cleared);
   };
 
+  // Map filter type to display label
+  const getDisplayLabel = (type: FilterType) => {
+    return type === "stack" ? "Language" : type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
   return (
     <div className={cn("flex  gap-2", className)} {...props}>
       {searchConfig.filters.map((type) => (
         <DropdownMenu key={type}>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="flex items-center gap-2">
-              <span className="capitalize">{type}</span>
+              <span className="capitalize">{getDisplayLabel(type)}</span>
               {filters[type].length > 0 && <Badge>{filters[type].length}</Badge>}
               <ChevronDown className="size-4" />
             </Button>

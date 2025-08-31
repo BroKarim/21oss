@@ -2,16 +2,14 @@
 
 import { cx } from "cva";
 import type { ComponentProps } from "react";
-import { Input } from "@/components/ui/input";
 import { ToolFilters } from "@/components/web/tools/tool-filter";
-import { useFilters } from "@/contexts/filter-context";
 
 export type ToolSearchProps = ComponentProps<"div"> & {
   placeholder?: string;
 };
 
-export const ToolSearch = ({ className, placeholder, ...props }: ToolSearchProps) => {
-  const { filters, isLoading, updateFilters } = useFilters();
+export const ToolSearch = ({ className, ...props }: ToolSearchProps) => {
+  // const { filters, isLoading, updateFilters } = useFilters();
 
   return (
     <div className={cx("w-full", className)} {...props}>

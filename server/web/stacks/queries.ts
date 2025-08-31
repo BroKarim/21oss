@@ -1,4 +1,4 @@
-import { type Prisma, ToolStatus } from "@prisma/client";
+import { type Prisma, ToolStatus, StackType } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { stackManyPayload, stackOnePayload } from "@/server/web/stacks/payloads";
 import { db } from "@/services/db";
@@ -13,6 +13,22 @@ export const findStacks = async ({ where, orderBy, ...args }: Prisma.StackFindMa
     ...args,
     orderBy: orderBy ?? [{ tools: { _count: "desc" } }, { name: "asc" }],
     where: { tools: { some: { status: ToolStatus.Published } }, ...where },
+    select: stackManyPayload,
+  });
+};
+
+export const findLanguageStacks = async ({ where, orderBy, ...args }: Prisma.StackFindManyArgs) => {
+  "use cache";
+  cacheTag("stacks");
+  cacheLife("max");
+  return db.stack.findMany({
+    ...args,
+    orderBy: orderBy ?? [{ tools: { _count: "desc" } }, { name: "asc" }],
+    where: {
+      type: StackType.Language,
+      tools: { some: { status: ToolStatus.Published } },
+      ...where,
+    },
     select: stackManyPayload,
   });
 };
