@@ -32,15 +32,6 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
   );
 }
 
-function SafeSidebar({ isAdmin }: { isAdmin: boolean }) {
-  const [mounted, setMounted] = React.useState(false);
-  React.useEffect(() => setMounted(true), []);
-
-  if (!mounted) return null;
-
-  return isAdmin ? <AdminSidebar /> : <MainSidebar />;
-}
-
 function Header() {
   const pathname = usePathname();
   const router = useRouter();

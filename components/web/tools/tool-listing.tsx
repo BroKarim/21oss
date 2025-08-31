@@ -25,7 +25,7 @@ const ToolListing = ({ list, pagination, options }: ToolListingProps) => {
 const ToolListingSkeleton = () => {
   return (
     <div className="space-y-5">
-      <Input size="lg" placeholder="Loading..." disabled />
+      <Input placeholder="Loading..." disabled />
       <ToolListSkeleton />
     </div>
   );

@@ -42,7 +42,7 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
         setIsLoading(false);
       }
     },
-    [subcategorySlug]
+    [subcategorySlug, isLoading]
   );
 
   useEffect(() => {
