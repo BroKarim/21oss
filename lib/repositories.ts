@@ -31,3 +31,33 @@ export const getToolRepositoryData = async (repository: string) => {
       : undefined,
   } satisfies Prisma.ToolUpdateInput;
 };
+
+export async function getAwesomeRepositoryData(repositoryUrl: string): Promise<Prisma.AwesomeListUpdateInput | null> {
+  try {
+    const repo = await githubClient.queryRepository(repositoryUrl);
+    if (!repo) return null;
+
+    // Ambil semua data termasuk owner & contributors
+    const { name, nameWithOwner, description, url, homepageUrl, stars, forks, contributors, watchers, pushedAt, createdAt, score, license, topics } = repo;
+
+    return {
+      name,
+      description,
+      repositoryUrl: url,
+      websiteUrl: homepageUrl,
+      stars,
+      forks,
+      contributors,
+      watchers,
+      lastCommitAt: pushedAt,
+      firstCommitAt: createdAt,
+      license,
+      owner: nameWithOwner,
+      topics,
+      score,
+    };
+  } catch (error) {
+    console.error("getAwesomeRepositoryData error:", error);
+    return null;
+  }
+}

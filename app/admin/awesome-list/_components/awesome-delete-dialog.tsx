@@ -7,15 +7,15 @@ import { useServerAction } from "zsa-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Trash } from "lucide-react";
-import { deleteAwesome } from "@/server/admin/awesome/action";
+import { deleteAwesome } from "@/server/admin/awesome-list/actions";
 
 type AwesomeListDeleteDialogProps = ComponentProps<typeof Dialog> & {
-  lists: AwesomeList[];
+  awesomes: AwesomeList[];
   showTrigger?: boolean;
   onSuccess?: () => void;
 };
 
-export const AwesomeDeleteDialog = ({ lists, showTrigger = true, onSuccess, ...props }: AwesomeListDeleteDialogProps) => {
+export const AwesomeDeleteDialog = ({ awesomes, showTrigger = true, onSuccess, ...props }: AwesomeListDeleteDialogProps) => {
   const { execute, isPending } = useServerAction(deleteAwesome, {
     onSuccess: () => {
       props.onOpenChange?.(false);
@@ -32,7 +32,7 @@ export const AwesomeDeleteDialog = ({ lists, showTrigger = true, onSuccess, ...p
       {showTrigger && (
         <DialogTrigger asChild>
           <Button variant="secondary" size="md" prefix={<Trash />}>
-            Delete ({lists.length})
+            Delete ({awesomes.length})
           </Button>
         </DialogTrigger>
       )}
@@ -41,8 +41,8 @@ export const AwesomeDeleteDialog = ({ lists, showTrigger = true, onSuccess, ...p
         <DialogHeader>
           <DialogTitle>Are you absolutely sure?</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete <span className="font-medium">{lists.length}</span>
-            {lists.length === 1 ? " list" : " lists"} from our servers.
+            This action cannot be undone. This will permanently delete <span className="font-medium">{awesomes.length}</span>
+            {awesomes.length === 1 ? " list" : " awesome"} from our servers.
           </DialogDescription>
         </DialogHeader>
 
@@ -53,7 +53,7 @@ export const AwesomeDeleteDialog = ({ lists, showTrigger = true, onSuccess, ...p
             </Button>
           </DialogClose>
 
-          <Button aria-label="Delete selected rows" size="md" variant="destructive" className="min-w-28" onClick={() => execute({ ids: lists.map(({ id }) => id) })} isPending={isPending}>
+          <Button aria-label="Delete selected rows" size="md" variant="destructive" className="min-w-28" onClick={() => execute({ ids: awesomes.map(({ id }) => id) })} isPending={isPending}>
             Delete
           </Button>
         </DialogFooter>

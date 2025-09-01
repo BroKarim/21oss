@@ -22,7 +22,7 @@ export const awesomeListTableParamsCache = createSearchParamsCache(awesomeListTa
 
 export type AwesomeListTableSchema = Awaited<ReturnType<typeof awesomeListTableParamsCache.parse>>;
 
-export const awesomeListSchema = z.object({
+export const awesomeSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(1, "Name is required"),
   repositoryUrl: z.string().url("Repository URL must be a valid URL"),
@@ -38,4 +38,4 @@ export const awesomeListSchema = z.object({
   category: z.nativeEnum(AwesomeCategory).default(AwesomeCategory.Programming),
 });
 
-export type AwesomeListSchema = z.infer<typeof awesomeListSchema>;
+export type AwesomeSchema = z.infer<typeof awesomeSchema>;
