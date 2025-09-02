@@ -91,17 +91,18 @@ export const prepareRepositoryData = async (repository: RepositoryQueryResult): 
 
   // Prepare topics data
   const topics = repository.repositoryTopics.nodes.map((node) => node.topic.name);
+  const contributorLogins = repository.mentionableUsers.nodes.map((u) => u.login);
 
   // Return the extracted data
   return {
     name: repository.name.toLowerCase(),
-    nameWithOwner: repository.nameWithOwner.toLowerCase(),
+    owner: repository.owner.login,
     description: repository.description,
     url: repository.url,
     homepageUrl: repository.homepageUrl,
     stars: metrics.stars,
     forks: metrics.forks,
-    contributors: metrics.contributors,
+    contributors: contributorLogins,
     watchers: metrics.watchers,
     pushedAt: metrics.pushedAt,
     createdAt: metrics.createdAt,

@@ -14,6 +14,8 @@ import { awesomeListTableParamsSchema } from "@/server/admin/awesome-list/schema
 import { getColumns } from "./awesome-table-columns";
 import { AwesomeTableToolbarActions } from "./awesome-table-toolbar-actions";
 import { Plus } from "lucide-react";
+import { FetchButton } from "@/components/admin/fetch-button";
+import { fetchAllAwesomeRepositoryData } from "@/server/admin/awesome-list/actions";
 
 type AwesomeTableProps = {
   awesomePromise: ReturnType<typeof findAwesomeLists>;
@@ -56,6 +58,7 @@ export function AwesomeTable({ awesomePromise }: AwesomeTableProps) {
         >
           <DataTableToolbar table={table}>
             <AwesomeTableToolbarActions table={table} />
+            <FetchButton action={fetchAllAwesomeRepositoryData} buttonText="Fetch Tool Repository Data" successMessage="✅ All tool repositories data fetched successfully." className="w-fit" />
             <DataTableViewOptions table={table} />
           </DataTableToolbar>
         </DataTableHeader>

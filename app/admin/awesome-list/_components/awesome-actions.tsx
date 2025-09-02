@@ -26,9 +26,9 @@ export const AwesomeActions = ({ className, awesome, ...props }: AwesomeActionsP
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-        {pathname !== `/admin/awesome/${awesome.id}` && (
+        {pathname !== `/admin/awesome-list/${awesome.id}` && (
           <DropdownMenuItem asChild>
-            <Link href={`/admin/awesome/${awesome.id}`}>Edit</Link>
+            <Link href={`/admin/awesome-list/${awesome.id}`}>Edit</Link>
           </DropdownMenuItem>
         )}
 

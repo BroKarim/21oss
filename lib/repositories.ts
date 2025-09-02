@@ -37,24 +37,19 @@ export async function getAwesomeRepositoryData(repositoryUrl: string): Promise<P
     const repo = await githubClient.queryRepository(repositoryUrl);
     if (!repo) return null;
 
-    // Ambil semua data termasuk owner & contributors
-    const { name, nameWithOwner, description, url, homepageUrl, stars, forks, contributors, watchers, pushedAt, createdAt, score, license, topics } = repo;
+    const { name, owner, description, url, stars, forks, contributors, pushedAt, createdAt, license } = repo;
 
     return {
       name,
       description,
       repositoryUrl: url,
-      websiteUrl: homepageUrl,
       stars,
       forks,
-      contributors,
-      watchers,
-      lastCommitAt: pushedAt,
-      firstCommitAt: createdAt,
+      contributors: contributors.join(", "),
+      lastCommitDate: pushedAt,
+      firstCommitDate: createdAt,
       license,
-      owner: nameWithOwner,
-      topics,
-      score,
+      owner: owner,
     };
   } catch (error) {
     console.error("getAwesomeRepositoryData error:", error);

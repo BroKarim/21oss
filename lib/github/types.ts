@@ -5,13 +5,13 @@ export type Repository = {
 
 export type RepositoryData = {
   name: string;
-  nameWithOwner: string;
+  owner: string;
   description?: string;
   url: string;
   homepageUrl?: string;
   stars: number;
   forks: number;
-  contributors: number;
+  contributors: string[];
   watchers: number;
   pushedAt: Date;
   createdAt: Date;
@@ -22,7 +22,7 @@ export type RepositoryData = {
 
 export type RepositoryQueryResult = {
   name: string;
-  nameWithOwner: string;
+  owner: { login: string };
   description?: string;
   url: string;
   homepageUrl?: string;
@@ -36,6 +36,7 @@ export type RepositoryQueryResult = {
   };
   mentionableUsers: {
     totalCount: number;
+    nodes: { login: string }[]; // ✅ tambahin nodes di sini
   };
   licenseInfo: {
     spdxId: string;

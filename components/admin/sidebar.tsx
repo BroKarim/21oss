@@ -68,6 +68,11 @@ export const AdminSidebar = () => {
           prefix: <Icon name="lucide/users" />,
         },
         {
+          title: "Awesome Lists",
+          href: "/admin/awesome-list",
+          prefix: <Icon name="lucide/users" />,
+        },
+        {
           title: "Reports",
           href: "/admin/reports",
           prefix: <Icon name="lucide/triangle-alert" />,

@@ -2,7 +2,9 @@ export const repositoryQuery = `
   query($owner: String!, $name: String!) {
     repository(owner: $owner, name: $name) {
       name
-      nameWithOwner
+      owner {
+        login
+      }
       description
       url
       homepageUrl
@@ -11,8 +13,11 @@ export const repositoryQuery = `
       pushedAt
       stargazerCount
       forkCount
-      mentionableUsers {
+      mentionableUsers(first: 5) {
         totalCount
+        nodes {
+          login
+        }
       }
       watchers {
         totalCount
