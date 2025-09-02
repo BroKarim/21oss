@@ -34,7 +34,6 @@ const data = {
       items: [
         { title: "APIs & Integration", url: "/categories/programming#apis-and-integration" },
         { title: "Backend", url: "/categories/programming#backend" },
-        { title: "Components", url: "/categories/programming#components" },
         { title: "Dev Tools", url: "/categories/programming#dev-tools" },
         { title: "Frontend", url: "/categories/programming#frontend" },
       ],
