@@ -46,7 +46,7 @@ const GitHubRepoCard = () => {
 
   return (
     <Card className="w-full mx-auto  border text-white md:py-1">
-      <CardContent className="py-0">
+      <CardContent>
         <div className="flex items-center gap-4">
           {/* Avatar Section */}
           <div className="relative flex-shrink-0">
