@@ -29,7 +29,10 @@ enum AdType {
 
 enum AwesomeCategory {
   Programming
-  NonProgramming
+  Data
+  Productivity
+  Design
+  Learning
 }
 
 enum RepoStatus {
