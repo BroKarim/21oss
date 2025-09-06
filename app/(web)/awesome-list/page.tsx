@@ -2,12 +2,17 @@
 
 import { AwesomeQuery } from "@/components/web/awesome-list/awesome-query";
 import WidgetBanner from "@/components/web/ui/banner";
-export default function Page() {
+
+type PageProps = {
+  searchParams: Record<string, string | string[] | undefined>;
+};
+
+export default function Page({ searchParams }: PageProps) {
   return (
     <main className="flex flex-1 flex-col overflow-hidden">
       <div className="container p-4 space-y-6">
         <WidgetBanner />
-        <AwesomeQuery />
+        <AwesomeQuery searchParams={Promise.resolve(searchParams)} />
       </div>
     </main>
   );
