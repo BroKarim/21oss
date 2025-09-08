@@ -12,8 +12,12 @@ type AwesomeQueryProps = Omit<AwesomeListingProps, "list" | "pagination"> & {
   pagination?: Partial<Omit<PaginationProps, "totalCount" | "pageSize">>;
 };
 export const AwesomeQuery = async ({ searchParams, overrideParams, where, pagination, ...props }: AwesomeQueryProps) => {
-  const parsedParams = awesomeFilterSchema.parse((await searchParams) ?? {});
+  const rawParams = (await searchParams) ?? {};
 
+  if (rawParams.category && !Array.isArray(rawParams.category)) {
+    rawParams.category = [rawParams.category];
+  }
+  const parsedParams = awesomeFilterSchema.parse(rawParams);
   const params = { ...parsedParams, ...overrideParams };
   const { awesomeLists, totalCount } = await searchAwesomeLists(params, where);
 

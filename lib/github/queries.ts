@@ -13,7 +13,7 @@ export const repositoryQuery = `
       pushedAt
       stargazerCount
       forkCount
-      mentionableUsers(first: 5) {
+      mentionableUsers(first: 30) {
         totalCount
         nodes {
           login
