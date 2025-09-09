@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { BookOpen, PenTool, Palette, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac } from "lucide-react";
+import { PenTool, Palette, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac, Table } from "lucide-react";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavLogo } from "./nav-logo";
@@ -21,9 +21,9 @@ const data = {
       icon: PenTool,
     },
     {
-      title: "Top 5",
-      url: "/top-5",
-      icon: BookOpen,
+      title: "Beautiful Table",
+      url: "https://og-table.com/",
+      icon: Table,
     },
   ],
   navSecondary: [

@@ -1,8 +1,7 @@
 "use client";
 
-import {  type LucideIcon } from "lucide-react";
-
-import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem} from "@/components/ui/sidebar";
+import React from "react";
+import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
 export function NavMain({
   items,
@@ -10,23 +9,27 @@ export function NavMain({
   items: {
     title: string;
     url: string;
-    icon?: LucideIcon;
+    icon?: React.ComponentType<{ className?: string }>;
     isActive?: boolean;
   }[];
 }) {
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild className="text-md" tooltip={item.title} >
-              <a href={item.url}>
-                {item.icon && <item.icon className="mr-2 h-4 w-4" />}
-                <span>{item.title}</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
+        {items.map((item) => {
+          const Icon = item.icon;
+
+          return (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild className="text-md" tooltip={item.title}>
+                <a href={item.url} className="w-full">
+                  {Icon && <Icon className="mr-1 h-5 w-5" />}
+                  <span>{item.title}</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   );

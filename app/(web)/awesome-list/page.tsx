@@ -1,9 +1,19 @@
-import FrameScrambleText from "@/components/web/frame-scramble-text";
+// import FrameScrambleText from "@/components/web/frame-scramble-text";
 
-export default function Page() {
+import { AwesomeQuery } from "@/components/web/awesome-list/awesome-query";
+import WidgetBanner from "@/components/web/ui/banner";
+
+type PageProps = {
+  searchParams: Record<string, string | string[] | undefined>;
+};
+
+export default function Page({ searchParams }: PageProps) {
   return (
-    <div className="w-full h-screen flex justify-center items-center">
-      <FrameScrambleText value="Coming soon" as="h5" className="text-xl text-foreground" />
-    </div>
+    <main className="flex flex-1 flex-col overflow-hidden">
+      <div className="container p-4 space-y-6">
+        <WidgetBanner />
+        <AwesomeQuery searchParams={Promise.resolve(searchParams)} />
+      </div>
+    </main>
   );
 }

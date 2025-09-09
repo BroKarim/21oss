@@ -3,17 +3,24 @@
 import { useServerAction } from "zsa-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { fetchAllToolRepositoryData } from "@/server/admin/tools/actions";
+import React from "react";
 
-export function FetchButton() {
-  const fetchAll = useServerAction(fetchAllToolRepositoryData, {
-    onSuccess: () => toast.success("✅ All repositories data fetched successfully"),
+interface ReusableFetchButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  action: (payload: any) => Promise<any>;
+  buttonText: string;
+  loadingText?: string;
+  successMessage: string;
+}
+
+export function FetchButton({ action, buttonText, loadingText = "Fetching...", successMessage, ...props }: ReusableFetchButtonProps) {
+  const { execute, isPending } = useServerAction(action, {
+    onSuccess: () => toast.success(successMessage),
     onError: ({ err }) => toast.error(`❌ ${err.message}`),
   });
 
   return (
-    <Button onClick={() => fetchAll.execute({})} disabled={fetchAll.isPending} className="w-fit">
-      {fetchAll.isPending ? "Fetching..." : "Fetch All Repository Data"}
+    <Button onClick={() => execute({})} disabled={isPending || props.disabled} {...props}>
+      {isPending ? loadingText : buttonText}
     </Button>
   );
 }

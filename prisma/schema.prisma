@@ -27,6 +27,19 @@ enum AdType {
   All
 }
 
+enum AwesomeCategory {
+  Programming
+  Data
+  Productivity
+  Design
+  Learning
+}
+
+enum RepoStatus {
+  Draft
+  Published
+}
+
 enum ToolStatus {
   Draft
   Published
@@ -216,7 +229,7 @@ model Stack {
   id          String    @id @default(cuid())
   name        String    @db.Citext
   slug        String    @unique
-  type        StackType @default(Language)
+  type        StackType @default(Tool)
   description String?
   website     String?
   faviconUrl  String?
@@ -243,6 +256,30 @@ model License {
   // Indexes
   @@index([slug])
 }
+
+model AwesomeList {
+  id              String   @id @default(cuid())
+  name            String   
+  repositoryUrl   String   @unique
+  description     String?  
+  stars           Int      @default(0)
+  forks           Int      @default(0)
+  license         String?  
+  owner           String   
+  contributors    String?     
+  firstCommitDate DateTime?
+  lastCommitDate  DateTime?
+
+  status          RepoStatus @default(Draft)
+  category        AwesomeCategory @default(Programming)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([repositoryUrl])
+}
+
+
 
 model Session {
   id             String   @id @default(cuid())
