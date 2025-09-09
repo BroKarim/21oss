@@ -45,10 +45,18 @@ export const AwesomeCard = ({ list }: { list: any }) => {
           <div className="relative w-full h-24 sm:w-40 sm:h-full flex items-center justify-center overflow-hidden">
             {/* Contributors (overflowing row) */}
             <div className="absolute inset-0 flex flex-wrap content-start z-0 space-x-1 space-y-1 px-2 py-1">
-              {displayContributors.slice(0, window.innerWidth < 640 ? 15 : 30).map((contributor: string, index: number) => {
+              {displayContributors.slice(0, 30).map((contributor: string, index: number) => {
                 const contributorName = contributor.trim();
                 return (
-                  <Avatar key={`${contributorName}-${index}`} className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 ring-1 ring-gray-600 ring-offset-1 ring-offset-gray-800 hover:ring-blue-400 transition-all duration-200 hover:scale-110">
+                  <Avatar
+                    key={`${contributorName}-${index}`}
+                    className={`
+                flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 ring-1 ring-gray-600 
+                ring-offset-1 ring-offset-gray-800 hover:ring-blue-400 
+                transition-all duration-200 hover:scale-110
+                ${index >= 15 ? "hidden sm:flex" : ""}
+              `}
+                  >
                     <AvatarImage src={`https://github.com/${contributorName}.png`} alt={contributorName} />
                     <AvatarFallback className="bg-gray-600 text-white text-[8px] sm:text-[10px]">{contributorName.split("").slice(0, 2).join("").toUpperCase()}</AvatarFallback>
                   </Avatar>

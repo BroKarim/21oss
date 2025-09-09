@@ -27,7 +27,6 @@ export async function AdCompact({ className, ...props }: ComponentProps<typeof C
         </div>
       </div>
 
-      {/* Right side - CTA Button */}
       <div className="flex-shrink-0 w-full sm:w-auto">
         <Link href={ad.websiteUrl} target="_blank" className="block">
           <button type="button" className="w-full sm:w-auto whitespace-nowrap rounded-md border px-2 sm:px-3 py-1 sm:py-1.5 text-[9px] sm:text-sm transition-colors font-medium text-center">
