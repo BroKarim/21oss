@@ -18,7 +18,7 @@ export const curatedListSchema = z.object({
   slug: z.string().optional(),
   description: z.string().optional(),
   type: z.enum(["gallery", "favicon", "slider"]).default("gallery"),
-  tools: z.array(z.string()).optional(), // array of Tool IDs
+  tools: z.array(z.string()).optional(), 
 });
 
 export type CuratedListSchema = z.infer<typeof curatedListSchema>;
