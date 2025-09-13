@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import type { PropsWithChildren } from "react";
 import { getServerSession } from "@/lib/auth";
 import { Header } from "@/components/admin/header";
+
 export const metadata: Metadata = {
   title: "Admin Panel",
 };

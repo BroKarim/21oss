@@ -150,6 +150,7 @@ model Tool {
     categories Category[]  @relation("ToolCategories")
     platforms  Platform[]  @relation("ToolPlatforms")
     stacks     Stack[]     @relation("ToolStacks")
+    curatedLists CuratedList[] @relation("CuratedListTools")
     likes      Like[]
     reports    Report[]
 
@@ -159,6 +160,16 @@ model Tool {
   @@index([inspiredById])
 }
 
+model CuratedList {
+  id          String   @id @default(cuid())
+  title       String
+  url         String?
+  description String?
+  type        String   
+  tools       Tool[]   @relation("CuratedListTools")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
 
 
 model ToolScreenshot {
