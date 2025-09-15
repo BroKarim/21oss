@@ -1,133 +1,134 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, GitFork, Copy } from "lucide-react";
+import { Star, GitFork, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button-shadcn";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
-const GitHubRepoCard = () => {
-  const referralUrl = `https://peerlist.io/tes`;
+export const AwesomeCard = ({ list }: { list: any }) => {
+  const [copied, setCopied] = useState(false);
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(referralUrl);
+      await navigator.clipboard.writeText(list.repositoryUrl);
+      setCopied(true);
+
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
   };
 
-  const repoData = {
-    name: "awesome-react-components",
-    description: "A curated collection of awesome React components and libraries for building modern web applications.",
-    url: "https://github.com/johndoe/awesome-react-components",
-    stars: 2847,
-    forks: 156,
-    owner: {
-      avatar: "https://avatars.githubusercontent.com/u/1?v=4",
-      name: "John Doe",
-      username: "johndoe",
-    },
-    contributors: [
-      { avatar: "https://avatars.githubusercontent.com/u/2?v=4", name: "Alice Chen", username: "alicech" },
-      { avatar: "https://avatars.githubusercontent.com/u/3?v=4", name: "Bob Smith", username: "bobsmith" },
-      { avatar: "https://avatars.githubusercontent.com/u/4?v=4", name: "Carol Wilson", username: "carolw" },
-      { avatar: "https://avatars.githubusercontent.com/u/5?v=4", name: "David Brown", username: "davidb" },
-    ],
-  };
+  const contributors = list.contributors ? list.contributors.split(",") : [];
 
-  const getAvatarPosition = (index: number, total: number) => {
-    const angle = (index * 2 * Math.PI) / total;
-    const radius = 50;
-    const x = Math.cos(angle) * radius;
-    const y = Math.sin(angle) * radius;
-    return { x, y };
-  };
+  const targetAvatarCount = 30;
+  const displayContributors = [...contributors];
+
+  if (displayContributors.length < targetAvatarCount) {
+    let currentCount = displayContributors.length;
+    let index = 0;
+    while (currentCount < targetAvatarCount) {
+      displayContributors.push(contributors[index % contributors.length]);
+      index++;
+      currentCount++;
+    }
+  }
 
   return (
-    <Card className="w-full mx-auto  border text-white md:py-1">
-      <CardContent>
-        <div className="flex items-center gap-4">
-          {/* Avatar Section */}
-          <div className="relative flex-shrink-0">
-            <div className="relative w-32 h-32 flex items-center justify-center">
-              {/* Owner Avatar */}
-              <Avatar className="w-12 h-12 z-10 ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-800">
-                <AvatarImage src={repoData.owner.avatar} alt={repoData.owner.name} />
-                <AvatarFallback className="bg-blue-500 text-white text-xs font-semibold">
-                  {repoData.owner.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-
-              {/* Contributors */}
-              {repoData.contributors.map((contributor, index) => {
-                const position = getAvatarPosition(index, repoData.contributors.length);
+    <Card className="w-full text-white overflow-hidden py-0 border">
+      <div className="flex items-stretch flex-col sm:flex-row">
+        {/* Avatar Section */}
+        <div className="relative flex-shrink-0">
+          <div className="relative w-full h-24 sm:w-40 sm:h-full flex items-center justify-center overflow-hidden">
+            {/* Contributors (overflowing row) */}
+            <div className="absolute inset-0 flex flex-wrap content-start z-0 space-x-2 space-y-2 px-2 py-1">
+              {displayContributors.slice(0, 30).map((contributor: string, index: number) => {
+                const contributorName = contributor.trim();
                 return (
                   <Avatar
-                    key={contributor.username}
-                    className="absolute w-8 h-8 ring-2 ring-gray-600 ring-offset-1 ring-offset-gray-800 hover:ring-blue-400 transition-all duration-200 hover:scale-110"
-                    style={{
-                      left: `50%`,
-                      top: `50%`,
-                      transform: `translate(calc(-50% + ${position.x}px), calc(-50% + ${position.y}px))`,
-                    }}
+                    key={`${contributorName}-${index}`}
+                    className={`
+                flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 ring-1 ring-gray-600
+                 ring-offset-1 ring-offset-gray-800 hover:ring-blue-400
+                 transition-all duration-200 hover:scale-110
+                ${index >= 15 ? "hidden sm:flex" : ""}
+              `}
                   >
-                    <AvatarImage src={contributor.avatar} alt={contributor.name} />
-                    <AvatarFallback className="bg-gray-600 text-white text-[10px]">
-                      {contributor.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
+                    <AvatarImage src={`https://github.com/${contributorName}.png`} alt={contributorName} />
+                    <AvatarFallback className="bg-gray-600 text-white text-[6px] sm:text-[8px]">{contributorName.split("").slice(0, 2).join("").toUpperCase()}</AvatarFallback>
                   </Avatar>
                 );
               })}
             </div>
-          </div>
-
-          {/* Repository Info */}
-          <div className="flex-1 space-y-2">
-            <div>
-              <h3 className="text-base font-semibold text-white mb-1">{repoData.name}</h3>
-              <p className="text-gray-300 text-xs leading-snug line-clamp-3">{repoData.description}</p>
-            </div>
-
-            {/* Stats */}
-            <div className="flex items-center gap-3 text-xs text-gray-400">
-              <div className="flex items-center gap-1">
-                <Star className="w-3 h-3" />
-                <span>{repoData.stars.toLocaleString()}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <GitFork className="w-3 h-3" />
-                <span>{repoData.forks}</span>
-              </div>
-              <div className="text-gray-500">{repoData.contributors.length + 1} contributors</div>
-            </div>
-
-            {/* Owner Info */}
-            <div className="text-xs text-gray-400">
-              by <span className="text-blue-400 font-medium">{repoData.owner.name}</span>
-            </div>
-
-            {/* Action Button */}
-            <div className="pt-1">
-              <div className="flex items-center gap-2 bg-black/30 rounded-md p-2 border border-gray-700">
-                <span className="text-gray-300 text-[11px] font-mono flex-1 truncate">{referralUrl}</span>
-                <Button variant="secondary" size="sm" onClick={copyToClipboard} className="h-7 px-2 bg-white/10 hover:bg-white/20 text-white border-white/20 hover:border-white/30 transition-all duration-200">
-                  <Copy className="h-3 w-3 mr-1" />
-                  Copy
-                </Button>
-              </div>
-            </div>
+            <div
+              className="absolute inset-0 bg-black/30 z-[5]"
+              style={{
+                backdropFilter: "blur(1px)",
+                WebkitBackdropFilter: "blur(1px)",
+              }}
+            ></div>
+            {/* Owner Avatar (positioned on top) */}
+            <Avatar className="w-10 h-10 sm:w-12 sm:h-12 z-10 ring-2 ring-blue-500 ring-offset-2 ring-offset-gray-800 absolute">
+              <AvatarImage src={`https://github.com/${list.owner}.png`} alt={list.owner} />
+              <AvatarFallback className="bg-blue-500 text-white text-xs font-semibold">
+                {list.owner
+                  .split(" ")
+                  .map((n: string) => n[0])
+                  .join("")}
+              </AvatarFallback>
+            </Avatar>
           </div>
         </div>
-      </CardContent>
+
+        {/* Repository Info */}
+        <CardContent className="flex-1 flex flex-col justify-center space-y-2 py-3 sm:py-4 px-3 sm:pl-2">
+          <div>
+            <h3 className="text-sm sm:text-base font-semibold text-white mb-1 leading-tight">{list.name}</h3>
+            <p className="text-white text-xs sm:text-xs leading-relaxed">{list.description}</p>
+          </div>
+
+          {/* Action Button */}
+          <div className="pt-1">
+            <div className="flex items-center gap-2 bg-black/30 rounded-md p-2 border border-gray-700 max-w-full">
+              <ScrollArea className="w-32 sm:w-60 flex-1 whitespace-nowrap">
+                <span className="text-gray-300 text-[10px] sm:text-[11px] font-mono whitespace-nowrap">{list.repositoryUrl}</span>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+              <Button variant="secondary" size="sm" onClick={copyToClipboard} className="h-6 sm:h-7 px-1.5 sm:px-2 bg-white/10 hover:bg-white/20 text-white border-white/20 hover:border-white/30 transition-all duration-200 text-xs">
+                {copied ? (
+                  <>
+                    <Check className="h-3 w-3 sm:mr-1 text-green-400" />
+                    <span className="hidden sm:inline">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-3 w-3 sm:mr-1" />
+                    <span className="hidden sm:inline">Copy</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="flex items-center gap-2 sm:gap-3 text-xs text-gray-400 flex-wrap">
+            <div className="flex items-center gap-1">
+              <Star className="w-3 h-3" />
+              <span>{list.stars.toLocaleString()}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <GitFork className="w-3 h-3" />
+              <span>{list.forks}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span>by</span>
+              <span className="text-blue-400 font-medium truncate max-w-20 sm:max-w-none">{list.owner}</span>
+            </div>
+          </div>
+        </CardContent>
+      </div>
     </Card>
   );
 };
-
-export default GitHubRepoCard;
