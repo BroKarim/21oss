@@ -47,7 +47,6 @@ export function CategoryForm({ className, title, category, toolsPromise, categor
     },
   });
 
-  // Set the slug based on the name
   useComputedField({
     form,
     sourceField: "name",
@@ -56,7 +55,6 @@ export function CategoryForm({ className, title, category, toolsPromise, categor
     enabled: !category,
   });
 
-  // Set the label based on the name
   useComputedField({
     form,
     sourceField: "name",
@@ -65,28 +63,8 @@ export function CategoryForm({ className, title, category, toolsPromise, categor
     enabled: !category,
   });
 
-  // Group available categories by parent
-  // const groupedCategories = useMemo(() => {
-  //   return parents.reduce(
-  //     (acc, category) => {
-  //       if (!category.parentId || category.fullPath.split("/").length >= 3) {
-  //         return acc;
-  //       }
-
-  //       if (!acc[category.parentId]) {
-  //         acc[category.parentId] = [];
-  //       }
-
-  //       acc[category.parentId].push(category);
-  //       return acc;
-  //     },
-  //     {} as Record<string, typeof parents>
-  //   );
-  // }, [parents]);
-
   const parentCandidates = useMemo(() => {
     return parents.filter((category) => {
-      // tampilkan hanya kategori top-level sebagai calon parent
       return !category.parentId && category.fullPath.split("/").length < 3;
     });
   }, [parents]);
@@ -96,7 +74,6 @@ export function CategoryForm({ className, title, category, toolsPromise, categor
     onSuccess: ({ data }) => {
       toast.success(`Category successfully ${category ? "updated" : "created"}`);
 
-      // If not updating a category, or slug has changed, redirect to the new category
       if (!category || data.slug !== category?.slug) {
         router.push(`/admin/categories/${data.slug}`);
       }

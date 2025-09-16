@@ -34,3 +34,12 @@ export const findCuratedLists = async (search: CuratedListsTableSchema) => {
   const pageCount = Math.ceil(curatedListsTotal / perPage);
   return { curatedLists, curatedListsTotal, pageCount };
 };
+
+export const findCuratedListById = async (id: string) => {
+  return db.curatedList.findUnique({
+    where: { id },
+    include: {
+      tools: { select: { id: true, name: true } },
+    },
+  });
+};

@@ -3,7 +3,7 @@
 import type { CuratedList } from "@prisma/client";
 import { usePathname, useRouter } from "next/navigation";
 import { type ComponentProps, useState } from "react";
-import { CuratedListDeleteDialog } from "@/app/admin/curated-lists/_components/curated-list-delete-dialog";
+import { CuratedListsDeleteDialog } from "@/app/admin/curated-lists/_components/curated-list-delete-dialog";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Link } from "@/components/ui/link";
@@ -39,7 +39,7 @@ export const CuratedListActions = ({ curatedList, className, ...props }: Curated
         </DropdownMenuItem>
       </DropdownMenuContent>
 
-      <CuratedListDeleteDialog open={isDeleteOpen} onOpenChange={() => setIsDeleteOpen(false)} curatedLists={[curatedList]} showTrigger={false} onSuccess={() => router.push("/admin/curated-lists")} />
+      <CuratedListsDeleteDialog open={isDeleteOpen} onOpenChange={() => setIsDeleteOpen(false)} curatedLists={[curatedList]} showTrigger={false} onSuccess={() => router.push("/admin/curated-lists")} />
     </DropdownMenu>
   );
 };

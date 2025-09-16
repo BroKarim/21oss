@@ -27,6 +27,12 @@ enum AdType {
   All
 }
 
+enum CuratedListType {
+  gallery
+  favicon
+  slider
+}
+
 enum AwesomeCategory {
   Programming
   Data
@@ -165,7 +171,7 @@ model CuratedList {
   title       String
   url         String?
   description String?
-  type        String   
+  type        CuratedListType @default(gallery)
   tools       Tool[]   @relation("CuratedListTools")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
