@@ -1,6 +1,7 @@
 "use server";
 
 import { findToolsWithCategories, findRecentTools, filterToolsBySubcategory } from "@/server/web/tools/queries";
+
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
 }

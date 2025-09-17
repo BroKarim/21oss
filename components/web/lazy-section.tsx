@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { HomeSection } from "@/lib/constants/home-sections";
 import { ToolMany } from "@/server/web/tools/payloads";
-import * as toolsActions from "@/server/web/tools/actions";
+import { sectionActions } from "@/lib/sections";
 import { sectionComponents } from "@/lib/constants/section-components";
 
 interface LazySectionProps {
@@ -11,7 +11,7 @@ interface LazySectionProps {
 }
 
 interface SectionWithData extends Omit<HomeSection, "actionName"> {
-  tools: ToolMany[] | null;
+  data: any[] | null; // bisa tools atau curated lists
 }
 
 export default function LazySection({ section }: LazySectionProps) {
@@ -30,8 +30,6 @@ export default function LazySection({ section }: LazySectionProps) {
     const observer = new IntersectionObserver(
       async (entries) => {
         const [entry] = entries;
-
-        // Trigger when section is 50% visible
         if (entry.isIntersecting && !hasLoaded && !isLoading) {
           setIsLoading(true);
 
@@ -39,16 +37,17 @@ export default function LazySection({ section }: LazySectionProps) {
             console.log(`Loading data for section: ${section.label}`);
 
             // Dynamic call to server action based on actionName
-            const actionFn = toolsActions[section.actionName as keyof typeof toolsActions];
+            // const actionFn = toolsActions[section.actionName as keyof typeof toolsActions];
+            const actionFn = sectionActions[section.actionName as keyof typeof sectionActions];
             if (!actionFn) {
               throw new Error(`Action ${section.actionName} not found`);
             }
 
-            const tools = await actionFn(section.label);
+            const tools = section.actionName === "getRecentTools" ? await actionFn(section.label) : await actionFn();
 
             setSectionData((prev) => ({
               ...prev,
-              tools,
+              data: tools,
             }));
 
             setHasLoaded(true);
