@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { HomeSection } from "@/lib/constants/home-sections";
 import { ToolMany } from "@/server/web/tools/payloads";
-import { sectionActions } from "@/lib/sections";
+import * as sectionActions from "@/lib/sections";
 import { sectionComponents } from "@/lib/constants/section-components";
 
 interface LazySectionProps {
@@ -11,7 +11,7 @@ interface LazySectionProps {
 }
 
 interface SectionWithData extends Omit<HomeSection, "actionName"> {
-  data: any[] | null; // bisa tools atau curated lists
+  tools: ToolMany[] | null;
 }
 
 export default function LazySection({ section }: LazySectionProps) {
@@ -38,12 +38,12 @@ export default function LazySection({ section }: LazySectionProps) {
 
             // Dynamic call to server action based on actionName
             // const actionFn = toolsActions[section.actionName as keyof typeof toolsActions];
-            const actionFn = sectionActions[section.actionName as keyof typeof sectionActions];
+
+            const actionFn = sectionActions[section.actionName as keyof typeof sectionActions] as unknown as () => Promise<any>;
             if (!actionFn) {
               throw new Error(`Action ${section.actionName} not found`);
             }
-
-            const tools = section.actionName === "getRecentTools" ? await actionFn(section.label) : await actionFn();
+            const tools = await actionFn();
 
             setSectionData((prev) => ({
               ...prev,
