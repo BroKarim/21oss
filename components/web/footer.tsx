@@ -10,7 +10,7 @@ const footerLinks = {
     { href: "/docs", label: "Awesome list" },
     { href: "/examples", label: "Blog" },
     { href: "/pricing", label: "Alternative" },
-    { href: "https://blog.arihant.us/", label: "Categories" },
+    { href: "categories/programming#apis-and-integration", label: "Categories" },
   ],
   socials: [
     { href: "https://github.com/BroKarim/open-layout", label: "Github" },
@@ -49,15 +49,13 @@ const FooterSection = ({ title, links }: FooterSectionProps) => (
 );
 
 function Footer() {
-  const currentYear = new Date().getFullYear();
+  // const currentYear = new Date().getFullYear();
   const tweetText = encodeURIComponent("Finding the right open‑source tool is messy—#210SS makes it simple. What's one underrated tool you can't live without? @brokariim");
 
   return (
     <footer className="bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto max-w-7xl">
-        {/* Main Footer Content */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
-          {/* Brand Section */}
           <div className="space-y-6">
             <Link href="/" className="inline-flex items-center space-x-2">
               <Icons.logo className="w-8 h-8" />
@@ -80,8 +78,6 @@ function Footer() {
               </Link>
             </div>
           </div>
-
-          {/* Links Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 lg:gap-8">
             <FooterSection title="Pages" links={footerLinks.pages} />
             <FooterSection title="Socials" links={footerLinks.socials} />
@@ -89,7 +85,6 @@ function Footer() {
           </div>
         </div>
 
-        {/* Brand Display */}
         <div className="mt-12 flex items-center justify-center">
           <h1 className="text-center text-4xl sm:text-6xl md:text-8xl lg:text-9xl xl:text-[10rem] font-bold bg-clip-text text-transparent bg-gradient-to-b from-neutral-600 via-neutral-700 to-neutral-900 select-none tracking-tight">
             21OSS.com
@@ -97,9 +92,9 @@ function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-8 pt-8 border-t border-border">
+        {/* <div className="mt-8 pt-8 border-t border-border">
           <p className="text-center text-sm text-muted-foreground">© {currentYear} 210SS. All rights reserved.</p>
-        </div>
+        </div> */}
       </div>
     </footer>
   );

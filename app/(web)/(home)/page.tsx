@@ -5,6 +5,7 @@ import { AdBanner } from "@/components/web/ads/ad-banner";
 import { getCuratedLists } from "@/server/web/curated-lists/actions";
 import { getRecentTools } from "@/server/web/tools/actions";
 
+
 export default async function Page() {
   const curatedLists = await getCuratedLists();
 

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ToolMany } from "@/server/web/tools/payloads";
-
 import { sectionComponents } from "@/lib/constants/section-components";
 
 interface SectionData {
