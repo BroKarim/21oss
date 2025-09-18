@@ -1,66 +1,39 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { HomeSection } from "@/lib/constants/home-sections";
 import { ToolMany } from "@/server/web/tools/payloads";
-import * as sectionActions from "@/lib/sections";
+
 import { sectionComponents } from "@/lib/constants/section-components";
 
-interface LazySectionProps {
-  section: HomeSection;
+interface SectionData {
+  id: string;
+  label: string;
+  type: "slider" | "favicon" | "gallery";
+  tools: ToolMany[];
+  options: {
+    showScroll?: boolean;
+    showViewAll?: boolean;
+    viewAllUrl?: string;
+    loadMore?: boolean;
+  };
 }
 
-interface SectionWithData extends Omit<HomeSection, "actionName"> {
-  tools: ToolMany[] | null;
+interface LazySectionProps {
+  section: SectionData;
 }
 
 export default function LazySection({ section }: LazySectionProps) {
-  const [sectionData, setSectionData] = useState<SectionWithData>({
-    id: section.id,
-    label: section.label,
-    type: section.type,
-    options: section.options,
-    tools: null,
-  });
   const [isLoading, setIsLoading] = useState(false);
-  const [hasLoaded, setHasLoaded] = useState(false);
+
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      async (entries) => {
+      (entries) => {
         const [entry] = entries;
-        if (entry.isIntersecting && !hasLoaded && !isLoading) {
+        if (entry.isIntersecting) {
           setIsLoading(true);
-
-          try {
-            console.log(`Loading data for section: ${section.label}`);
-
-            // Dynamic call to server action based on actionName
-            // const actionFn = toolsActions[section.actionName as keyof typeof toolsActions];
-
-            const actionFn = sectionActions[section.actionName as keyof typeof sectionActions] as unknown as () => Promise<any>;
-            if (!actionFn) {
-              throw new Error(`Action ${section.actionName} not found`);
-            }
-            const tools = await actionFn();
-
-            setSectionData((prev) => ({
-              ...prev,
-              data: tools,
-            }));
-
-            setHasLoaded(true);
-          } catch (error) {
-            console.error(`Error loading section ${section.label}:`, error);
-            setSectionData((prev) => ({
-              ...prev,
-              tools: [],
-            }));
-            setHasLoaded(true);
-          } finally {
-            setIsLoading(false);
-          }
+          observer.disconnect(); // Stop observing once visible
         }
       },
       {
@@ -74,10 +47,9 @@ export default function LazySection({ section }: LazySectionProps) {
     }
 
     return () => observer.disconnect();
-  }, [section, hasLoaded, isLoading]);
-
+  }, []);
   // Loading skeleton
-  if (isLoading || !hasLoaded) {
+  if (isLoading) {
     return (
       <div ref={sectionRef} className="space-y-4">
         <div className="flex items-center justify-between rounded-md">
@@ -112,7 +84,7 @@ export default function LazySection({ section }: LazySectionProps) {
   }
 
   // No tools found
-  if (!sectionData.tools?.length) {
+  if (!section.tools?.length) {
     return (
       <div ref={sectionRef} className="text-center text-gray-500 py-8">
         No tools available for {section.label}.
@@ -121,13 +93,9 @@ export default function LazySection({ section }: LazySectionProps) {
   }
 
   const Component = sectionComponents[section.type];
-  const componentProps = {
-    ...sectionData,
-    tools: sectionData.tools || [],
-  };
   return (
-    <div ref={sectionRef}>
-      <Component {...componentProps} />
+    <div>
+      <Component {...section} />
     </div>
   );
 }

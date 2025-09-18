@@ -1,17 +1,48 @@
 import { cn } from "@/lib/utils";
 import WidgetBanner from "@/components/web/ui/banner";
-import { homeSections } from "@/lib/constants/home-sections";
 import LazySection from "@/components/web/lazy-section";
 import { AdBanner } from "@/components/web/ads/ad-banner";
+import { getCuratedLists } from "@/server/web/curated-lists/actions";
+import { getRecentTools } from "@/server/web/tools/actions";
 
+export default async function Page() {
+  const curatedLists = await getCuratedLists();
 
-export default function Page() {
-  const groupedSections: (typeof homeSections | (typeof homeSections)[number])[] = [];
-  let tempFaviconGroup: (typeof homeSections)[number][] = [];
-  homeSections.forEach((section, index) => {
+  const sections = [
+    {
+      id: "recent",
+      label: "Recently Added",
+      type: "gallery" as const,
+      tools: await getRecentTools(),
+      options: {
+        loadMore: true,
+        showScroll: false,
+        showViewAll: false,
+      },
+    },
+    // Dynamic sections from curated lists
+    ...curatedLists.map((curatedList) => ({
+      id: curatedList.id,
+      label: curatedList.title,
+      type: curatedList.type as "slider" | "favicon" | "gallery",
+      tools: curatedList.tools,
+      options: {
+        showScroll: true,
+        showViewAll: true,
+        viewAllUrl: `/`,
+        loadMore: false,
+      },
+    })),
+  ];
+
+  // Group favicon sections together
+  const groupedSections: (typeof sections | (typeof sections)[number])[] = [];
+  let tempFaviconGroup: (typeof sections)[number][] = [];
+
+  sections.forEach((section, index) => {
     if (section.type === "favicon") {
       tempFaviconGroup.push(section);
-      const next = homeSections[index + 1];
+      const next = sections[index + 1];
       if (!next || next.type !== "favicon") {
         groupedSections.push(tempFaviconGroup);
         tempFaviconGroup = [];
