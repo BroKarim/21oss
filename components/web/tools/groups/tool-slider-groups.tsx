@@ -39,34 +39,29 @@ export const ToolSliderGroup = ({ id, label, tools, options }: ToolSliderGroupPr
   }
 
   return (
-    <section className="space-y-4 border border-stone-700 p-2 rounded-lg">
-      {/* Header dengan label dan tombol View All */}
+    <section className="w-full md:w-[1130px]  max-w-full space-y-4 border  p-2 rounded-lg overflow-hidden">
       <div className="flex items-center justify-between">
         <h2 className="text-xl ">{label}</h2>
-        {showViewAll && viewAllUrl && (
-          <Button asChild variant="outline">
-            <Link href={viewAllUrl}>View All</Link>
-          </Button>
-        )}
       </div>
 
-      {/* Slider atau grid statis */}
-      <div className="relative">
+      <div className="w-full">
         {showScroll ? (
-          <ScrollArea className="w-full -mx-1 px-1">
-            <div className="flex space-x-4" style={{ minWidth: "100%", paddingLeft: "1px", paddingRight: "1px" }}>
-              {displayedTools.map((tool, index) => (
-                <div key={tool.id} className="min-w-[300px] max-w-[300px]">
-                  <ToolCard tool={tool} style={{ order: index }} />
+          <ScrollArea className="whitespace-nowrap rounded-md pb-4">
+            <div className="flex w-max space-x-4">
+              {displayedTools.map((tool) => (
+                <div key={tool.id} className="w-[280px] shrink-0 sm:w-[320px]">
+                  <ToolCard tool={tool} />
                 </div>
               ))}
             </div>
-            <ScrollBar orientation="horizontal" className="invisible" />
+            <ScrollBar orientation="horizontal" />
           </ScrollArea>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {displayedTools.map((tool, index) => (
-              <ToolCard key={tool.id} tool={tool} style={{ order: index }} />
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {displayedTools.map((tool) => (
+              <div key={tool.id} className="w-full">
+                <ToolCard tool={tool} />
+              </div>
             ))}
           </div>
         )}

@@ -44,11 +44,11 @@ export const ToolGalleryGroup = ({ id, label, tools, options, className, showGlo
   }
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 3); 
+    setVisibleCount((prev) => prev + 3);
   };
 
   return (
-    <section id={id} className={cx("space-y-4 border-[0.75px] relative h-full border-border rounded-[1.5rem] p-1  md:p-2", className)}>
+    <section id={id} className={cx("w-full max-w-full space-y-4 border-[0.75px] relative border-border rounded-[1.5rem] p-1 md:p-2 overflow-hidden", className)}>
       <div className="border-[0.75px] md:rounded-[1.5rem] md:p-4 lg:p-4 overflow-hidden">
         {showGlowingEffect && <GlowingEffect spread={40} glow={true} disabled={false} proximity={64} inactiveZone={0.01} borderWidth={3} />}
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 justify-between gap-2">
@@ -60,10 +60,10 @@ export const ToolGalleryGroup = ({ id, label, tools, options, className, showGlo
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 auto-cols-fr">
+        <div className="w-full max-w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-hidden">
           {displayedTools.map((tool, index) => (
-            <div key={tool.id} className="w-full min-w-0 flex-shrink-0" style={{ order: index }}>
-              <div className="w-full max-w-full">
+            <div key={tool.id} className="w-full min-w-0 overflow-hidden" style={{ order: index }}>
+              <div className="w-full max-w-full overflow-hidden">
                 <ToolCard tool={tool} />
               </div>
             </div>

@@ -56,8 +56,8 @@ export default async function Page() {
     }
   });
   return (
-    <main className={cn("flex flex-1 flex-col overflow-x-hidden")}>
-      <div className="container space-y-2 p-4 max-w-full">
+    <main className={cn("flex flex-1 flex-col min-h-0 w-full max-w-full overflow-x-hidden")}>
+      <div className="w-full max-w-full px-4 py-4 space-y-2">
         <WidgetBanner />
         <div className="space-y-10 overflow-x-hidden">
           {groupedSections.map((group, idx) => {
@@ -67,14 +67,18 @@ export default async function Page() {
               elements.push(
                 <div key={`favicon-group-${idx}`} className="md:flex gap-4">
                   {group.map((section, secIdx) => (
-                    <div key={`${section.id}-${secIdx}`} className="flex-1">
+                    <div key={`${section.id}-${secIdx}`} className="w-full min-w-0 overflow-hidden">
                       <LazySection section={section} />
                     </div>
                   ))}
                 </div>
               );
             } else {
-              elements.push(<LazySection key={`${group.id}-${idx}`} section={group} />);
+              elements.push(
+                <div key={`section-wrapper-${idx}`} className="w-full max-w-full overflow-hidden">
+                  <LazySection key={`${group.id}-${idx}`} section={group} />
+                </div>
+              );
             }
 
             if ((idx + 1) % 3 === 0 && idx < groupedSections.length - 1) {
