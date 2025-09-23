@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Link } from "@/components/ui/link";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Select } from "@/components/ui/select";
 import { Stack } from "@/components/ui/stack";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";

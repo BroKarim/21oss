@@ -4,8 +4,7 @@ import LazySection from "@/components/web/lazy-section";
 import { AdBanner } from "@/components/web/ads/ad-banner";
 import { getCuratedLists } from "@/server/web/curated-lists/actions";
 import { getRecentTools } from "@/server/web/tools/actions";
-
-
+import { ToolMany } from "@/server/web/tools/payloads";
 export default async function Page() {
   const curatedLists = await getCuratedLists();
 
@@ -26,7 +25,7 @@ export default async function Page() {
       id: curatedList.id,
       label: curatedList.title,
       type: curatedList.type as "slider" | "favicon" | "gallery",
-      tools: curatedList.tools,
+      tools: curatedList.tools as ToolMany[],
       options: {
         showScroll: true,
         showViewAll: true,
