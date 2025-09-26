@@ -39,7 +39,7 @@ export const ToolSliderGroup = ({ id, label, tools, options }: ToolSliderGroupPr
   }
 
   return (
-    <section className="w-full md:w-[1130px]  max-w-full space-y-4 border  p-2 rounded-lg overflow-hidden">
+    <section className="w-full  max-w-full space-y-4 border  p-2 rounded-lg overflow-hidden">
       <div className="flex items-center justify-between">
         <h2 className="text-xl ">{label}</h2>
       </div>
