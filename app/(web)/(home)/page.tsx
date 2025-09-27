@@ -28,9 +28,9 @@ export default async function Page() {
       tools: curatedList.tools as ToolMany[],
       options: {
         showScroll: true,
-        showViewAll: true,
+        showViewAll: false,
         viewAllUrl: `/`,
-        loadMore: false,
+        loadMore: true,
       },
     })),
   ];
