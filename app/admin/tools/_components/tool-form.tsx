@@ -30,6 +30,7 @@ import type { findPlatformList } from "@/server/admin/platforms/queries";
 import { StackCombobox } from "./stack-combobox";
 import type { findStackList } from "@/server/admin/stacks/queries";
 import { toolSchema, type ToolSchema } from "@/server/admin/tools/schema";
+import { generateFaviconUrl } from "@/lib/url-utils";
 import { cx } from "@/lib/utils";
 
 const ToolStatusChange = ({ tool }: { tool: Tool }) => {
@@ -57,6 +58,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   const stackOptions = use(stacksPromise);
   const [isStatusPending, setIsStatusPending] = useState(false);
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft);
+
   const form = useForm({
     resolver: zodResolver(toolSchema),
     defaultValues: {
@@ -74,11 +76,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       categories: tool?.categories.map((c) => c.id) ?? [],
       platforms: tool?.platforms.map((p) => p.id) ?? [],
       // stacks: tool?.stacks.map((s) => ({ id: s.id })) ?? [],
-      stacks: (tool?.stacks || []).map((s) =>
-        typeof s === "string"
-          ? { id: "", name: s, slug: s } // fallback untuk data lama
-          : s
-      ),
+      stacks: (tool?.stacks || []).map((s) => (typeof s === "string" ? { id: "", name: s, slug: s } : s)),
       screenshots:
         tool?.screenshots?.map((img) => ({
           imageUrl: img.imageUrl,
@@ -125,6 +123,14 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     enabled: !tool,
   });
 
+  useComputedField({
+    form,
+    sourceField: "websiteUrl",
+    computedField: "faviconUrl",
+    callback: generateFaviconUrl,
+    enabled: !tool,
+  });
+
   if (!stacksPromise) {
     throw new Error("stacksPromise tidak diberikan ke ToolForm");
   }
@@ -156,13 +162,10 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       if (data.status !== originalStatus) {
         toast.success(<ToolStatusChange tool={data} />);
         setOriginalStatus(data.status);
-      }
-      // Otherwise, just show a success message
-      else {
+      } else {
         toast.success(`Tool successfully ${tool ? "updated" : "created"}`);
       }
 
-      // If not updating a tool, or slug has changed, redirect to the new tool
       if (!tool || data.slug !== tool?.slug) {
         router.push(`/admin/tools/${data.slug}`);
       }
@@ -397,14 +400,14 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
               <div className="col-span-2 text-right">
                 <Button type="button" size="sm" variant="destructive" onClick={() => removeScreenshot(index)}>
-                  Hapus Screenshot
+                  Remove Screenshot
                 </Button>
               </div>
             </div>
           ))}
 
           <Button type="button" variant="secondary" onClick={() => appendScreenshot({ imageUrl: "", caption: "" })}>
-            + Tambah Screenshot
+            + Add Screenshot
           </Button>
         </div>
 
