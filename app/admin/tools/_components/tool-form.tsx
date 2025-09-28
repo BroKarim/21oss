@@ -24,7 +24,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ExternalLink } from "@/components/web/external-link";
 import { useComputedField } from "@/hooks/use-computed-field";
 import type { findCategoryList } from "@/server/admin/categories/queries";
-import { upsertTool } from "@/server/admin/tools/actions";
+import { upsertTool, autoFillFromRepo } from "@/server/admin/tools/actions";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
 import type { findPlatformList } from "@/server/admin/platforms/queries";
 import { StackCombobox } from "./stack-combobox";
@@ -87,7 +87,36 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     },
   });
 
-  // otomatis isi form slug berdasarkan nama
+  const autoFillAction = useServerAction(autoFillFromRepo, {
+    onSuccess: ({ data }) => {
+      if (data.name) form.setValue("name", data.name);
+      if (data.tagline) form.setValue("tagline", data.tagline);
+      if (data.description) form.setValue("description", data.description);
+      if (data.stacks) {
+        form.setValue(
+          "stacks",
+          data.stacks.map((stackName: string) => ({
+            id: "",
+            name: stackName,
+            slug: stackName.toLowerCase(),
+          }))
+        );
+      }
+      toast.success("Auto filled from repo 🎉");
+    },
+    onError: ({ err }) => toast.error(err.message),
+  });
+
+  const handleAutoFill = async () => {
+    const repoUrl = form.getValues("repositoryUrl");
+    if (!repoUrl) {
+      toast.error("Please enter a repository URL first");
+      return;
+    }
+    await autoFillAction.execute({ repositoryUrl: repoUrl });
+  };
+
+  // autofill slug based on name
   useComputedField({
     form,
     sourceField: "name",
@@ -186,8 +215,11 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
   return (
     <Form {...form}>
-      <Stack className="justify-between">
+      <Stack className="justify-between w-full">
         <H3 className="flex-1 truncate">{title}</H3>
+        <Button type="button" variant="secondary" size="sm" disabled={autoFillAction.isPending} onClick={handleAutoFill}>
+          {autoFillAction.isPending ? "Filling..." : "Auto Fill"}
+        </Button>
       </Stack>
 
       <form onSubmit={handleFormSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>

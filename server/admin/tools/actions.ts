@@ -11,6 +11,14 @@ import { toolSchema } from "@/server/admin/tools/schema";
 import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
 
+// import OpenAI from "openai";
+import { env } from "@/env";
+
+// const client = new OpenAI({
+//   apiKey: env.OPENROUTER_API_KEY,
+//   baseURL: "https://openrouter.ai/api/v1",
+// });
+
 export const upsertTool = adminProcedure
   .createServerAction()
   .input(toolSchema)
@@ -170,6 +178,200 @@ export const deleteTools = adminProcedure
     console.log("🎉 Tools deletion completed successfully");
     return result;
   });
+
+const autoFillSchema = z.object({
+  repositoryUrl: z.string().url("Please provide a valid URL."),
+});
+
+interface AutoFillResponse {
+  name: string;
+  tagline: string;
+  description: string;
+  stacks: string[];
+}
+
+// experimental
+export const autoFillFromRepo = adminProcedure
+  .createServerAction()
+  .input(autoFillSchema)
+  .handler(async ({ input }) => {
+    const { repositoryUrl } = input;
+    console.log("🔍 Starting auto-fill for:", repositoryUrl);
+    // Extract repo info from URL
+    const repoMatch = repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/\?#]+)/);
+    if (!repoMatch) {
+      throw new Error("Invalid GitHub URL format");
+    }
+
+    const [, owner, repo] = repoMatch;
+    const cleanRepo = repo.replace(/\.git$/, ""); // remove .git suffix
+
+    const prompt = `
+    You are a senior technical writer and developer advocate. Analyze this GitHub repository: ${owner}/${cleanRepo}
+
+    Based on the repository name, owner, and what you can infer, provide:
+    - name: The project/tool name (clean, without prefixes like "awesome-" or suffixes like "-js")
+    - tagline: One short marketing sentence (max 8 words)
+    - description: Brief explanation of what it does (max 40 words)
+    - stacks: Main technologies/frameworks used (be specific, e.g., "react", "typeScript", "aws-s3", "postgresql") lowercase only
+
+    Formatting rules for "stacks":
+    - All items must be lowercase
+    - Do not include duplicates or unrelated terms
+
+    Respond ONLY with valid JSON:
+    {
+      "name": "Project Name",
+      "tagline": "Short description",
+      "description": "A comprehensive 2-3 paragraph description that thoroughly explains what this tool does, its standout features, key benefits, typical use cases, and target audience",
+      "stacks": ["technology1", "technology2", "technology3"]
+    }`;
+
+    try {
+      console.log("🤖 Calling OpenRouter API...");
+
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://your-domain.com",
+          "X-Title": "AutoFill Tool",
+        },
+        body: JSON.stringify({
+          model: "meta-llama/llama-3.3-8b-instruct:free",
+          // model: "x-ai/grok-4-fast:free",
+          messages: [
+            {
+              role: "user",
+              content: prompt,
+            },
+          ],
+          temperature: 0.3,
+          max_tokens: 500,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("❌ OpenRouter API Error:", res.status, errorText);
+        throw new Error(`API request failed: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log("📝 Raw API Response:", JSON.stringify(data, null, 2));
+
+      const content = data.choices?.[0]?.message?.content;
+
+      if (!content) {
+        console.error("❌ Empty response from AI:", data);
+        throw new Error("AI returned empty response");
+      }
+
+      console.log("🎯 AI Content:", content);
+
+      let parsed: AutoFillResponse;
+      try {
+        // Improved JSON extraction
+        let jsonStr = content.trim();
+
+        // Remove markdown code blocks
+        jsonStr = jsonStr.replace(/```json\s*/g, "").replace(/```\s*/g, "");
+
+        // Find JSON object boundaries
+        const jsonStart = jsonStr.indexOf("{");
+        const jsonEnd = jsonStr.lastIndexOf("}") + 1;
+
+        if (jsonStart === -1 || jsonEnd === 0) {
+          throw new Error("No JSON object found in response");
+        }
+
+        jsonStr = jsonStr.slice(jsonStart, jsonEnd);
+        console.log("🔧 Cleaned JSON:", jsonStr);
+
+        parsed = JSON.parse(jsonStr);
+      } catch (parseError) {
+        console.error("❌ JSON Parse Error:", parseError);
+        console.error("❌ Content was:", content);
+        throw new Error(`Failed to parse AI response as JSON: ${parseError instanceof Error ? parseError.message : "Unknown error"}`);
+      }
+
+      // Validate and clean response
+      const result: AutoFillResponse = {
+        name: typeof parsed.name === "string" ? parsed.name.trim() : "Untitled Project",
+        tagline: typeof parsed.tagline === "string" ? parsed.tagline.trim() : "A great tool",
+        description: typeof parsed.description === "string" ? parsed.description.trim() : "This is a useful tool.",
+        stacks: Array.isArray(parsed.stacks)
+          ? parsed.stacks
+              .filter(Boolean)
+              .map((s) => String(s).trim())
+              .filter(Boolean)
+          : [],
+      };
+
+      console.log("✅ Final result:", result);
+      return result;
+    } catch (error) {
+      console.error("❌ AutoFill complete error:", error);
+
+      if (error instanceof Error) {
+        throw error;
+      }
+
+      throw new Error("Failed to auto-fill from repository");
+    }
+  });
+
+// export const autoFillFromRepo = adminProcedure
+//   .createServerAction()
+//   .input(z.object({ repoUrl: z.string().url() }))
+//   .handler(async ({ input }) => {
+//     // 👉 Prompt
+//     const prompt = `
+//     You are an assistant that extracts structured metadata from GitHub repositories.
+//     Repository URL: ${input.repoUrl}
+
+//     Please provide JSON with the following fields:
+//     {
+//       "name": "string",
+//       "tagline": "string singkat",
+//       "description": "string lebih panjang",
+//       "stacks": ["string", "string"]
+//     }
+//     `;
+
+//     try {
+//       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+//         method: "POST",
+//         headers: {
+//           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({
+//           model: "anthropic/claude-3.5-sonnet", // bebas pilih model gratis / sesuai kebutuhan
+//           messages: [{ role: "user", content: prompt }],
+//           temperature: 0.3,
+//         }),
+//       });
+
+//       const json = await response.json();
+
+//       // 📝 Parse isi AI
+//       const content = json.choices?.[0]?.message?.content;
+//       let parsed;
+//       try {
+//         parsed = JSON.parse(content);
+//       } catch {
+//         console.error("⚠️ Failed to parse AI response", content);
+//         throw new Error("AI response is invalid JSON");
+//       }
+
+//       return parsed; // { name, tagline, description, stacks }
+//     } catch (err: any) {
+//       console.error("🔥 autoFillFromRepo error:", err);
+//       throw new Error("Failed to auto-fill data");
+//     }
+//   });
 
 export const fetchToolRepositoryData = adminProcedure
   .createServerAction()

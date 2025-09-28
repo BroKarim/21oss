@@ -23,6 +23,7 @@ export const env = createEnv({
     S3_ACCESS_KEY: z.string().min(1),
     S3_SECRET_ACCESS_KEY: z.string().min(1),
     S3_PUBLIC_URL: z.string().optional(),
+    OPENROUTER_API_KEY: z.string().min(1),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.string().url().min(1),
