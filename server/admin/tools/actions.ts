@@ -10,14 +10,18 @@ import { adminProcedure } from "@/lib/safe-actions";
 import { toolSchema } from "@/server/admin/tools/schema";
 import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
-
-// import OpenAI from "openai";
 import { env } from "@/env";
 
-// const client = new OpenAI({
-//   apiKey: env.OPENROUTER_API_KEY,
-//   baseURL: "https://openrouter.ai/api/v1",
-// });
+const autoFillSchema = z.object({
+  repositoryUrl: z.string().url("Please provide a valid URL."),
+});
+
+interface AutoFillResponse {
+  name: string;
+  tagline: string;
+  description: string;
+  stacks: string[];
+}
 
 export const upsertTool = adminProcedure
   .createServerAction()
@@ -178,17 +182,6 @@ export const deleteTools = adminProcedure
     console.log("🎉 Tools deletion completed successfully");
     return result;
   });
-
-const autoFillSchema = z.object({
-  repositoryUrl: z.string().url("Please provide a valid URL."),
-});
-
-interface AutoFillResponse {
-  name: string;
-  tagline: string;
-  description: string;
-  stacks: string[];
-}
 
 // experimental
 export const autoFillFromRepo = adminProcedure
