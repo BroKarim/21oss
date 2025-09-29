@@ -89,6 +89,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     onSuccess: ({ data }) => {
       if (data.name) form.setValue("name", data.name);
       if (data.tagline) form.setValue("tagline", data.tagline);
+      if (data.websiteUrl) form.setValue("websiteUrl", data.websiteUrl);
       if (data.description) form.setValue("description", data.description);
       if (data.stacks) {
         form.setValue(

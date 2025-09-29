@@ -18,6 +18,7 @@ const autoFillSchema = z.object({
 
 interface AutoFillResponse {
   name: string;
+  websiteUrl: string;
   tagline: string;
   description: string;
   stacks: string[];
@@ -206,6 +207,7 @@ export const autoFillFromRepo = adminProcedure
     - name: The project/tool name (clean, without prefixes like "awesome-" or suffixes like "-js")
     - tagline: One short marketing sentence (max 8 words)
     - description: Brief explanation of what it does (max 40 words)
+    - - websiteUrl: Official website or documentation link (if none, return an empty string)
     - stacks: Main technologies/frameworks used (be specific, e.g., "react", "typeScript", "aws-s3", "postgresql") lowercase only
 
     Formatting rules for "stacks":
@@ -232,7 +234,8 @@ export const autoFillFromRepo = adminProcedure
           "X-Title": "AutoFill Tool",
         },
         body: JSON.stringify({
-          model: "meta-llama/llama-3.3-8b-instruct:free",
+          model: "deepseek/deepseek-chat-v3.1:free",
+          // model: "meta-llama/llama-3.3-8b-instruct:free",
           // model: "x-ai/grok-4-fast:free",
           messages: [
             {
@@ -293,6 +296,7 @@ export const autoFillFromRepo = adminProcedure
       const result: AutoFillResponse = {
         name: typeof parsed.name === "string" ? parsed.name.trim() : "Untitled Project",
         tagline: typeof parsed.tagline === "string" ? parsed.tagline.trim() : "A great tool",
+        websiteUrl: typeof parsed.websiteUrl === "string" ? parsed.websiteUrl.trim() : "",
         description: typeof parsed.description === "string" ? parsed.description.trim() : "This is a useful tool.",
         stacks: Array.isArray(parsed.stacks)
           ? parsed.stacks
@@ -314,57 +318,6 @@ export const autoFillFromRepo = adminProcedure
       throw new Error("Failed to auto-fill from repository");
     }
   });
-
-// export const autoFillFromRepo = adminProcedure
-//   .createServerAction()
-//   .input(z.object({ repoUrl: z.string().url() }))
-//   .handler(async ({ input }) => {
-//     // 👉 Prompt
-//     const prompt = `
-//     You are an assistant that extracts structured metadata from GitHub repositories.
-//     Repository URL: ${input.repoUrl}
-
-//     Please provide JSON with the following fields:
-//     {
-//       "name": "string",
-//       "tagline": "string singkat",
-//       "description": "string lebih panjang",
-//       "stacks": ["string", "string"]
-//     }
-//     `;
-
-//     try {
-//       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-//         method: "POST",
-//         headers: {
-//           Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           model: "anthropic/claude-3.5-sonnet", // bebas pilih model gratis / sesuai kebutuhan
-//           messages: [{ role: "user", content: prompt }],
-//           temperature: 0.3,
-//         }),
-//       });
-
-//       const json = await response.json();
-
-//       // 📝 Parse isi AI
-//       const content = json.choices?.[0]?.message?.content;
-//       let parsed;
-//       try {
-//         parsed = JSON.parse(content);
-//       } catch {
-//         console.error("⚠️ Failed to parse AI response", content);
-//         throw new Error("AI response is invalid JSON");
-//       }
-
-//       return parsed; // { name, tagline, description, stacks }
-//     } catch (err: any) {
-//       console.error("🔥 autoFillFromRepo error:", err);
-//       throw new Error("Failed to auto-fill data");
-//     }
-//   });
 
 export const fetchToolRepositoryData = adminProcedure
   .createServerAction()
