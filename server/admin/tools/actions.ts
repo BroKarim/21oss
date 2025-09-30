@@ -14,6 +14,7 @@ import { env } from "@/env";
 
 const autoFillSchema = z.object({
   repositoryUrl: z.string().url("Please provide a valid URL."),
+  model: z.string().url("Please provide a valid URL."),
 });
 
 interface AutoFillResponse {
@@ -189,7 +190,7 @@ export const autoFillFromRepo = adminProcedure
   .createServerAction()
   .input(autoFillSchema)
   .handler(async ({ input }) => {
-    const { repositoryUrl } = input;
+    const { repositoryUrl, model } = input;
     console.log("🔍 Starting auto-fill for:", repositoryUrl);
     // Extract repo info from URL
     const repoMatch = repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/\?#]+)/);
@@ -234,7 +235,8 @@ export const autoFillFromRepo = adminProcedure
           "X-Title": "AutoFill Tool",
         },
         body: JSON.stringify({
-          model: "deepseek/deepseek-chat-v3.1:free",
+          model,
+          // model: "deepseek/deepseek-chat-v3.1:free",
           // model: "meta-llama/llama-3.3-8b-instruct:free",
           // model: "x-ai/grok-4-fast:free",
           messages: [
