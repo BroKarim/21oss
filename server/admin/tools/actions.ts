@@ -14,7 +14,7 @@ import { env } from "@/env";
 
 const autoFillSchema = z.object({
   repositoryUrl: z.string().url("Please provide a valid URL."),
-  model: z.string().url("Please provide a valid URL."),
+  model: z.string().min(1, "Model is required"),
 });
 
 interface AutoFillResponse {
@@ -236,9 +236,6 @@ export const autoFillFromRepo = adminProcedure
         },
         body: JSON.stringify({
           model,
-          // model: "deepseek/deepseek-chat-v3.1:free",
-          // model: "meta-llama/llama-3.3-8b-instruct:free",
-          // model: "x-ai/grok-4-fast:free",
           messages: [
             {
               role: "user",

@@ -16,12 +16,11 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ToolPublishActions } from "./tool-publish-actions";
 import { H3 } from "@/components/ui/heading";
-import { RefreshCw, ChevronDown } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/components/ui/link";
 import { Stack } from "@/components/ui/stack";
 import { Textarea } from "@/components/ui/textarea";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ExternalLink } from "@/components/web/external-link";
 import { useComputedField } from "@/hooks/use-computed-field";
 import type { findCategoryList } from "@/server/admin/categories/queries";
@@ -33,7 +32,7 @@ import type { findStackList } from "@/server/admin/stacks/queries";
 import { toolSchema, type ToolSchema } from "@/server/admin/tools/schema";
 import { generateFaviconUrl } from "@/lib/url-utils";
 import { cx } from "@/lib/utils";
-
+import { AIModelSelector, DEFAULT_AI_MODELS } from "../../_components/ai-model-selector";
 const ToolStatusChange = ({ tool }: { tool: Tool }) => {
   return (
     <>
@@ -87,14 +86,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   });
 
   const [selectedModel, setSelectedModel] = useState("deepseek/deepseek-chat-v3.1:free");
-
-  const MODELS = [
-    { value: "deepseek/deepseek-chat-v3.1:free", label: "DeepSeek Chat" },
-    { value: "meta-llama/llama-3.3-8b-instruct:free", label: "LLaMA 3.3 8B" },
-    { value: "x-ai/grok-4-fast:free", label: "Grok 4 Fast" },
-    { value: "anthropic/claude-3-haiku", label: "Claude 3 Haiku" },
-    { value: "openai/gpt-4o-mini", label: "GPT-4o Mini" },
-  ];
 
   const autoFillAction = useServerAction(autoFillFromRepo, {
     onSuccess: ({ data }) => {
@@ -234,27 +225,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
         <H3 className="flex-1 truncate">{title}</H3>
 
         <div className="inline-flex -space-x-px divide-x divide-primary-foreground/30 rounded-lg shadow-sm shadow-black/5 rtl:space-x-reverse">
-          <Button type="button" variant="secondary" size="sm" disabled={autoFillAction.isPending} onClick={handleAutoFill} className="rounded-r-none border-r-0 focus:z-10">
-            {autoFillAction.isPending ? "Filling..." : "Auto Fill"} {" "}
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="sm" className="rounded-l-none px-2 focus:z-10">
-                <ChevronDown className="h-4 w-4" aria-hidden="true" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuRadioGroup value={selectedModel} onValueChange={setSelectedModel}>
-                {MODELS.map((model) => (
-                  <DropdownMenuRadioItem key={model.value} value={model.value} className="items-start">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium">{model.label}</span>
-                    </div>
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AIModelSelector models={DEFAULT_AI_MODELS} selectedModel={selectedModel} onModelChange={setSelectedModel} onAutoFill={handleAutoFill} isLoading={autoFillAction.isPending} />
         </div>
       </Stack>
 

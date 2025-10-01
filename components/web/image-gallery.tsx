@@ -19,6 +19,7 @@ const SUPPORTED_VIDEO_FORMATS = /\.(mp4|webm|ogg|mov)$/i;
 const SUPPORTED_GIF_FORMATS = /\.gif$/i;
 const DEFAULT_AUTO_PLAY_INTERVAL = 5000;
 const SLIDE_TRANSITION_DURATION = 500;
+const YOUTUBE_REGEX = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 
 export function ImageGallery({ items, className, autoPlay = true, autoPlayInterval = DEFAULT_AUTO_PLAY_INTERVAL, showThumbnails = true }: ImageGalleryProps) {
   const [currentIndex, setCurrentIndex] = React.useState(0);
@@ -29,6 +30,13 @@ export function ImageGallery({ items, className, autoPlay = true, autoPlayInterv
   const isVideo = React.useCallback((url: string) => SUPPORTED_VIDEO_FORMATS.test(url), []);
 
   const isGif = React.useCallback((url: string) => SUPPORTED_GIF_FORMATS.test(url), []);
+
+  const isYouTube = (url: string) => YOUTUBE_REGEX.test(url);
+
+  const getYouTubeId = (url: string): string | null => {
+    const match = url.match(YOUTUBE_REGEX);
+    return match ? match[1] : null;
+  };
 
   const getSlideTransform = React.useCallback(
     (index: number) => {
@@ -150,6 +158,13 @@ export function ImageGallery({ items, className, autoPlay = true, autoPlayInterv
                   onLoadStart={() => {
                     if (isCurrentSlide) setIsPlaying(false);
                   }}
+                />
+              ) : isYouTube(src) ? (
+                <iframe
+                  src={`https://www.youtube.com/embed/${getYouTubeId(src)}?rel=0&modestbranding=1`}
+                  className="h-full w-full object-cover"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
                 />
               ) : isGif(src) ? (
                 <img src={src} alt={`Media ${index + 1}`} className="h-full w-full object-cover" loading={index === 0 ? "eager" : "lazy"} />
