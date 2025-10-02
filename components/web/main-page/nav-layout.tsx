@@ -1,11 +1,13 @@
-"use client";
+"use client"
 
 import * as React from "react";
-import { PenTool, Palette, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac, Table } from "lucide-react";
+import { Palette, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac, LayoutPanelTop } from "lucide-react";
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavLogo } from "./nav-logo";
-import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarRail, SidebarFooter } from "@/components/ui/sidebar";
+import { SidebarAds } from "../ads/sidebar-banner";
+import { RippleFilter } from "../ads/sidebar-banner";
 
 const data = {
   navMain: [
@@ -15,15 +17,11 @@ const data = {
       icon: LayoutGrid,
       isActive: true,
     },
-    {
-      title: "Awesome List",
-      url: "/awesome-list",
-      icon: PenTool,
-    },
+
     {
       title: "Beautiful Table",
       url: "https://og-table.com/",
-      icon: Table,
+      icon: LayoutPanelTop,
     },
   ],
   navSecondary: [
@@ -84,6 +82,11 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         <NavMain items={data.navMain} />
         <NavSecondary items={data.navSecondary} />
       </SidebarContent>
+      <SidebarFooter>
+        <div className="p-1">
+          <SidebarAds filter={<RippleFilter />} className="ripple w-full" />
+        </div>
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

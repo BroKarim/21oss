@@ -7,7 +7,7 @@ import { FaviconImage } from "@/components/ui/favicon";
 import { BGPattern } from "../background/pattern-bg";
 
 export async function AdCompact({ className, ...props }: ComponentProps<typeof Card>) {
-  const ad = await findAd({ where: { type: "ToolPage" } });
+  const ad = await findAd({ where: { type: "WidgetBanner" } });
 
   if (!ad) {
     return null;
@@ -15,7 +15,6 @@ export async function AdCompact({ className, ...props }: ComponentProps<typeof C
 
   return (
     <Card className={cx("relative isolate overflow-hidden z-30 rounded-lg border", "p-2 sm:p-1 sm:pl-4 sm:pr-12", "flex flex-col sm:flex-row items-start sm:items-center justify-between", "gap-2 sm:gap-3 md:gap-4", className)} {...props}>
-      {/* BGPattern hanya tampil di desktop */}
       <div className="hidden sm:block">
         <BGPattern variant="diagonal-stripes" mask="fade-y" />
       </div>

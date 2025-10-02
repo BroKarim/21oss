@@ -1,7 +1,7 @@
 import { ToolMany } from "@/server/web/tools/payloads";
 import Link from "next/link";
-import { Button } from "@/components/ui/button-shadcn"; // Asumsikan dari shadcn/ui
-import Image from "next/image"; // Untuk favicon dengan optimasi
+import { Button } from "@/components/ui/button-shadcn"; // dari shadcn/ui
+import Image from "next/image"; // untuk favicon
 
 type ToolFaviconGroupProps = {
   id: string;
@@ -16,10 +16,7 @@ type ToolFaviconGroupProps = {
 export const ToolFaviconGroup = ({ id, label, tools, options }: ToolFaviconGroupProps) => {
   const { showViewAll = false, viewAllUrl } = options;
 
-  // Batasi ke 10 item
-  const displayedTools = tools.slice(0, 10);
-
-  if (!displayedTools.length) {
+  if (!tools.length) {
     return (
       <section className="space-y-4" id={id}>
         <div className="flex items-center justify-between">
@@ -30,29 +27,29 @@ export const ToolFaviconGroup = ({ id, label, tools, options }: ToolFaviconGroup
             </Button>
           )}
         </div>
-        <div className="text-center text-gray-500">No tools available for this section.</div>
+        <div className="text-center text-muted-foreground">No tools available for this section.</div>
       </section>
     );
   }
 
   return (
-    <section className="rounded-2xl p-6 space-y-4 border">
+    <section className="rounded-2xl border p-6 space-y-4" id={id}>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">{label}</h2>
+        <h2 className="text-2xl ">{label}</h2>
         {showViewAll && viewAllUrl && (
-          <Button asChild variant="outline" className="border-neutral-700 text-sm">
+          <Button asChild variant="outline" size="sm" className="border-neutral-700">
             <Link href={viewAllUrl}>View All</Link>
           </Button>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        {displayedTools.map((tool) => (
-          <Link key={tool.id} href={`/${tool.slug}`} className="flex items-center gap-3 p-2   rounded-lg transition">
+      <div className="grid grid-cols-4 gap-4">
+        {tools.map((tool) => (
+          <Link key={tool.id} href={`/${tool.slug}`} className="flex items-center gap-3 p-2 rounded-lg transition hover:bg-accent">
             <Image src={tool.faviconUrl || "/placeholder.svg"} alt={`${tool.name} favicon`} width={48} height={48} className="rounded-sm border" />
-            <div className="flex-1 flex-col">
-              <h3 className="text-sm font-medium text-white leading-tight">{tool.name}</h3>
-              {tool.categories?.[0] && <p className="text-sm text-gray-500">{tool.categories[0].name}</p>}
+            <div className="flex flex-col">
+              <h3 className="text-sm font-medium leading-tight">{tool.name}</h3>
+              {tool.platforms?.length ? <p className="text-xs text-muted-foreground">{tool.platforms.map((p) => p.name).join(", ")}</p> : null}
             </div>
           </Link>
         ))}

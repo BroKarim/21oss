@@ -107,12 +107,11 @@ export function AdForm({ className, title, ad, ...props }: AdsFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="Banner">Banner</SelectItem>
-                    <SelectItem value="AlternativePage">Alternative Page</SelectItem>
-                    <SelectItem value="ToolPage">Tool Page</SelectItem>
-                    <SelectItem value="SelfHosted">Self Hosted</SelectItem>
-                    <SelectItem value="BlogPost">Blog Post</SelectItem>
-                    <SelectItem value="All">All</SelectItem>
+                    {Object.values(AdType).map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
