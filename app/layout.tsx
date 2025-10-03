@@ -9,6 +9,8 @@ import { GeistMono } from "geist/font/mono";
 import { siteConfig } from "@/config/site";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { AdminSidebar } from "@/components/admin/sidebar";
+import { UserSidebar } from "@/components/web/user-sidebar";
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -57,7 +59,9 @@ export default function RootLayout({
         <div className="h-full">
           <NuqsAdapter>
             <SearchProvider>
-              <AppProviders>{children}</AppProviders>
+              <AppProviders mainSidebar={<UserSidebar />} adminSidebar={<AdminSidebar />}>
+                {children}
+              </AppProviders>
             </SearchProvider>
           </NuqsAdapter>
         </div>

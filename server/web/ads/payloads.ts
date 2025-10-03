@@ -22,3 +22,5 @@ export const adOnePayload = Prisma.validator<Prisma.AdSelect>()({
   faviconUrl: true,
   type: true,
 });
+
+export type AdOne = Prisma.AdGetPayload<{ select: typeof adOnePayload }>;

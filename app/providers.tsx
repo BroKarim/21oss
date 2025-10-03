@@ -4,15 +4,14 @@ import React, { Suspense } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { ArrowLeft } from "lucide-react";
-import { MainSidebar } from "@/components/web/main-page/nav-layout";
-import { AdminSidebar } from "@/components/admin/sidebar";
+
 import { Button } from "@/components/ui/button-shadcn";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
 import { InfoDialog } from "@/components/web/ui/info-dialog";
 import { useAtom } from "jotai";
 import { Footer } from "@/components/web/footer";
 
-export function AppProviders({ children }: { children: React.ReactNode }): React.ReactElement {
+export function AppProviders({ children, mainSidebar, adminSidebar }: { children: React.ReactNode; mainSidebar: React.ReactNode; adminSidebar: React.ReactNode }): React.ReactElement {
   const [open, setOpen] = useAtom(sidebarOpenAtom);
   const pathname = usePathname();
 
@@ -20,7 +19,7 @@ export function AppProviders({ children }: { children: React.ReactNode }): React
 
   return (
     <SidebarProvider defaultOpen={open} open={open} onOpenChange={setOpen}>
-      <Suspense fallback={null}>{isAdmin ? <AdminSidebar /> : <MainSidebar />}</Suspense>
+      <Suspense fallback={null}>{isAdmin ? adminSidebar : mainSidebar}</Suspense>
       <SidebarInset>
         <MainLayout>
           {!isAdmin && <Header />}

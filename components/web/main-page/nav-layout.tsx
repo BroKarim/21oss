@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import * as React from "react";
 import { Palette, LayoutGrid, BotMessageSquare, DiamondPercent, AppWindowMac, LayoutPanelTop } from "lucide-react";
@@ -8,6 +8,10 @@ import { NavLogo } from "./nav-logo";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail, SidebarFooter } from "@/components/ui/sidebar";
 import { SidebarAds } from "../ads/sidebar-banner";
 import { RippleFilter } from "../ads/sidebar-banner";
+import type { AdOne } from "@/server/web/ads/payloads";
+type MainSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  ad: AdOne | null;
+};
 
 const data = {
   navMain: [
@@ -72,7 +76,7 @@ const data = {
   ],
 };
 
-export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function NavLayout({ ad, ...props }: MainSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -84,7 +88,7 @@ export function MainSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
       </SidebarContent>
       <SidebarFooter>
         <div className="p-1">
-          <SidebarAds filter={<RippleFilter />} className="ripple w-full" />
+          <SidebarAds ad={ad} filter={<RippleFilter />} className="ripple w-full" />
         </div>
       </SidebarFooter>
       <SidebarRail />

@@ -1,16 +1,15 @@
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { findAd } from "@/server/web/ads/queries";
+import type { AdOne } from "@/server/web/ads/payloads";
 import { Button } from "@/components/ui/button-shadcn";
 import type { ComponentProps } from "react";
 
 type SidebarAdsProps = ComponentProps<"div"> & {
   filter?: React.ReactNode;
+  ad: AdOne | null;
 };
 
-export async function SidebarAds({ className, filter, ...props }: SidebarAdsProps) {
-  const ad = await findAd({ where: { type: "SidebarBanner" } });
-
+export function SidebarAds({ className, filter, ad, ...props }: SidebarAdsProps) {
   if (!ad) {
     return null;
   }
