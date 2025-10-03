@@ -9,7 +9,7 @@ type SidebarAdsProps = ComponentProps<"div"> & {
   ad: AdOne | null;
 };
 
-export function SidebarAds({ className, filter, ad, ...props }: SidebarAdsProps) {
+export function AdSlot({ className, filter, ad, ...props }: SidebarAdsProps) {
   if (!ad) {
     return null;
   }

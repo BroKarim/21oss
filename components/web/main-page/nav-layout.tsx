@@ -6,8 +6,8 @@ import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavLogo } from "./nav-logo";
 import { Sidebar, SidebarContent, SidebarHeader, SidebarRail, SidebarFooter } from "@/components/ui/sidebar";
-import { SidebarAds } from "../ads/sidebar-banner";
-import { RippleFilter } from "../ads/sidebar-banner";
+import { AdSlot, RippleFilter } from "@/components/web/ads/ad-slot";
+
 import type { AdOne } from "@/server/web/ads/payloads";
 type MainSidebarProps = React.ComponentProps<typeof Sidebar> & {
   ad: AdOne | null;
@@ -88,7 +88,7 @@ export function NavLayout({ ad, ...props }: MainSidebarProps) {
       </SidebarContent>
       <SidebarFooter>
         <div className="p-1">
-          <SidebarAds ad={ad} filter={<RippleFilter />} className="ripple w-full" />
+          <AdSlot ad={ad} filter={<RippleFilter />} className="ripple w-full" />
         </div>
       </SidebarFooter>
       <SidebarRail />
