@@ -1,5 +1,3 @@
-// import FrameScrambleText from "@/components/web/frame-scramble-text";
-
 import { AwesomeQuery } from "@/components/web/awesome-list/awesome-query";
 import WidgetBanner from "@/components/web/ui/banner";
 
