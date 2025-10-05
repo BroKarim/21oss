@@ -191,7 +191,6 @@ export function AIModelSelector({ models, selectedModel, onModelChange, onAutoFi
 export const DEFAULT_AI_MODELS: AIModel[] = [
   { value: "deepseek/deepseek-chat-v3.1:free", label: "DeepSeek Chat", icon: Brain, color: "#A06CD5" },
   { value: "meta-llama/llama-3.3-8b-instruct:free", label: "LLaMA 3.3 8B", icon: Zap, color: "#FF6B6B" },
-  { value: "x-ai/grok-4-fast:free", label: "Grok 4 Fast", icon: Sparkles, color: "#4ECDC4" },
-  { value: "anthropic/claude-3-haiku", label: "Claude 3 Haiku", icon: Brain, color: "#45B7D1" },
+  { value: "anthropic/claude-sonnet-4.5", label: "Claude Sonnet 4.5", icon: Sparkles, color: "#45B7D1" },
   { value: "openai/gpt-4o-mini", label: "GPT-4o Mini", icon: Zap, color: "#F9C74F" },
 ];
