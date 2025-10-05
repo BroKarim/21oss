@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-interface ImageGalleryProps {
+interface MediaViewerProps {
   items: string[];
   className?: string;
   autoPlay?: boolean;
@@ -21,7 +21,7 @@ const DEFAULT_AUTO_PLAY_INTERVAL = 5000;
 const SLIDE_TRANSITION_DURATION = 500;
 const YOUTUBE_REGEX = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 
-export function ImageGallery({ items, className, autoPlay = true, autoPlayInterval = DEFAULT_AUTO_PLAY_INTERVAL, showThumbnails = true }: ImageGalleryProps) {
+export function MediaViewer({ items, className, autoPlay = true, autoPlayInterval = DEFAULT_AUTO_PLAY_INTERVAL, showThumbnails = true }: MediaViewerProps) {
   const [currentIndex, setCurrentIndex] = React.useState(0);
   const [isPlaying, setIsPlaying] = React.useState(autoPlay);
   const intervalRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -200,28 +200,35 @@ export function ImageGallery({ items, className, autoPlay = true, autoPlayInterv
           </div>
         )}
       </div>
-
       {/* Thumbnails */}
+
       {showThumbnails && hasMultipleItems && (
         <div className="mt-4 flex gap-2 overflow-x-auto px-2 py-2">
-          {items.map((src, index) => (
-            <button
-              key={`thumb-${index}`}
-              className={cn("relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md transition-all duration-200 border", index === currentIndex ? "border-blue-500 ring-2 ring-blue-500" : "border-gray-200 hover:border-gray-300")}
-              onClick={() => goToSlide(index)}
-              aria-label={`Go to slide ${index + 1}`}
-            >
-              {isVideo(src) ? (
-                <video src={src} className="h-full w-full object-cover" muted preload="metadata" playsInline />
-              ) : isGif(src) ? (
-                <img src={src} alt={`Thumbnail ${index + 1}`} className="h-full w-full object-cover" />
-              ) : (
-                <Image src={src} alt={`Thumbnail ${index + 1}`} fill className="object-cover" sizes="64px" quality={60} />
-              )}
+          {items.map((src, index) => {
+            const youtubeId = isYouTube(src) ? getYouTubeId(src) : null;
 
-              {isVideo(src) ? <video src={src} className="h-full w-full object-cover" muted preload="metadata" /> : <Image src={src} alt={`Thumbnail ${index + 1}`} fill className="object-cover" sizes="80px" />}
-            </button>
-          ))}
+            let thumbContent;
+
+            if (youtubeId) {
+              const thumbUrl = `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
+              thumbContent = <Image src={thumbUrl} alt={`YouTube Thumbnail ${index + 1}`} fill className="object-cover" sizes="64px" quality={60} />;
+            } else if (isVideo(src)) {
+              thumbContent = <video src={src} className="h-full w-full object-cover" muted preload="metadata" playsInline />;
+            } else {
+              thumbContent = <Image src={src} alt={`Thumbnail ${index + 1}`} fill className="object-cover" sizes="64px" quality={60} />;
+            }
+
+            return (
+              <button
+                key={`thumb-${index}`}
+                className={cn("relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-md transition-all duration-200 border", index === currentIndex ? "border-blue-500 ring-2 ring-blue-500" : "border-gray-200 hover:border-gray-300")}
+                onClick={() => goToSlide(index)}
+                aria-label={`Go to slide ${index + 1}`}
+              >
+                {thumbContent}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

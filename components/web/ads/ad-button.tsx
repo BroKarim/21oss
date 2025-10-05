@@ -6,8 +6,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ExternalLink } from "@/components/web/external-link";
 import { FaviconImage } from "@/components/ui/favicon";
 import { findAd } from "@/server/web/ads/queries";
+import { RainbowButton } from "@/components/ui/rainbow-button";
 
-type AdButtonProps = Omit<ComponentProps<typeof Button>, "type"> & {
+
+type AdButtonProps = Omit<ComponentProps<typeof RainbowButton>, "type"> & {
   type: AdType;
 };
 
@@ -19,11 +21,11 @@ const AdButton = async ({ type, ...props }: AdButtonProps) => {
   const icon = ad.faviconUrl ? <FaviconImage src={ad.faviconUrl} title={ad.name} className="size-4" /> : <Icon name="lucide/arrow-up-right" />;
 
   return (
-    <Button variant="secondary" suffix={icon} asChild {...props}>
+    <RainbowButton className=" text-white"  prefix={icon} {...props}>
       <ExternalLink href={ad.websiteUrl} eventName="click_ad" eventProps={{ url: ad.websiteUrl, type: ad.type, source: "button" }}>
         {ad.buttonLabel ?? `Visit ${ad.name}`}
       </ExternalLink>
-    </Button>
+    </RainbowButton>
   );
 };
 

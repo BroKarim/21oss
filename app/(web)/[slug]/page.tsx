@@ -13,7 +13,7 @@ import { ToolStacks } from "@/components/web/tools/tool-stacks";
 import { RelatedTools } from "./related";
 import { Note } from "@/components/ui/note";
 import { RepositoryDetails } from "@/components/web/repository-detail";
-import { ImageGallery } from "@/components/web/image-gallery";
+import { MediaViewer } from "@/components/web/media-viewer";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -70,7 +70,7 @@ export default async function ToolPage(props: PageProps) {
                 {/* Action Buttons */}
                 <Stack className="w-full flex-col gap-3 sm:flex-row sm:gap-4">
                   {tool.websiteUrl && (
-                    <Button asChild>
+                    <Button>
                       <Link href={tool.websiteUrl} target="_blank" rel="noopener noreferrer">
                         Visit {tool.name}
                       </Link>
@@ -92,7 +92,7 @@ export default async function ToolPage(props: PageProps) {
 
           <div className="w-full">
             <div className="min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] rounded-lg overflow-hidden">
-              <ImageGallery items={(tool.screenshots ?? []).map((s) => s.imageUrl)} className="w-full h-full" />
+              <MediaViewer items={(tool.screenshots ?? []).map((s) => s.imageUrl)} className="w-full h-full" />
             </div>
           </div>
 
