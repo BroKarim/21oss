@@ -21,7 +21,6 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
   const fetchTools = useCallback(
     async (currentFilters: typeof filters) => {
       if (isLoading) return;
-
       setIsLoading(true);
       setError(null);
 
@@ -38,20 +37,21 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
       } catch (err) {
         console.error(`Failed to load tools for subcategory: ${subcategorySlug}`, err);
         setTools([]);
+        setError("Failed to load tools");
       } finally {
         setIsLoading(false);
       }
     },
-    [subcategorySlug, isLoading]
+    [subcategorySlug]
   );
 
   useEffect(() => {
     const currentRef = ref.current;
-    if (!currentRef || hasLoaded) return;
+    if (!currentRef) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasLoaded) {
+        if (entry.isIntersecting && !hasLoaded && !isLoading) {
           fetchTools(filters);
         }
       },
@@ -61,19 +61,17 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
     observer.observe(currentRef);
 
     return () => {
-      if (currentRef) observer.unobserve(currentRef);
+      observer.disconnect();
     };
-  }, [fetchTools, hasLoaded, filters]);
+  }, [fetchTools, hasLoaded, isLoading, filters]);
 
   useEffect(() => {
     if (!hasLoaded) return;
-
-    const timeoutId = setTimeout(() => {
+    const timeout = setTimeout(() => {
       fetchTools(filters);
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [filters, hasLoaded, fetchTools]);
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [filters]);
 
   return (
     <div ref={ref} className="space-y-2">

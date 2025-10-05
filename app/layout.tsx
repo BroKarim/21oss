@@ -4,8 +4,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { SearchProvider } from "@/contexts/search-context";
 import { cn } from "@/lib/utils";
 import { AppProviders } from "./providers";
-import { GeistSans } from "geist/font/sans";
-import { GeistMono } from "geist/font/mono";
+import { Outfit } from "next/font/google";
 import { siteConfig } from "@/config/site";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -48,6 +47,8 @@ export const viewport: Viewport = {
   ],
 };
 
+const outfit = Outfit({ subsets: ["latin"] });
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -55,7 +56,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(GeistSans.variable, GeistMono.variable, "font-sans [scrollbar-gutter:stable]")}>
+      <body className={cn(outfit.className, " [scrollbar-gutter:stable]")}>
         <div className="h-full">
           <NuqsAdapter>
             <SearchProvider>

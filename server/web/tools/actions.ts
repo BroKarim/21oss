@@ -15,11 +15,6 @@ export async function getToolsBySubcategory(
     platform?: string[];
   }
 ) {
-  // console.log("[SERVER ACTION] getToolsBySubcategory called with:", {
-  //   subcategorySlug,
-  //   filters,
-  // });
-
   try {
     const result = await filterToolsBySubcategory({
       subcategory: subcategorySlug,

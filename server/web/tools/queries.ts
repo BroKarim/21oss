@@ -144,12 +144,10 @@ export const filterToolsBySubcategory = async ({ subcategory, stack, license, pl
   cacheTag("tools", `tools-subcat-${subcategory}`);
   cacheLife("max");
 
-  // Logika 'where' diadaptasi dari searchTools
   const whereQuery: Prisma.ToolWhereInput = {
     status: ToolStatus.Published,
     categories: { some: { slug: subcategory } },
 
-    // Kondisi filter opsional, hanya ditambahkan jika ada nilainya
     ...(stack?.length ? { stacks: { some: { slug: { in: stack } } } } : {}),
     ...(license?.length ? { license: { slug: { in: license } } } : {}),
     ...(platform?.length ? { platforms: { some: { slug: { in: platform } } } } : {}),
@@ -159,13 +157,13 @@ export const filterToolsBySubcategory = async ({ subcategory, stack, license, pl
     whereQuery.OR = [{ name: { contains: q, mode: "insensitive" } }, { tagline: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }];
   }
 
-  console.log("[QUERY] Generated where query:", JSON.stringify(whereQuery, null, 2));
+  // console.log("[QUERY] Generated where query:", JSON.stringify(whereQuery, null, 2));
 
   return db.tool.findMany({
     where: whereQuery,
-    select: ToolManyPayload, // Payload Anda sudah benar
+    select: ToolManyPayload,
     orderBy: { publishedAt: "desc" },
-    take: 20, // Anda bisa sesuaikan limit ini atau membuatnya dinamis
+    take: 20,
   });
 };
 

@@ -21,9 +21,17 @@ export function NavMain({
 
           return (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild className="text-md" tooltip={item.title}>
-                <a href={item.url} className="w-full">
-                  {Icon && <Icon className="mr-1 h-5 w-5" />}
+              <SidebarMenuButton
+                asChild
+                tooltip={item.title}
+                className={`
+                  text-md
+                  transition-colors
+                  ${item.isActive ? "bg-white/10 text-white hover:bg-white/15" : "text-white/60 hover:text-white hover:bg-white/10"}
+                `}
+              >
+                <a href={item.url} className="w-full flex items-center">
+                  {Icon && <Icon className="mr-2 h-5 w-5" />}
                   <span>{item.title}</span>
                 </a>
               </SidebarMenuButton>

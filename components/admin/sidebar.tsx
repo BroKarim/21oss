@@ -52,11 +52,7 @@ export const AdminSidebar = () => {
           href: "/admin/ads",
           prefix: <Icon name="lucide/users" />,
         },
-        {
-          title: "Awesome Lists",
-          href: "/admin/awesome-list",
-          prefix: <Icon name="lucide/users" />,
-        },
+
         {
           title: "Curated Lists",
           href: "/admin/curated-lists",
