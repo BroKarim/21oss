@@ -7,7 +7,7 @@ import { CuratedListPayload } from "./payloads";
 export const findCuratedLists = async ({ where, ...args }: Prisma.CuratedListFindManyArgs = {}) => {
   "use cache";
 
-  cacheTag("curated-list");
+  cacheTag("curated-lists");
   cacheLife("max");
 
   return db.curatedList.findMany({
