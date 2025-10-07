@@ -1,10 +1,10 @@
 "use server";
 
-import { slugify } from "@primoui/utils";
+import { slugify, getRandomString } from "@primoui/utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
-import { removeS3Directories } from "@/lib/media";
+import { removeS3Directories, uploadToS3Storage } from "@/lib/media";
 import { getToolRepositoryData } from "@/lib/repositories";
 import { adminProcedure } from "@/lib/safe-actions";
 import { toolSchema } from "@/server/admin/tools/schema";
@@ -185,7 +185,49 @@ export const deleteTools = adminProcedure
     return result;
   });
 
-// experimental
+
+const VALID_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const VALID_VIDEO_TYPES = ["video/mp4"];
+
+export const uploadToolMedia = adminProcedure
+  .createServerAction()
+  .input(
+    z.object({
+      toolId: z.string(),
+      file: z
+        .instanceof(File)
+        .refine((file) => file.size > 0, "File tidak boleh kosong")
+        .refine((file) => {
+          const isImage = VALID_IMAGE_TYPES.includes(file.type);
+          const isVideo = VALID_VIDEO_TYPES.includes(file.type);
+          return isImage || isVideo;
+        }, "Hanya mendukung file JPG, PNG, atau MP4")
+        .refine((file) => {
+          if (VALID_IMAGE_TYPES.includes(file.type)) {
+            return file.size <= 1024 * 1024; // 1 MB
+          }
+          if (VALID_VIDEO_TYPES.includes(file.type)) {
+            return file.size <= 1024 * 1024 * 20; // 20 MB
+          }
+          return false;
+        }, "Ukuran file melebihi batas"),
+    })
+  )
+  .handler(async ({ input: { toolId, file } }) => {
+    const isImage = VALID_IMAGE_TYPES.includes(file.type);
+    const isVideo = VALID_VIDEO_TYPES.includes(file.type);
+
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const extension = file.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
+    const randomKey = getRandomString();
+    const key = `tools/${toolId}/${randomKey}.${extension}`;
+
+    const fileUrl = await uploadToS3Storage(buffer, key);
+
+    return { url: fileUrl, type: isVideo ? "video" : "image" };
+  });
+
+  
 export const autoFillFromRepo = adminProcedure
   .createServerAction()
   .input(autoFillSchema)
