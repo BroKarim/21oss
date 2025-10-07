@@ -18,13 +18,14 @@ import { ToolPublishActions } from "./tool-publish-actions";
 import { H3 } from "@/components/ui/heading";
 import { RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Link } from "@/components/ui/link";
 import { Stack } from "@/components/ui/stack";
 import { Textarea } from "@/components/ui/textarea";
 import { ExternalLink } from "@/components/web/external-link";
 import { useComputedField } from "@/hooks/use-computed-field";
 import type { findCategoryList } from "@/server/admin/categories/queries";
-import { upsertTool, autoFillFromRepo } from "@/server/admin/tools/actions";
+import { upsertTool, autoFillFromRepo, uploadToolMedia } from "@/server/admin/tools/actions";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
 import type { findPlatformList } from "@/server/admin/platforms/queries";
 import { StackCombobox } from "./stack-combobox";
@@ -33,7 +34,6 @@ import { toolSchema, type ToolSchema } from "@/server/admin/tools/schema";
 import { generateFaviconUrl } from "@/lib/url-utils";
 import { cx } from "@/lib/utils";
 import { AIModelSelector, DEFAULT_AI_MODELS } from "../../_components/ai-model-selector";
-
 
 const ToolStatusChange = ({ tool }: { tool: Tool }) => {
   return (
@@ -376,21 +376,78 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
         <div className="space-y-4 col-span-full">
           <h3 className="font-semibold text-lg">Screenshots</h3>
-          {screenshotFields.map((screenshot, index) => (
-            <div key={screenshot.id ?? index} className="grid sm:grid-cols-2 gap-4 items-end border p-4 rounded-xl">
-              <FormField
-                control={form.control}
-                name={`screenshots.${index}.imageUrl`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image URL</FormLabel>
-                    <FormControl>
-                      <Input {...field} placeholder="https://..." />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
 
+          {screenshotFields.map((screenshot, index) => (
+            <div key={screenshot.id ?? index} className="grid sm:grid-cols-2 gap-4 items-start border p-4 rounded-xl">
+              <Tabs defaultValue="url" className="col-span-2">
+                <TabsList>
+                  <TabsTrigger value="url">Input URL</TabsTrigger>
+                  <TabsTrigger value="upload">Upload File</TabsTrigger>
+                </TabsList>
+
+                {/* TAB 1: INPUT URL */}
+                <TabsContent value="url" className="mt-2 space-y-4">
+                  <FormField
+                    control={form.control}
+                    name={`screenshots.${index}.imageUrl`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Image URL</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="https://..." />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </TabsContent>
+
+                {/* TAB 2: UPLOAD */}
+                <TabsContent value="upload" className="mt-2 space-y-4">
+                  <FormItem>
+                    <FormLabel>Upload Image / Video</FormLabel>
+                    <FormControl>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/jpg,image/png,video/mp4"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+
+                          try {
+                            const [result, error] = await uploadToolMedia({
+                              toolId: tool?.id ?? "temp",
+                              file,
+                            });
+
+                            if (error) {
+                              alert(`Upload gagal: ${error.message}`);
+                              return;
+                            }
+
+                            if (result?.url) {
+                              form.setValue(`screenshots.${index}.imageUrl`, result.url);
+                            }
+                          } catch (err: any) {
+                            alert(`Upload gagal: ${err.message}`);
+                          }
+                        }}
+                      />
+                      {form.watch(`screenshots.${index}.imageUrl`) && (
+                        <div className="mt-2">
+                          {form.watch(`screenshots.${index}.imageUrl`).endsWith(".mp4") ? (
+                            <video src={form.watch(`screenshots.${index}.imageUrl`)} className="rounded-lg w-40" controls />
+                          ) : (
+                            <img src={form.watch(`screenshots.${index}.imageUrl`)} alt="preview" className="rounded-lg w-40 border" />
+                          )}
+                        </div>
+                      )}
+                    </FormControl>
+                    <p className="text-xs text-muted-foreground">JPG/PNG ≤ 1MB, MP4 ≤ 20MB</p>
+                  </FormItem>
+                </TabsContent>
+              </Tabs>
+
+              {/* Caption */}
               <FormField
                 control={form.control}
                 name={`screenshots.${index}.caption`}
@@ -404,6 +461,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                 )}
               />
 
+              {/* Remove button */}
               <div className="col-span-2 text-right">
                 <Button type="button" size="sm" variant="destructive" onClick={() => removeScreenshot(index)}>
                   Remove Screenshot
