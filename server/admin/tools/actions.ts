@@ -12,11 +12,6 @@ import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
 import { env } from "@/env";
 
-const autoFillSchema = z.object({
-  repositoryUrl: z.string().url("Please provide a valid URL."),
-  model: z.string().min(1, "Model is required"),
-});
-
 interface AutoFillResponse {
   name: string;
   websiteUrl: string;
@@ -24,6 +19,13 @@ interface AutoFillResponse {
   description: string;
   stacks: string[];
 }
+const autoFillSchema = z.object({
+  repositoryUrl: z.string().url("Please provide a valid URL."),
+  model: z.string().min(1, "Model is required"),
+});
+
+const VALID_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const VALID_VIDEO_TYPES = ["video/mp4"];
 
 export const upsertTool = adminProcedure
   .createServerAction()
@@ -185,49 +187,47 @@ export const deleteTools = adminProcedure
     return result;
   });
 
+const validateFileNotEmpty = (file: File): boolean => {
+  return file.size > 0;
+};
 
-const VALID_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
-const VALID_VIDEO_TYPES = ["video/mp4"];
+const validateFileType = (file: File): boolean => {
+  const isImage = VALID_IMAGE_TYPES.includes(file.type);
+  const isVideo = VALID_VIDEO_TYPES.includes(file.type);
+  return isImage || isVideo;
+};
+
+const validateFileSize = (file: File): boolean => {
+  if (VALID_IMAGE_TYPES.includes(file.type)) {
+    return file.size <= 1024 * 1024; // 1 MB
+  }
+  if (VALID_VIDEO_TYPES.includes(file.type)) {
+    return file.size <= 1024 * 1024 * 20; // 20 MB
+  }
+  return false;
+};
 
 export const uploadToolMedia = adminProcedure
   .createServerAction()
   .input(
     z.object({
-      toolId: z.string(),
-      file: z
-        .instanceof(File)
-        .refine((file) => file.size > 0, "File tidak boleh kosong")
-        .refine((file) => {
-          const isImage = VALID_IMAGE_TYPES.includes(file.type);
-          const isVideo = VALID_VIDEO_TYPES.includes(file.type);
-          return isImage || isVideo;
-        }, "Hanya mendukung file JPG, PNG, atau MP4")
-        .refine((file) => {
-          if (VALID_IMAGE_TYPES.includes(file.type)) {
-            return file.size <= 1024 * 1024; // 1 MB
-          }
-          if (VALID_VIDEO_TYPES.includes(file.type)) {
-            return file.size <= 1024 * 1024 * 20; // 20 MB
-          }
-          return false;
-        }, "Ukuran file melebihi batas"),
+      toolName: z.string(),
+      file: z.instanceof(File).refine(validateFileNotEmpty, "File tidak boleh kosong").refine(validateFileType, "Hanya mendukung file JPG, PNG, atau MP4").refine(validateFileSize, "Ukuran file melebihi batas"),
     })
   )
-  .handler(async ({ input: { toolId, file } }) => {
-    const isImage = VALID_IMAGE_TYPES.includes(file.type);
+  .handler(async ({ input: { toolName, file } }) => {
     const isVideo = VALID_VIDEO_TYPES.includes(file.type);
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const extension = file.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
     const randomKey = getRandomString();
-    const key = `tools/${toolId}/${randomKey}.${extension}`;
+    const key = `${slugify(toolName)}/${randomKey}.${extension}`;
 
     const fileUrl = await uploadToS3Storage(buffer, key);
 
     return { url: fileUrl, type: isVideo ? "video" : "image" };
   });
 
-  
 export const autoFillFromRepo = adminProcedure
   .createServerAction()
   .input(autoFillSchema)

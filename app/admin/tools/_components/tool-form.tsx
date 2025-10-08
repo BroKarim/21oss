@@ -384,7 +384,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                   <TabsTrigger value="url">Input URL</TabsTrigger>
                   <TabsTrigger value="upload">Upload File</TabsTrigger>
                 </TabsList>
-
                 {/* TAB 1: INPUT URL */}
                 <TabsContent value="url" className="mt-2 space-y-4">
                   <FormField
@@ -400,49 +399,67 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                     )}
                   />
                 </TabsContent>
-
                 {/* TAB 2: UPLOAD */}
                 <TabsContent value="upload" className="mt-2 space-y-4">
                   <FormItem>
                     <FormLabel>Upload Image / Video</FormLabel>
                     <FormControl>
-                      <input
-                        type="file"
-                        accept="image/jpeg,image/jpg,image/png,video/mp4"
-                        onChange={async (e) => {
-                          const file = e.target.files?.[0];
-                          if (!file) return;
+                      <div className="flex flex-col items-center justify-center w-full">
+                        <label htmlFor={`file-upload-${index}`} className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-muted/30 hover:bg-muted/50 transition-colors">
+                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg className="w-10 h-10 mb-3 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <p className="mb-2 text-sm text-muted-foreground">
+                              <span className="font-semibold">Choose images</span> or drag & drop it here
+                            </p>
+                            <p className="text-xs text-muted-foreground">JPG, JPEG, PNG and WEBP. Max 20 MB.</p>
+                          </div>
+                          <input
+                            id={`file-upload-${index}`}
+                            type="file"
+                            className="hidden"
+                            accept="image/jpeg,image/jpg,image/png,video/mp4"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
 
-                          try {
-                            const [result, error] = await uploadToolMedia({
-                              toolId: tool?.id ?? "temp",
-                              file,
-                            });
+                              try {
+                                const [result, error] = await uploadToolMedia({
+                                  toolName: form.getValues("name"),
+                                  file,
+                                });
 
-                            if (error) {
-                              alert(`Upload gagal: ${error.message}`);
-                              return;
-                            }
+                                if (error) {
+                                  toast.error(`Upload gagal: ${error.message}`);
+                                  return;
+                                }
 
-                            if (result?.url) {
-                              form.setValue(`screenshots.${index}.imageUrl`, result.url);
-                            }
-                          } catch (err: any) {
-                            alert(`Upload gagal: ${err.message}`);
-                          }
-                        }}
-                      />
-                      {form.watch(`screenshots.${index}.imageUrl`) && (
-                        <div className="mt-2">
-                          {form.watch(`screenshots.${index}.imageUrl`).endsWith(".mp4") ? (
-                            <video src={form.watch(`screenshots.${index}.imageUrl`)} className="rounded-lg w-40" controls />
-                          ) : (
-                            <img src={form.watch(`screenshots.${index}.imageUrl`)} alt="preview" className="rounded-lg w-40 border" />
-                          )}
-                        </div>
-                      )}
+                                if (result?.url) {
+                                  form.setValue(`screenshots.${index}.imageUrl`, result.url);
+                                  toast.success("File berhasil diupload");
+                                }
+                              } catch (err: any) {
+                                toast.error(`Upload gagal: ${err.message}`);
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
                     </FormControl>
-                    <p className="text-xs text-muted-foreground">JPG/PNG ≤ 1MB, MP4 ≤ 20MB</p>
+
+                    {/* Preview lebih besar */}
+                    {form.watch(`screenshots.${index}.imageUrl`) && (
+                      <div className="flex justify-center mt-4">
+                        {form.watch(`screenshots.${index}.imageUrl`).endsWith(".mp4") ? (
+                          <video src={form.watch(`screenshots.${index}.imageUrl`)} className="rounded-lg max-w-md w-full border shadow-sm" controls />
+                        ) : (
+                          <img src={form.watch(`screenshots.${index}.imageUrl`)} alt="preview" className="rounded-lg max-w-md w-full border shadow-sm" />
+                        )}
+                      </div>
+                    )}
+
+                    <p className="text-xs text-muted-foreground text-center">JPG/PNG ≤ 1MB, MP4 ≤ 20MB</p>
                   </FormItem>
                 </TabsContent>
               </Tabs>
