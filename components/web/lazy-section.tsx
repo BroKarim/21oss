@@ -7,7 +7,7 @@ import { sectionComponents } from "@/lib/constants/section-components";
 interface SectionData {
   id: string;
   label: string;
-  type: "slider" | "favicon" | "gallery";
+  type: "slider" | "favicon" |  "gallery" | "carousel";
   tools: ToolMany[];
   options: {
     showScroll?: boolean;

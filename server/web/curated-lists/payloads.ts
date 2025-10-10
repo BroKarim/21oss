@@ -4,7 +4,7 @@ import { ToolManyPayload } from "../tools/payloads"; // reuse tools payload
 export const CuratedListPayload: Prisma.CuratedListSelect = {
   id: true,
   title: true,
-  type: true, // "gallery" | "favicon" | "slider"
+  type: true,
   createdAt: true,
   updatedAt: true,
   tools: {

@@ -22,7 +22,7 @@ export const curatedListSchema = z.object({
   title: z.string().min(1, "Title is required"),
   url: z.string().optional(),
   description: z.string().optional(),
-  type: z.enum(["gallery", "favicon", "slider"]).default("gallery"),
+  type: z.enum(["gallery", "favicon", "slider", "carousel"]).default("gallery"),
   tools: z.array(z.string()).optional(),
 });
 

@@ -6,7 +6,6 @@ import { getCuratedLists } from "@/server/web/curated-lists/actions";
 import { getRecentTools } from "@/server/web/tools/actions";
 import { ToolMany } from "@/server/web/tools/payloads";
 
-
 export default async function Page() {
   const curatedLists = await getCuratedLists();
 
@@ -26,7 +25,7 @@ export default async function Page() {
     ...curatedLists.map((curatedList) => ({
       id: curatedList.id,
       label: curatedList.title,
-      type: curatedList.type as "slider" | "favicon" | "gallery",
+      type: curatedList.type as "slider" | "favicon" | "gallery" | "carousel",
       tools: curatedList.tools as ToolMany[],
       options: {
         showScroll: true,

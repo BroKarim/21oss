@@ -116,6 +116,7 @@ export function CuratedListForm({ className, title, curatedList, toolsPromise, .
                   <option value="gallery">Gallery</option>
                   <option value="favicon">Favicon</option>
                   <option value="slider">Slider</option>
+                  <option value="carousel">Carousel</option>
                 </select>
               </FormControl>
               <FormMessage />
