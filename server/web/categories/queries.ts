@@ -166,3 +166,36 @@ export const getSubcategories = async (slug: string) => {
 
   return subcategories;
 };
+
+export const findCategoriesWithChildren = async () => {
+  "use cache";
+  cacheTag("categories");
+  cacheLife("max");
+
+  const categories = await db.category.findMany({
+    where: { parentId: null },
+    orderBy: { name: "asc" },
+    include: {
+      subcategories: {
+        orderBy: { name: "asc" },
+        select: {
+          name: true,
+          slug: true,
+          fullPath: true,
+        },
+      },
+    },
+  });
+
+  // Bentuk struktur sesuai NavSecondary
+  return categories.map((cat) => ({
+    title: cat.name,
+    slug: cat.slug,
+    icon: cat.name === "AI" ? "BotMessageSquare" : "AppWindowMac", // sementara statis
+    isActive: cat.name === "Programming",
+    items: cat.subcategories.map((sub) => ({
+      title: sub.name,
+      url: `/categories/${cat.slug}#${sub.slug}`,
+    })),
+  }));
+};

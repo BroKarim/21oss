@@ -74,7 +74,7 @@ export const ToolCarouselGroup = ({ label, tools, options }: ToolCarouselGroupPr
     {
       label: "Forks",
       value: formatNumber(currentTool.forks, "standard"),
-      icon: <GitFork />
+      icon: <GitFork />,
     },
     { label: "Last commit", value: lastCommitDate, icon: <Timer /> },
   ];
@@ -154,7 +154,6 @@ export const ToolCarouselGroup = ({ label, tools, options }: ToolCarouselGroupPr
           )}
         </div>
 
-        {/* [PERUBAHAN]: Pagination Indicator dipindahkan ke sini */}
         <div className="flex gap-2">
           {tools.map((_, index) => (
             <button key={index} onClick={() => setCurrentIndex(index)} className={`h-2 rounded-full transition-all ${index === currentIndex ? "bg-foreground w-6" : "bg-foreground/30 w-2"}`} aria-label={`Go to slide ${index + 1}`} />

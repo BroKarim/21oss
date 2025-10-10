@@ -1,7 +1,16 @@
 "use client";
 
 import React from "react";
+import { LayoutGrid, LayoutPanelTop, AppWindowMac, BotMessageSquare } from "lucide-react";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+
+// Buat peta icon di sini
+const iconMap = {
+  LayoutGrid,
+  LayoutPanelTop,
+  AppWindowMac,
+  BotMessageSquare,
+};
 
 export function NavMain({
   items,
@@ -9,7 +18,7 @@ export function NavMain({
   items: {
     title: string;
     url: string;
-    icon?: React.ComponentType<{ className?: string }>;
+    icon?: string;
     isActive?: boolean;
   }[];
 }) {
@@ -17,7 +26,7 @@ export function NavMain({
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
-          const Icon = item.icon;
+          const Icon = item.icon ? iconMap[item.icon as keyof typeof iconMap] : null;
 
           return (
             <SidebarMenuItem key={item.title}>
@@ -25,8 +34,7 @@ export function NavMain({
                 asChild
                 tooltip={item.title}
                 className={`
-                  text-md
-                  transition-colors
+                  text-md transition-colors
                   ${item.isActive ? "bg-white/10 text-white hover:bg-white/15" : "text-white/60 hover:text-white hover:bg-white/10"}
                 `}
               >
