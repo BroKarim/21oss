@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
-import { ToolManyPayload } from "../tools/payloads"; // reuse tools payload
+import { ToolManyPayload } from "../tools/payloads";
 
-export const CuratedListPayload: Prisma.CuratedListSelect = {
+export const CuratedListPayload = Prisma.validator<Prisma.CuratedListSelect>()({
   id: true,
   title: true,
   type: true,
@@ -10,7 +10,7 @@ export const CuratedListPayload: Prisma.CuratedListSelect = {
   tools: {
     select: ToolManyPayload,
   },
-};
+});
 
 export type CuratedListMany = Prisma.CuratedListGetPayload<{
   select: typeof CuratedListPayload;

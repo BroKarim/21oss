@@ -28,7 +28,6 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
     select: stackManyPayload,
   },
   categories: toolCategoriesPayload,
-
   screenshots: {
     select: {
       id: true,
@@ -39,7 +38,7 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   },
 });
 
-export const ToolManyPayload: Prisma.ToolSelect = {
+export const ToolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   id: true,
   name: true,
   slug: true,
@@ -51,6 +50,11 @@ export const ToolManyPayload: Prisma.ToolSelect = {
   stars: true,
   forks: true,
   faviconUrl: true,
+  firstCommitDate: true,
+  lastCommitDate: true,
+  publishedAt: true,
+  updatedAt: true,
+  categories: toolCategoriesPayload,
   stacks: {
     select: stackManyPayload,
   },
@@ -68,12 +72,7 @@ export const ToolManyPayload: Prisma.ToolSelect = {
       name: true,
     },
   },
-  firstCommitDate: true,
-  lastCommitDate: true,
-  publishedAt: true,
-  createdAt: true,
-  updatedAt: true,
-};
+});
 
 export const toolManyExtendedPayload = Prisma.validator<Prisma.ToolSelect>()({
   name: true,
