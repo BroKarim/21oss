@@ -72,12 +72,10 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       affiliateUrl: tool?.affiliateUrl ?? "",
       repositoryUrl: tool?.repositoryUrl ?? "",
       faviconUrl: tool?.faviconUrl ?? "",
-      screenshotUrl: tool?.screenshotUrl ?? "",
       status: tool?.status ?? ToolStatus.Draft,
       publishedAt: tool?.publishedAt ?? null,
       categories: tool?.categories.map((c) => c.id) ?? [],
       platforms: tool?.platforms.map((p) => p.id) ?? [],
-      // stacks: tool?.stacks.map((s) => ({ id: s.id })) ?? [],
       stacks: (tool?.stacks || []).map((s) => (typeof s === "string" ? { id: "", name: s, slug: s } : s)),
       screenshots:
         tool?.screenshots?.map((img) => ({

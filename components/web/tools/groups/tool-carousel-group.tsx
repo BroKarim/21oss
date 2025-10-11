@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { ToolMany } from "@/server/web/tools/payloads";
+import { ToolOne } from "@/server/web/tools/payloads";
 import { Button } from "@/components/ui/button-shadcn";
 import { ChevronLeft, ChevronRight, Star, GitFork, Timer, ExternalLink, Github } from "lucide-react";
 import Link from "next/link";
@@ -15,7 +15,7 @@ import { formatNumber } from "@primoui/utils";
 type ToolCarouselGroupProps = {
   id: string;
   label: string;
-  tools: ToolMany[];
+  tools: ToolOne[];
   options: {
     showViewAll?: boolean;
     viewAllUrl?: string;
