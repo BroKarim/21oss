@@ -2,15 +2,17 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AppWindowMac, BotMessageSquare, ChevronRight } from "lucide-react";
-
+import { ChevronRight } from "lucide-react";
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "@/components/ui/sidebar";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Icons } from "../icons";
 
-// ✅ Tambahkan peta ikon di sini
 const iconMap = {
-  AppWindowMac,
-  BotMessageSquare,
+  0: Icons.robot,
+  1: Icons.design,
+  2: Icons.marketing,
+  3: Icons.productive,
+  4: Icons.code,
 };
 
 function useHash() {
@@ -28,7 +30,6 @@ export function NavSecondary({
 }: {
   items: {
     title: string;
-    icon?: string; // ✅ ubah jadi string
     isActive?: boolean;
     items?: {
       title: string;
@@ -56,13 +57,24 @@ export function NavSecondary({
       <SidebarGroupLabel>Filter</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item, index) => {
-          const Icon = item.icon ? iconMap[item.icon as keyof typeof iconMap] : null;
+          const Icon = iconMap[index as keyof typeof iconMap];
 
           return (
             <Collapsible key={item.title} asChild open={activeItem === index} onOpenChange={(isOpen) => setActiveItem(isOpen ? index : null)}>
               <SidebarMenuItem>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title} className={`transition-colors ${activeItem === index ? "bg-white/10 text-white hover:bg-white/15" : "text-white/60 hover:text-white hover:bg-white/10"}`}>
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    className={`transition-colors ${
+                      activeItem === index
+                        ? `text-white
+                    bg-gradient-to-r from-white/20 via-white/10 to-white/5
+                    transition-colors shadow-[inset_0_1px_rgb(255_255_255/0.15)]
+                    border-none
+                    backdrop-blur-sm`
+                        : "text-white/60 hover:text-white hover:bg-white/10"
+                    }`}
+                  >
                     {Icon && <Icon className="mr-2 h-4 w-4" />}
                     <span>{item.title}</span>
                     <ChevronRight className="ml-auto h-4 w-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />

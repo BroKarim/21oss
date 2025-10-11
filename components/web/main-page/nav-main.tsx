@@ -1,32 +1,26 @@
 "use client";
 
 import React from "react";
-import { LayoutGrid, LayoutPanelTop, AppWindowMac, BotMessageSquare } from "lucide-react";
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+import { Icons } from "../icons";
 
-// Buat peta icon di sini
 const iconMap = {
-  LayoutGrid,
-  LayoutPanelTop,
-  AppWindowMac,
-  BotMessageSquare,
+  "Explore": Icons.globe,
+  "Beautiful Table": Icons.ogTable,
 };
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: string;
-    isActive?: boolean;
-  }[];
-}) {
+interface NavItem {
+  title: string;
+  url: string;
+  isActive?: boolean;
+}
+
+export function NavMain({ items }: { items: NavItem[] }) {
   return (
     <SidebarGroup>
       <SidebarMenu>
         {items.map((item) => {
-          const Icon = item.icon ? iconMap[item.icon as keyof typeof iconMap] : null;
+          const Icon = iconMap[item.title as keyof typeof iconMap];
 
           return (
             <SidebarMenuItem key={item.title}>
@@ -34,12 +28,25 @@ export function NavMain({
                 asChild
                 tooltip={item.title}
                 className={`
-                  text-md transition-colors
-                  ${item.isActive ? "bg-white/10 text-white hover:bg-white/15" : "text-white/60 hover:text-white hover:bg-white/10"}
-                `}
+              text-md transition-all duration-300 ease-in-out rounded-md
+              ${
+                item.isActive
+                  ? `
+                    text-white
+                    bg-gradient-to-r from-white/20 via-white/10 to-white/5
+                    transition-colors shadow-[inset_0_1px_rgb(255_255_255/0.15)]
+                    border-none
+                    backdrop-blur-sm
+                  `
+                  : `
+                    text-white/60 hover:text-white
+                    hover:bg-white/10
+                  `
+              }
+            `}
               >
-                <a href={item.url} className="w-full flex items-center">
-                  {Icon && <Icon className="mr-2 h-5 w-5" />}
+                <a href={item.url} className="w-full flex items-center px-3 py-2">
+                  {Icon && <Icon className="mr-1 h-5 w-5" />}
                   <span>{item.title}</span>
                 </a>
               </SidebarMenuButton>

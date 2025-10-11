@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button-shadcn";
 import { Icons } from "./icons";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const footerLinks = {
   pages: [
@@ -51,7 +53,7 @@ const FooterSection = ({ title, links }: FooterSectionProps) => (
 function Footer() {
   // const currentYear = new Date().getFullYear();
   const tweetText = encodeURIComponent("Finding the right open‑source tool is messy—#210SS makes it simple. What's one underrated tool you can't live without? @brokariim");
-
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <footer className="bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="container mx-auto max-w-7xl">
@@ -62,13 +64,23 @@ function Footer() {
               <h2 className="text-xl font-bold text-foreground">210SS</h2>
             </Link>
 
-            <div className="space-y-4">
-              <p className="text-muted-foreground">
-                Build by{" "}
-                <Link href="https://x.com/BroKariim" target="_blank" className="text-blue-500 hover:text-blue-600 transition-colors duration-200">
-                  @Brokarim
-                </Link>
-              </p>
+            <div className="space-y-4 space-x-1">
+              <div className="relative inline-block" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
+                <p className="text-muted-foreground">
+                  Build by{" "}
+                  <a href="https://x.com/BroKariim" target="_blank" className="transition-colors duration-200 hover:text-foreground">
+                    @Brokarim
+                  </a>
+                </p>
+
+                {/* Avatar */}
+                <div className={`absolute bottom-0 left-1/2 transform -translate-x-1/2 transition-all duration-500 ${isHovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
+                  <Avatar>
+                    <AvatarImage src="https://github.com/BroKarim.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </div>
+              </div>
 
               <Link href={`https://x.com/compose/tweet?text=${tweetText}`}>
                 <Button variant="ghost" className="border border-border hover:bg-accent transition-all duration-200">
