@@ -21,14 +21,3 @@ export const findCuratedLists = cache(
   }
 );
 
-// export const findCuratedListById = async (id: string) => {
-//   "use cache";
-
-//   cacheTag("curated-list");
-//   cacheLife("max");
-
-//   return db.curatedList.findUnique({
-//     where: { id },
-//     select: CuratedListPayload,
-//   });
-// };
