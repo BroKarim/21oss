@@ -1,13 +1,14 @@
 // components/groups/tool-slider-group.tsx
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // Asumsikan menggunakan shadcn/ui
 import { ToolMany } from "@/server/web/tools/payloads";
-import { ToolCard } from "../tool-card";
+import { ToolCard } from "../tool-card-2";
 import Link from "next/link";
 import { Button } from "@/components/ui/button-shadcn";
 
 type ToolSliderGroupProps = {
   id: string;
   label: string;
+  description?: string;
   tools: ToolMany[];
   options: {
     showScroll?: boolean;
@@ -16,17 +17,20 @@ type ToolSliderGroupProps = {
   };
 };
 
-export const ToolSliderGroup = ({ id, label, tools, options }: ToolSliderGroupProps) => {
+export const ToolSliderGroup = ({ id, label, tools, options, description }: ToolSliderGroupProps) => {
   const { showScroll = false, showViewAll = false, viewAllUrl } = options;
 
-  // Jika showScroll false, batasi ke 4 item
   const displayedTools = showScroll ? tools : tools.slice(0, 4);
 
   if (!displayedTools.length) {
     return (
       <section className="space-y-4" id={id}>
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold">{label}</h2>
+          <div className="flex flex-col">
+            <h2 className="md:text-2xl text-lg font-bold">{label}</h2>
+            {description && <p className="text-sm text-muted-foreground">{description}</p>}
+          </div>
+
           {showViewAll && viewAllUrl && (
             <Button asChild variant="outline">
               <Link href={viewAllUrl}>View All</Link>
@@ -41,7 +45,7 @@ export const ToolSliderGroup = ({ id, label, tools, options }: ToolSliderGroupPr
   return (
     <section className="w-full  max-w-full space-y-4 border  p-2 rounded-lg overflow-hidden">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl ">{label}</h2>
+        <h2 className="md:text-xl text-lg">{label}</h2>
       </div>
 
       <div className="w-full">

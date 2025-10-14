@@ -11,10 +11,12 @@ import { Insights } from "@/components/ui/insights";
 import { ToolStacks } from "@/components/web/tools/tool-stacks";
 import { Favicon } from "@/components/ui/favicon";
 import { formatNumber } from "@primoui/utils";
+import { cn } from "@/lib/utils";
 
 type ToolCarouselGroupProps = {
   id: string;
   label: string;
+  description?: string;
   tools: ToolMany[];
   options: {
     showViewAll?: boolean;
@@ -22,179 +24,109 @@ type ToolCarouselGroupProps = {
   };
 };
 
-export const ToolCarouselGroup = ({ label, tools, options }: ToolCarouselGroupProps) => {
-  const { showViewAll = false, viewAllUrl } = options;
+export const ToolCarouselGroup = ({ label, description, tools }: ToolCarouselGroupProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handlePrevious = () => {
-    setCurrentIndex((prev) => (prev === 0 ? tools.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex((prev) => (prev === tools.length - 1 ? 0 : prev + 1));
-  };
-
-  const handleSwipe = (e: React.TouchEvent) => {
-    const touch = e.changedTouches[0];
-    const startX = touch.clientX;
-
-    const handleTouchEnd = (endEvent: TouchEvent) => {
-      const endX = endEvent.changedTouches[0].clientX;
-      const diff = startX - endX;
-
-      if (Math.abs(diff) > 50) {
-        if (diff > 0) {
-          handleNext();
-        } else {
-          handlePrevious();
-        }
-      }
-    };
-
-    document.addEventListener("touchend", handleTouchEnd, { once: true });
-  };
+  const handlePrevious = () => setCurrentIndex((prev) => (prev === 0 ? tools.length - 1 : prev - 1));
+  const handleNext = () => setCurrentIndex((prev) => (prev === tools.length - 1 ? 0 : prev + 1));
 
   const currentTool = tools[currentIndex];
   const primaryImage = currentTool.screenshots?.find((s) => s.order === 0)?.imageUrl;
 
-  const lastCommitDate =
-    currentTool.lastCommitDate &&
-    formatDistanceToNowStrict(currentTool.lastCommitDate, {
-      addSuffix: true,
-    });
+  const lastCommitDate = currentTool.lastCommitDate && formatDistanceToNowStrict(currentTool.lastCommitDate, { addSuffix: true });
 
   const insights = [
-    {
-      label: "Stars",
-      value: formatNumber(currentTool.stars, "standard"),
-      icon: <Star />,
-    },
-    {
-      label: "Forks",
-      value: formatNumber(currentTool.forks, "standard"),
-      icon: <GitFork />,
-    },
+    { label: "Stars", value: formatNumber(currentTool.stars, "standard"), icon: <Star /> },
+    { label: "Forks", value: formatNumber(currentTool.forks, "standard"), icon: <GitFork /> },
     { label: "Last commit", value: lastCommitDate, icon: <Timer /> },
   ];
 
   return (
-    <section className="w-full max-w-full space-y-4 rounded-lg border p-2 overflow-hidden">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl">{label}</h2>
+    <section className="w-full space-y-4 rounded-lg border p-3 md:p-4">
+      {/* Header */}
+      <div className="flex flex-col items-center text-center">
+        <h2 className="text-lg md:text-2xl font-semibold">{label}</h2>
+        {description && <p className="text-xs md:text-sm text-muted-foreground max-w-md">{description}</p>}
       </div>
 
-      {/* Desktop View */}
-      <div className="hidden md:flex flex-col items-center gap-4">
-        <div ref={containerRef} className="relative w-full h-[33vh] flex items-stretch gap-6 rounded-lg overflow-hidden" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} onTouchStart={handleSwipe}>
-          {/* Image Section */}
-          <div className="flex-shrink-0 w-1/2 relative group">
-            <div className="relative w-full h-full rounded-lg shadow-base overflow-hidden">
-              <div className="absolute inset-0">
-                <ComponentPreviewImage src={primaryImage} alt={`${currentTool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover" priority={false} />
-              </div>
-              {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center flex-col justify-center p-4">
-                <p className="text-white text-sm text-center leading-relaxed mb-4">{currentTool.tagline}</p>
-                <Insights insights={insights.filter((i) => i.value)} />
-              </div>
-            </div>
+      {/* Unified Layout */}
+      <div
+        ref={containerRef}
+        className={cn("relative flex flex-col md:flex-row items-stretch gap-4 md:gap-6 rounded-lg overflow-hidden", "transition-all duration-300")}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Image */}
+        <div className="relative w-full md:w-1/2 h-52 md:h-[33vh] rounded-lg overflow-hidden group">
+          <ComponentPreviewImage src={primaryImage} alt={`${currentTool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover" priority={false} />
+
+          {/* Hover overlay (desktop only) */}
+          <div className="absolute inset-0 bg-black/80 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <Insights insights={insights.filter((i) => i.value)} />
           </div>
 
-          {/* Info Section */}
-          <div className="flex-1 flex flex-col justify-between py-2">
-            <div className="space-y-4">
-              <div className="flex items-start flex-col justify-between gap-3">
-                <Favicon src={currentTool.faviconUrl} title={currentTool.name} className="size-8 p-1 rounded-md" />
-                <h3 className="text-lg font-semibold truncate">{currentTool.name}</h3>
-              </div>
-              <div>
-                <p className="text-sm text-foreground/80 line-clamp-3">{currentTool.description || currentTool.tagline}</p>
-              </div>
-              <div>
-                <p className="text-xs font-medium text-foreground/60 mb-2">Tech Stack</p>
-                <div className="flex flex-wrap gap-2">
-                  <ToolStacks stacks={currentTool.stacks} />
-                </div>
-              </div>
-            </div>
-
-            {/* [PERUBAHAN]: Tombol Aksi */}
-            <div className="flex items-center gap-2 mt-4">
-              {currentTool.websiteUrl && (
-                <Link href={currentTool.websiteUrl} rel="noopener noreferrer" className="truncate">
-                  <Button variant="outline" size="sm">
-                    Visit Website
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              )}
-              {currentTool.repositoryUrl && (
-                <Link href={currentTool.repositoryUrl} rel="noopener noreferrer">
-                  <Button variant="secondary" size="sm">
-                    Repository
-                    <Github className="mr-2 h-4 w-4" />
-                  </Button>
-                </Link>
-              )}
-            </div>
-          </div>
-
-          {/* Navigation Buttons */}
+          {/* Navigation arrows */}
           {isHovered && (
             <>
-              <Button variant="ghost" size="icon" onClick={handlePrevious} className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white">
-                <ChevronLeft className="h-6 w-6" />
+              <Button variant="ghost" size="icon" onClick={handlePrevious} className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white">
+                <ChevronLeft className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={handleNext} className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white">
-                <ChevronRight className="h-6 w-6" />
+              <Button variant="ghost" size="icon" onClick={handleNext} className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white">
+                <ChevronRight className="h-5 w-5" />
               </Button>
             </>
           )}
         </div>
 
-        <div className="flex gap-2">
-          {tools.map((_, index) => (
-            <button key={index} onClick={() => setCurrentIndex(index)} className={`h-2 rounded-full transition-all ${index === currentIndex ? "bg-foreground w-6" : "bg-foreground/30 w-2"}`} aria-label={`Go to slide ${index + 1}`} />
-          ))}
-        </div>
-      </div>
+        {/* Info Section */}
+        <div className="flex-1 flex flex-col justify-between space-y-3">
+          {/* Header */}
+          <div className="flex items-center gap-2">
+            <Favicon src={currentTool.faviconUrl} title={currentTool.name} className="size-6 md:size-8 p-1 rounded-md" />
+            <h3 className="text-base md:text-lg font-semibold truncate">{currentTool.name}</h3>
+          </div>
 
-      {/* Mobile View */}
-      <div className="md:hidden">
-        <div className="relative w-full space-y-3" onTouchStart={handleSwipe}>
-          {/* Website URL */}
-          {currentTool.websiteUrl && (
-            <Link href={currentTool.websiteUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-500 hover:underline truncate block px-2">
-              {currentTool.websiteUrl}
-            </Link>
-          )}
+          {/* Description */}
+          <p className="text-xs md:text-sm text-foreground/80 line-clamp-3">{currentTool.description || currentTool.tagline}</p>
 
-          {/* Image */}
-          <div className="relative w-full aspect-video rounded-lg shadow-base overflow-hidden">
-            <div className="absolute inset-0">
-              <ComponentPreviewImage src={primaryImage} alt={`${currentTool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover" priority={false} />
+          {/* Tech stack */}
+          <div>
+            <p className="text-xs font-medium text-foreground/60 mb-1">Tech Stack</p>
+            <div className="flex flex-wrap gap-2">
+              <ToolStacks stacks={currentTool.stacks} />
             </div>
           </div>
 
-          {/* Pagination Indicator */}
-          <div className="flex gap-2 justify-center">
-            {tools.map((_, index) => (
-              <button key={index} onClick={() => setCurrentIndex(index)} className={`h-2 rounded-full transition-all ${index === currentIndex ? "bg-foreground w-6" : "bg-foreground/30 w-2"}`} aria-label={`Go to slide ${index + 1}`} />
-            ))}
+          {/* Buttons */}
+          <div className="flex gap-2 mt-2 flex-wrap">
+            {currentTool.websiteUrl && (
+              <Link href={currentTool.websiteUrl} rel="noopener noreferrer">
+                <Button variant="outline" size="sm" className="text-xs md:text-sm">
+                  <ExternalLink className="mr-1 h-3 w-3 md:h-4 md:w-4" />
+                  Visit Website
+                </Button>
+              </Link>
+            )}
+            {currentTool.repositoryUrl && (
+              <Link href={currentTool.repositoryUrl} rel="noopener noreferrer">
+                <Button variant="secondary" size="sm" className="text-xs md:text-sm">
+                  <Github className="mr-1 h-3 w-3 md:h-4 md:w-4" />
+                  Repository
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
 
-      {/* View All Link */}
-      {showViewAll && viewAllUrl && (
-        <div className="pt-2">
-          <Link href={viewAllUrl} className="text-sm text-blue-500 hover:underline">
-            View all →
-          </Link>
-        </div>
-      )}
+      {/* Dots pagination */}
+      <div className="flex justify-center gap-2 mt-3">
+        {tools.map((_, index) => (
+          <button key={index} onClick={() => setCurrentIndex(index)} className={cn("h-2 rounded-full transition-all", index === currentIndex ? "bg-foreground w-6" : "bg-foreground/30 w-2")} aria-label={`Go to slide ${index + 1}`} />
+        ))}
+      </div>
     </section>
   );
 };

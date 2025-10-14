@@ -6,6 +6,7 @@ import Image from "next/image"; // untuk favicon
 type ToolFaviconGroupProps = {
   id: string;
   label: string;
+  description?: string;
   tools: ToolMany[];
   options: {
     showViewAll?: boolean;
@@ -13,7 +14,7 @@ type ToolFaviconGroupProps = {
   };
 };
 
-export const ToolFaviconGroup = ({ id, label, tools, options }: ToolFaviconGroupProps) => {
+export const ToolFaviconGroup = ({ id, label, description, tools, options }: ToolFaviconGroupProps) => {
   const { showViewAll = false, viewAllUrl } = options;
 
   if (!tools.length) {
@@ -35,7 +36,10 @@ export const ToolFaviconGroup = ({ id, label, tools, options }: ToolFaviconGroup
   return (
     <section className="rounded-2xl border p-6 space-y-4" id={id}>
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl ">{label}</h2>
+        <div className="flex flex-col">
+          <h2 className=" md:text-2xl text-lg  font-bold">{label}</h2>
+          {description && <p className="text-sm text-muted-foreground">{description}</p>}
+        </div>
         {showViewAll && viewAllUrl && (
           <Button asChild variant="outline" size="sm" className="border-neutral-700">
             <Link href={viewAllUrl}>View All</Link>
@@ -43,7 +47,7 @@ export const ToolFaviconGroup = ({ id, label, tools, options }: ToolFaviconGroup
         )}
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid md:grid-cols-4 grid-cols-2 gap-4">
         {tools.map((tool) => (
           <Link key={tool.id} href={`/${tool.slug}`} className="flex items-center gap-3 p-2 rounded-lg transition hover:bg-accent">
             <Image src={tool.faviconUrl || "/placeholder.svg"} alt={`${tool.name} favicon`} width={48} height={48} className="rounded-sm border" />

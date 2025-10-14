@@ -7,7 +7,8 @@ import { sectionComponents } from "@/lib/constants/section-components";
 interface SectionData {
   id: string;
   label: string;
-  type: "slider" | "favicon" |  "gallery" | "carousel";
+  description?: string;
+  type: "slider" | "favicon" | "gallery" | "carousel";
   tools: ToolMany[];
   options: {
     showScroll?: boolean;
@@ -91,10 +92,10 @@ export default function LazySection({ section }: LazySectionProps) {
     );
   }
 
-  const Component = sectionComponents[section.type];
-  return (
-    <div>
-      <Component {...section} />
-    </div>
-  );
-}
+    const Component = sectionComponents[section.type];
+    return (
+      <div>
+        <Component {...section} />
+      </div>
+    );
+  }

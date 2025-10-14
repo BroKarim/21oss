@@ -7,6 +7,7 @@ import { ToolMany } from "@/server/web/tools/payloads";
 type SectionComponentProps = {
   id: string;
   label: string;
+  description?: string;
   tools: ToolMany[];
   options: {
     showScroll?: boolean;

@@ -24,6 +24,7 @@ export default async function Page() {
     ...curatedLists.map((curatedList) => ({
       id: curatedList.id,
       label: curatedList.title,
+      description: curatedList.description ?? undefined,
       type: curatedList.type as "slider" | "favicon" | "gallery" | "carousel",
       tools: curatedList.tools,
       options: {
