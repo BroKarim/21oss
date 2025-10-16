@@ -9,6 +9,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 import ComponentPreviewImage from "../../card/card-image";
 import { Insights } from "@/components/ui/insights";
 import { ToolStacks } from "@/components/web/tools/tool-stacks";
+import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { Favicon } from "@/components/ui/favicon";
 import { formatNumber } from "@primoui/utils";
 import { cn } from "@/lib/utils";
@@ -46,8 +47,8 @@ export const ToolCarouselGroup = ({ label, description, tools }: ToolCarouselGro
   return (
     <section className="w-full max-w-full relative space-y-4 rounded-lg border p-3 md:p-4">
       {/* Header */}
-      <div className="flex flex-col items-center text-center">
-        <h2 className="text-lg md:text-2xl font-semibold">{label}</h2>
+      <div className="flex flex-col ">
+        <AnimatedGradientText className="text-lg md:text-2xl font-semibold">{label}</AnimatedGradientText>
         {description && <p className="text-xs md:text-sm text-muted-foreground max-w-md">{description}</p>}
       </div>
 

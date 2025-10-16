@@ -3,6 +3,7 @@ import { ToolMany } from "@/server/web/tools/payloads";
 import { ToolCard } from "../tool-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button-shadcn";
+import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 
 type ToolSliderGroupProps = {
   id: string;
@@ -27,7 +28,6 @@ export const ToolSliderGroup = ({ id, label, tools, options, description }: Tool
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <h2 className="md:text-2xl text-lg font-bold">{label}</h2>
-            {description && <p className="text-sm text-muted-foreground">{description}</p>}
           </div>
 
           {showViewAll && viewAllUrl && (
@@ -43,8 +43,11 @@ export const ToolSliderGroup = ({ id, label, tools, options, description }: Tool
 
   return (
     <section className="w-full  max-w-full space-y-4 border  p-2 rounded-lg overflow-hidden">
-      <div className="flex items-center justify-between">
-        <h2 className="md:text-xl text-lg">{label}</h2>
+      <div className="flex flex-col items-start max-w-md space-y-2 justify-between">
+        <AnimatedGradientText speed={2} colorFrom="#8b5cf6" colorTo="#ec4899" className="md:text-2xl font-bold text-lg">
+          {label}
+        </AnimatedGradientText>
+        {description && <p className="text-sm text-muted-foreground">{description}</p>}
       </div>
 
       <div className="w-full">

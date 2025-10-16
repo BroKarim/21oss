@@ -6,6 +6,7 @@ import { ToolCard } from "../tool-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button-shadcn";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { cx } from "@/lib/utils";
 
 type ToolGalleryGroupProps = {
@@ -57,8 +58,10 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
           </div>
         )}
         <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 justify-between gap-2">
-          <div className="flex flex-col">
-            <h2 className="md:text-2xl text-lg  ">{label}</h2>
+          <div className="flex flex-col max-w-lg">
+            <AnimatedGradientText speed={2} colorFrom="#4ade80" colorTo="#06b6d4" className="md:text-2xl text-lg font-bold ">
+              {label}
+            </AnimatedGradientText>
             {description && <p className="text-sm text-muted-foreground">{description}</p>}
           </div>
           {showViewAll && viewAllUrl && (

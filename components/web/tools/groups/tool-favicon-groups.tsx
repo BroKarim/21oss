@@ -1,8 +1,8 @@
 import { ToolMany } from "@/server/web/tools/payloads";
 import Link from "next/link";
-import { Button } from "@/components/ui/button-shadcn"; // dari shadcn/ui
-import Image from "next/image"; // untuk favicon
-
+import { Button } from "@/components/ui/button-shadcn"; 
+import Image from "next/image"; 
+import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 type ToolFaviconGroupProps = {
   id: string;
   label: string;
@@ -37,7 +37,7 @@ export const ToolFaviconGroup = ({ id, label, description, tools, options }: Too
     <section className="rounded-2xl border p-6 space-y-4" id={id}>
       <div className="flex items-center justify-between">
         <div className="flex flex-col">
-          <h2 className=" md:text-2xl text-lg  font-bold">{label}</h2>
+          <AnimatedGradientText colorFrom="#84cc16" color="#22d3ee" className=" md:text-2xl text-lg  font-bold">{label}</AnimatedGradientText>
           {description && <p className="text-sm text-muted-foreground">{description}</p>}
         </div>
         {showViewAll && viewAllUrl && (
