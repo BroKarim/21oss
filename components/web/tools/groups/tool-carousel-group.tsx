@@ -44,7 +44,7 @@ export const ToolCarouselGroup = ({ label, description, tools }: ToolCarouselGro
   ];
 
   return (
-    <section className="w-full space-y-4 rounded-lg border p-3 md:p-4">
+    <section className="w-full max-w-full relative space-y-4 rounded-lg border p-3 md:p-4">
       {/* Header */}
       <div className="flex flex-col items-center text-center">
         <h2 className="text-lg md:text-2xl font-semibold">{label}</h2>

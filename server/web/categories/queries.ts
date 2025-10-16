@@ -192,7 +192,7 @@ export const findCategoriesWithChildren = async () => {
     title: cat.name,
     slug: cat.slug,
     icon: cat.name === "AI" ? "BotMessageSquare" : "AppWindowMac", // sementara statis
-    isActive: cat.name === "Programming",
+    isActive: cat.name === "AI",
     items: cat.subcategories.map((sub) => ({
       title: sub.name,
       url: `/categories/${cat.slug}#${sub.slug}`,

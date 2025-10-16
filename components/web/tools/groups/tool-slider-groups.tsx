@@ -1,7 +1,6 @@
-// components/groups/tool-slider-group.tsx
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // Asumsikan menggunakan shadcn/ui
 import { ToolMany } from "@/server/web/tools/payloads";
-import { ToolCard } from "../tool-card-2";
+import { ToolCard } from "../tool-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button-shadcn";
 

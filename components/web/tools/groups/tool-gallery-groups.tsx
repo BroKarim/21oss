@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { ToolMany } from "@/server/web/tools/payloads";
-import { ToolCard } from "../tool-card-2";
+import { ToolCard } from "../tool-card";
 import Link from "next/link";
 import { Button } from "@/components/ui/button-shadcn";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
