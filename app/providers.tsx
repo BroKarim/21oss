@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
 import { ArrowLeft } from "lucide-react";
-
+import { useMounted } from "@mantine/hooks";
 import { Button } from "@/components/ui/button-shadcn";
 import { MainLayout, sidebarOpenAtom } from "@/components/web/main-page/main-layout";
 import { InfoDialog } from "@/components/web/ui/info-dialog";
@@ -14,17 +14,19 @@ import { Footer } from "@/components/web/footer";
 export function AppProviders({ children, mainSidebar, adminSidebar }: { children: React.ReactNode; mainSidebar: React.ReactNode; adminSidebar: React.ReactNode }): React.ReactElement {
   const [open, setOpen] = useAtom(sidebarOpenAtom);
   const pathname = usePathname();
+  const isMounted = useMounted();
 
   const isAdmin = pathname.startsWith("/admin");
+  const showAdminUI = isMounted && isAdmin;
 
   return (
     <SidebarProvider defaultOpen={open} open={open} onOpenChange={setOpen}>
-      <Suspense fallback={null}>{isAdmin ? adminSidebar : mainSidebar}</Suspense>
+      <Suspense fallback={null}>{showAdminUI ? adminSidebar : mainSidebar}</Suspense>
       <SidebarInset>
         <MainLayout>
-          {!isAdmin && <Header />}
+          {!showAdminUI && <Header />}
           {children}
-          {!isAdmin && <Footer />}
+          {!showAdminUI && <Footer />}
         </MainLayout>
       </SidebarInset>
     </SidebarProvider>

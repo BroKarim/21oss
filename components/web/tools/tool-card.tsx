@@ -1,3 +1,5 @@
+'use client'
+
 import { formatNumber } from "@primoui/utils";
 import type { ComponentProps } from "react";
 import { GitFork, Star, Timer, ChevronLeft, ChevronRight } from "lucide-react";
