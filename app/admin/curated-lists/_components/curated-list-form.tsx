@@ -13,6 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Stack } from "@/components/ui/stack";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { slugify } from "@primoui/utils";
+import { useComputedField } from "@/hooks/use-computed-field";
 import { RelationSelector } from "@/components/admin/relation-selector";
 import { upsertCuratedList } from "@/server/admin/curated-list/actions";
 import { curatedListSchema } from "@/server/admin/curated-list/schema";
@@ -29,7 +31,7 @@ type CuratedListFormProps = ComponentProps<"form"> & {
 export function CuratedListForm({ className, title, curatedList, toolsPromise, ...props }: CuratedListFormProps) {
   const router = useRouter();
   const tools = use(toolsPromise);
-
+  
   const form = useForm({
     resolver: zodResolver(curatedListSchema),
     defaultValues: {
@@ -39,6 +41,14 @@ export function CuratedListForm({ className, title, curatedList, toolsPromise, .
       type: curatedList?.type ?? "gallery",
       tools: curatedList?.tools.map((t) => t.id) ?? [],
     },
+  });
+
+  useComputedField({
+    form,
+    sourceField: "title",
+    computedField: "url",
+    callback: slugify,
+    enabled: !curatedList,
   });
 
   const upsertAction = useServerAction(upsertCuratedList, {
