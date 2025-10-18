@@ -86,7 +86,7 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Share this section</DialogTitle>
+                <DialogTitle>Share</DialogTitle>
               </DialogHeader>
               <div className="flex items-center gap-2">
                 <Input readOnly value={fullLink} />
