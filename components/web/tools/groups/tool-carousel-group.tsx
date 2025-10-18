@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ToolMany } from "@/server/web/tools/payloads";
 import { Button } from "@/components/ui/button-shadcn";
 import { ChevronLeft, ChevronRight, Star, GitFork, Timer, ExternalLink, Github, Link as LinkIcon, Copy, Check } from "lucide-react";
@@ -47,7 +47,13 @@ export const ToolCarouselGroup = ({ label, description, tools, id }: ToolCarouse
   ];
 
   const [copied, setCopied] = useState(false);
-  const fullLink = `${typeof window !== "undefined" ? window.location.origin : ""}/#${id}`;
+  const [fullLink, setFullLink] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setFullLink(`${window.location.origin}/home?slug=${id}`);
+    }
+  }, [id]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(fullLink);

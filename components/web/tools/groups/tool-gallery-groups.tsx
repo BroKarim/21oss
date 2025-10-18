@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ToolMany } from "@/server/web/tools/payloads";
 import { ToolCard } from "../tool-card";
 import Link from "next/link";
@@ -33,14 +33,19 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
   const displayedTools = tools.slice(0, visibleCount);
 
   const [copied, setCopied] = useState(false);
-  const fullLink = `${typeof window !== "undefined" ? window.location.origin : ""}/#${id}`;
+  const [fullLink, setFullLink] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setFullLink(`${window.location.origin}/home?slug=${id}`);
+    }
+  }, [id]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(fullLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
-
 
   if (!displayedTools.length) {
     return (

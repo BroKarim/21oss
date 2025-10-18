@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // Asumsikan menggunakan shadcn/ui
 import { ToolMany } from "@/server/web/tools/payloads";
 import { ToolCard } from "../tool-card";
@@ -28,7 +28,13 @@ export const ToolSliderGroup = ({ id, label, tools, options, description }: Tool
 
   const displayedTools = showScroll ? tools : tools.slice(0, 4);
   const [copied, setCopied] = useState(false);
-  const fullLink = `${typeof window !== "undefined" ? window.location.origin : ""}/#${id}`;
+  const [fullLink, setFullLink] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setFullLink(`${window.location.origin}/home?slug=${id}`);
+    }
+  }, [id]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(fullLink);
