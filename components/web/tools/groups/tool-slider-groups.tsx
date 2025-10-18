@@ -1,9 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // Asumsikan menggunakan shadcn/ui
 import { ToolMany } from "@/server/web/tools/payloads";
 import { ToolCard } from "../tool-card";
 import Link from "next/link";
+import { Link as LinkIcon, Copy, Check } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button-shadcn";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
+import { Input } from "@/components/ui/input";
 
 type ToolSliderGroupProps = {
   id: string;
@@ -21,6 +27,14 @@ export const ToolSliderGroup = ({ id, label, tools, options, description }: Tool
   const { showScroll = false, showViewAll = false, viewAllUrl } = options;
 
   const displayedTools = showScroll ? tools : tools.slice(0, 4);
+  const [copied, setCopied] = useState(false);
+  const fullLink = `${typeof window !== "undefined" ? window.location.origin : ""}/#${id}`;
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(fullLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
 
   if (!displayedTools.length) {
     return (
@@ -43,11 +57,32 @@ export const ToolSliderGroup = ({ id, label, tools, options, description }: Tool
 
   return (
     <section className="w-full  max-w-full space-y-4 border  p-2 rounded-lg overflow-hidden">
-      <div className="flex flex-col items-start max-w-md space-y-2 justify-between">
-        <AnimatedGradientText speed={2} colorFrom="#8b5cf6" colorTo="#ec4899" className="md:text-2xl font-bold text-lg">
-          {label}
-        </AnimatedGradientText>
-        {description && <p className="text-sm text-muted-foreground">{description}</p>}
+      <div className="w-full flex justify-between md:items-center md:flex-row flex-col gap-2">
+        <div className="flex flex-col items-start max-w-md space-y-2 justify-between">
+          <AnimatedGradientText speed={2} colorFrom="#8b5cf6" colorTo="#ec4899" className="md:text-2xl font-bold text-lg">
+            {label}
+          </AnimatedGradientText>
+          {description && <p className="text-sm text-muted-foreground">{description}</p>}
+        </div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm" className="flex items-center gap-1">
+              <LinkIcon className="h-4 w-4" />
+              Share
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Share this section</DialogTitle>
+            </DialogHeader>
+            <div className="flex items-center gap-2">
+              <Input readOnly value={fullLink} />
+              <Button variant="secondary" size="icon" onClick={handleCopy}>
+                {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="w-full">

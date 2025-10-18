@@ -1,5 +1,5 @@
 import type { CuratedList } from "@prisma/client";
-import { createSearchParamsCache, parseAsString, parseAsInteger,   parseAsStringEnum } from "nuqs/server";
+import { createSearchParamsCache, parseAsString, parseAsInteger, parseAsStringEnum } from "nuqs/server";
 import { z } from "zod";
 import { getSortingStateParser } from "@/lib/parsers";
 
@@ -20,7 +20,7 @@ export type CuratedListsTableSchema = Awaited<ReturnType<typeof curatedListsTabl
 export const curatedListSchema = z.object({
   id: z.string().optional(),
   title: z.string().min(1, "Title is required"),
-  url: z.string().optional(),
+  url: z.string().min(1, "URL is required"),
   description: z.string().optional(),
   type: z.enum(["gallery", "favicon", "slider", "carousel"]).default("gallery"),
   tools: z.array(z.string()).optional(),

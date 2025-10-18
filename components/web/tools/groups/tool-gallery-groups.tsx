@@ -4,7 +4,10 @@ import { useState } from "react";
 import { ToolMany } from "@/server/web/tools/payloads";
 import { ToolCard } from "../tool-card";
 import Link from "next/link";
+import { Link as LinkIcon, Copy, Check } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button-shadcn";
+import { Input } from "@/components/ui/input";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { cx } from "@/lib/utils";
@@ -28,6 +31,16 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
   const [visibleCount, setVisibleCount] = useState(6);
 
   const displayedTools = tools.slice(0, visibleCount);
+
+  const [copied, setCopied] = useState(false);
+  const fullLink = `${typeof window !== "undefined" ? window.location.origin : ""}/#${id}`;
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(fullLink);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
 
   if (!displayedTools.length) {
     return (
@@ -57,18 +70,32 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
             <GlowingEffect spread={40} glow proximity={64} inactiveZone={0.01} borderWidth={3} />
           </div>
         )}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center mb-4 justify-between gap-2">
+        <div className="flex flex-col sm:flex-row  sm:items-center mb-4 justify-between gap-2">
           <div className="flex flex-col max-w-lg">
             <AnimatedGradientText speed={2} colorFrom="#4ade80" colorTo="#06b6d4" className="md:text-2xl text-lg font-bold ">
               {label}
             </AnimatedGradientText>
             {description && <p className="text-sm text-muted-foreground">{description}</p>}
           </div>
-          {showViewAll && viewAllUrl && (
-            <Button asChild variant="outline">
-              <Link href={viewAllUrl}>View All</Link>
-            </Button>
-          )}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <LinkIcon className="h-4 w-4" />
+                Share
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Share this section</DialogTitle>
+              </DialogHeader>
+              <div className="flex items-center gap-2">
+                <Input readOnly value={fullLink} />
+                <Button variant="secondary" size="icon" onClick={handleCopy}>
+                  {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         <div className="w-full max-w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-hidden">

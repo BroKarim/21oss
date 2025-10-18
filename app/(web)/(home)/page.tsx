@@ -22,7 +22,7 @@ export default async function Page() {
     },
     // Dynamic sections from curated lists
     ...curatedLists.map((curatedList) => ({
-      id: curatedList.id,
+      id: curatedList.url,
       label: curatedList.title,
       description: curatedList.description ?? undefined,
       type: curatedList.type as "slider" | "favicon" | "gallery" | "carousel",
@@ -42,10 +42,8 @@ export default async function Page() {
         <WidgetBanner />
         <div className="space-y-10 overflow-x-hidden">
           {sections.map((section, idx) => (
-            <div key={section.id} className="w-full max-w-full overflow-hidden">
+            <div key={section.id} id={section.id} className="w-full max-w-full overflow-hidden">
               <LazySection section={section} />
-
-              {/* sisipkan iklan setiap 3 section */}
               {(idx + 1) % 3 === 0 && idx < sections.length - 1 && (
                 <div key={`ad-banner-${idx}`}>
                   <AdBanner />

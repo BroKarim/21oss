@@ -4,6 +4,7 @@ import { ToolManyPayload } from "../tools/payloads";
 export const CuratedListPayload = Prisma.validator<Prisma.CuratedListSelect>()({
   id: true,
   title: true,
+  url: true,
   description: true,
   type: true,
   createdAt: true,
