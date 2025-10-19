@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"; // Asumsikan menggunakan shadcn/ui
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ToolMany } from "@/server/web/tools/payloads";
 import { ToolCard } from "../tool-card";
 import Link from "next/link";

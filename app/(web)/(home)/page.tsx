@@ -1,52 +1,52 @@
 import { cn } from "@/lib/utils";
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import WidgetBanner from "@/components/web/ui/banner";
 import LazySection from "@/components/web/lazy-section";
 import { AdBanner } from "@/components/web/ads/ad-banner";
 import { getCuratedLists } from "@/server/web/curated-lists/actions";
 import { getRecentTools } from "@/server/web/tools/actions";
 import ScrollToSlug from "@/components/web/scroll-to-slug";
-import { db } from "@/services/db";
+// import { db } from "@/services/db";
 
-export async function generateMetadata(props: { searchParams?: Promise<{ slug?: string }> }): Promise<Metadata> {
-  const searchParams = await props.searchParams;
-  const slug = searchParams?.slug;
+// export async function generateMetadata(props: { searchParams?: Promise<{ slug?: string }> }): Promise<Metadata> {
+//   const searchParams = await props.searchParams;
+//   const slug = searchParams?.slug;
 
-  if (!slug) {
-    return {
-      title: "Awesome Tools — Curated Collections",
-      description: "Discover open-source and startup-friendly tools curated by our community.",
-    };
-  }
+//   if (!slug) {
+//     return {
+//       title: "Awesome Tools — Curated Collections",
+//       description: "Discover open-source and startup-friendly tools curated by our community.",
+//     };
+//   }
 
-  const curatedList = await db.curatedList.findUnique({
-    where: { url: slug },
-    select: { title: true, description: true },
-  });
+//   const curatedList = await db.curatedList.findUnique({
+//     where: { url: slug },
+//     select: { title: true, description: true },
+//   });
 
-  if (!curatedList) {
-    return {
-      title: "Awesome Tools — Curated Collections",
-      description: "Discover open-source and startup-friendly tools curated by our community.",
-    };
-  }
+//   if (!curatedList) {
+//     return {
+//       title: "Awesome Tools — Curated Collections",
+//       description: "Discover open-source and startup-friendly tools curated by our community.",
+//     };
+//   }
 
-  return {
-    title: curatedList.title,
-    description: curatedList.description ?? "Explore this curated list of open source tools.",
-    openGraph: {
-      title: curatedList.title,
-      description: curatedList.description ?? "Explore this curated list of open source tools.",
-      images: [`/opengraph-image?slug=${slug}`],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: curatedList.title,
-      description: curatedList.description ?? "Explore this curated list of open source tools.",
-      images: [`/opengraph-image?slug=${slug}`],
-    },
-  };
-}
+//   return {
+//     title: curatedList.title,
+//     description: curatedList.description ?? "Explore this curated list of open source tools.",
+//     openGraph: {
+//       title: curatedList.title,
+//       description: curatedList.description ?? "Explore this curated list of open source tools.",
+//       images: [`/opengraph-image?slug=${slug}`],
+//     },
+//     twitter: {
+//       card: "summary_large_image",
+//       title: curatedList.title,
+//       description: curatedList.description ?? "Explore this curated list of open source tools.",
+//       images: [`/opengraph-image?slug=${slug}`],
+//     },
+//   };
+// }
 
 export default async function Page() {
   const curatedLists = await getCuratedLists();

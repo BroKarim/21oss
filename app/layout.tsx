@@ -14,6 +14,7 @@ import { UserSidebar } from "@/components/web/user-sidebar";
 export const metadata: Metadata = {
   title: siteConfig.name,
   description: siteConfig.description,
+  metadataBase: new URL("https://21oss.com"),
   authors: [
     {
       name: "brokariim",

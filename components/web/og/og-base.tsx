@@ -2,13 +2,15 @@ import { getExcerpt } from "@primoui/utils";
 import type { PropsWithChildren } from "react";
 import { LogoSymbol } from "@/components/ui/logo-symbol-2";
 import { config } from "@/config";
+import { Favicon } from "@/components/ui/favicon";
 
 type OgBaseProps = PropsWithChildren<{
   name: string;
   description: string | null;
+  tools?: { faviconUrl: string | null; name: string }[];
 }>;
 
-export const OgBase = ({ name, description, children }: OgBaseProps) => {
+export const OgBase = ({ name, description, children, tools }: OgBaseProps) => {
   return (
     <div
       style={{
@@ -43,12 +45,37 @@ export const OgBase = ({ name, description, children }: OgBaseProps) => {
           backgroundImage: "linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.05))",
         }}
       >
+        {/* Title */}
         <div style={{ display: "flex", alignItems: "center", gap: "24" }}>
           <p style={{ fontSize: "3.4rem", fontFamily: "GeistBold", lineHeight: "1.05" }}>{name}</p>
 
           {children}
         </div>
-
+        {/* Tool Favicons */}
+        {tools && tools.length > 0 && (
+          <div
+            style={{
+              display: "flex",
+              gap: "0.6rem",
+              flexWrap: "wrap",
+              alignItems: "center",
+              marginBottom: "2rem",
+            }}
+          >
+            {tools.slice(0, 6).map((tool, idx) => (
+              <div
+                key={idx}
+                style={{
+                  marginLeft: idx === 0 ? "0" : "-0.5rem",
+                  zIndex: idx,
+                }}
+              >
+                <Favicon src={tool.faviconUrl} title={tool.name} className="size-5 rounded-md border border-gray-200 p-[1px]" />
+              </div>
+            ))}
+          </div>
+        )}
+        {/* Description */}
         <p
           style={{
             fontSize: "2.8rem",
@@ -60,7 +87,7 @@ export const OgBase = ({ name, description, children }: OgBaseProps) => {
         >
           {getExcerpt(description, 125)}
         </p>
-
+        {/* Footer */}
         <div
           style={{
             marginTop: "auto",
