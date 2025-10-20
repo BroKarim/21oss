@@ -6,47 +6,82 @@ import { AdBanner } from "@/components/web/ads/ad-banner";
 import { getCuratedLists } from "@/server/web/curated-lists/actions";
 import { getRecentTools } from "@/server/web/tools/actions";
 import ScrollToSlug from "@/components/web/scroll-to-slug";
-// import { db } from "@/services/db";
+import { db } from "@/services/db";
+import type { Metadata } from "next";
+import { siteConfig } from "@/config/site";
 
-// export async function generateMetadata(props: { searchParams?: Promise<{ slug?: string }> }): Promise<Metadata> {
-//   const searchParams = await props.searchParams;
-//   const slug = searchParams?.slug;
+type PageProps = {
+  searchParams?: { slug?: string };
+};
 
-//   if (!slug) {
-//     return {
-//       title: "Awesome Tools — Curated Collections",
-//       description: "Discover open-source and startup-friendly tools curated by our community.",
-//     };
-//   }
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const slug = searchParams?.slug;
 
-//   const curatedList = await db.curatedList.findUnique({
-//     where: { url: slug },
-//     select: { title: true, description: true },
-//   });
+  if (!slug) {
+    return {
+      title: "Home",
+      description: siteConfig.description,
+      openGraph: {
+        title: "Home",
+        description: siteConfig.description,
+        url: `${siteConfig.url}/home`, // URL halaman home
+        images: [
+          {
+            url: siteConfig.ogImage,
+            width: 1200,
+            height: 630,
+            alt: siteConfig.name,
+          },
+        ],
+      },
+    };
+  }
 
-//   if (!curatedList) {
-//     return {
-//       title: "Awesome Tools — Curated Collections",
-//       description: "Discover open-source and startup-friendly tools curated by our community.",
-//     };
-//   }
+  const curatedList = await db.curatedList.findUnique({
+    where: { url: slug },
+    select: { title: true, description: true },
+  });
 
-//   return {
-//     title: curatedList.title,
-//     description: curatedList.description ?? "Explore this curated list of open source tools.",
-//     openGraph: {
-//       title: curatedList.title,
-//       description: curatedList.description ?? "Explore this curated list of open source tools.",
-//       images: [`/opengraph-image?slug=${slug}`],
-//     },
-//     twitter: {
-//       card: "summary_large_image",
-//       title: curatedList.title,
-//       description: curatedList.description ?? "Explore this curated list of open source tools.",
-//       images: [`/opengraph-image?slug=${slug}`],
-//     },
-//   };
-// }
+  if (!curatedList) {
+    return {
+      title: "Not Found",
+      description: "This list could not be found.",
+    };
+  }
+
+  const title = curatedList.title;
+  const description = curatedList.description ?? "Explore this curated list of open source tools.";
+
+  const ogImageUrl = new URL(
+    `/home/opengraph-image?slug=${slug}`,
+    siteConfig.url // 'https://www.21oss.com'
+  );
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `${siteConfig.url}/home?slug=${slug}`,
+      images: [
+        {
+          url: ogImageUrl.toString(),
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [ogImageUrl.toString()],
+    },
+  };
+}
 
 export default async function Page() {
   const curatedLists = await getCuratedLists();
