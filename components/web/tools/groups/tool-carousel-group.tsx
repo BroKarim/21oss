@@ -51,7 +51,7 @@ export const ToolCarouselGroup = ({ label, description, tools, id }: ToolCarouse
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setFullLink(`${window.location.origin}/home?slug=${id}`);
+      setFullLink(`${window.location.origin}/ho?slug=${id}`);
     }
   }, [id]);
 

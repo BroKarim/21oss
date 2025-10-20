@@ -15,7 +15,8 @@ type PageProps = {
 };
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
-  const slug = searchParams?.slug;
+  const params = await searchParams;
+  const slug = params?.slug;
 
   if (!slug) {
     return {
@@ -24,7 +25,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
       openGraph: {
         title: "Home",
         description: siteConfig.description,
-        url: `${siteConfig.url}/home`, // URL halaman home
+        url: `${siteConfig.url}`,
         images: [
           {
             url: siteConfig.ogImage,
@@ -52,10 +53,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   const title = curatedList.title;
   const description = curatedList.description ?? "Explore this curated list of open source tools.";
 
-  const ogImageUrl = new URL(
-    `/home/opengraph-image?slug=${slug}`,
-    siteConfig.url // 'https://www.21oss.com'
-  );
+  const ogImageUrl = new URL(`/opengraph-image?slug=${slug}`, siteConfig.url);
 
   return {
     title,
@@ -64,7 +62,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
       title,
       description,
       type: "website",
-      url: `${siteConfig.url}/home?slug=${slug}`,
+      url: `${siteConfig.url}/?slug=${slug}`,
       images: [
         {
           url: ogImageUrl.toString(),
