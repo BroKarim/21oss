@@ -32,7 +32,7 @@ export const ToolSliderGroup = ({ id, label, tools, options, description }: Tool
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setFullLink(`${window.location.origin}/?slug=${id}`);
+      setFullLink(`${window.location.origin}/list/${id}`);
     }
   }, [id]);
 

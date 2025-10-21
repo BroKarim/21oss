@@ -1,11 +1,15 @@
 "use client";
-
 import { useEffect } from "react";
 
 export default function ScrollToSlug() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const slug = params.get("slug");
+    let slug = params.get("slug");
+
+    if (!slug && window.location.hash) {
+      slug = window.location.hash.replace("#", "");
+    }
+
     if (slug) {
       setTimeout(() => {
         const el = document.getElementById(slug);

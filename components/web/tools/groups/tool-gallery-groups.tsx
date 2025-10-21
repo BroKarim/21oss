@@ -37,7 +37,7 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      setFullLink(`${window.location.origin}/?slug=${id}`);
+      setFullLink(`${window.location.origin}/list/${id}`);
     }
   }, [id]);
 
