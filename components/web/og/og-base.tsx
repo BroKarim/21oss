@@ -1,7 +1,6 @@
 import { getExcerpt } from "@primoui/utils";
 import type { PropsWithChildren } from "react";
 import { config } from "@/config";
-import { Favicon } from "@/components/ui/favicon";
 
 type OgBaseProps = PropsWithChildren<{
   name: string;
@@ -68,11 +67,14 @@ export const OgBase = ({ name, description, children, tools }: OgBaseProps) => {
                 style={{
                   marginLeft: idx === 0 ? "0" : "-0.5rem",
                   zIndex: idx,
+                  display: "flex",
                 }}
               >
-                <Favicon
-                  src={tool.faviconUrl}
-                  title={tool.name}
+                <img
+                  src={tool.faviconUrl ?? "https://www.google.com/s2/favicons?sz=96&domain_url=21oss.com"}
+                  alt=""
+                  width={92}
+                  height={92}
                   style={{
                     width: "20px",
                     height: "20px",
