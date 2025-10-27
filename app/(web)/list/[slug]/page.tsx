@@ -1,14 +1,17 @@
-import { db } from "@/services/db";
 import type { Metadata } from "next";
-import { siteConfig } from "@/config/site";
 import { notFound, redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { db } from "@/services/db";
+import { siteConfig } from "@/config/site";
 
 type PageProps = {
-  params: Promise<{ slug?: string }>;
+  params: { slug: string };
 };
 
+const BOT_AGENTS = ["Twitterbot", "facebookexternalhit", "LinkedInBot", "Pinterest", "Discordbot", "Threads"];
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug } = params;
   if (!slug) notFound();
 
   const curatedList = await db.curatedList.findUnique({
@@ -50,6 +53,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CuratedListRedirectPage({ params }: PageProps) {
   const { slug } = await params;
+
+  const headersList = await headers();
+  const userAgent = headersList.get("user-agent") || "";
+  const isBot = BOT_AGENTS.some((agent) => userAgent.includes(agent));
+
+  if (isBot) {
+    return (
+      <main>
+        <h1>{params.slug}</h1>
+        <p>Loading curated list...</p>
+      </main>
+    );
+  }
+
   redirect(`/#${slug}`);
-  return null;
 }
