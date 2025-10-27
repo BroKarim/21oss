@@ -21,6 +21,13 @@ export default async function Image({ params }: PageProps) {
     select: {
       title: true,
       description: true,
+      tools: {
+        select: {
+          name: true,
+          faviconUrl: true,
+        },
+        take: 6,
+      },
     },
   });
 
@@ -28,7 +35,7 @@ export default async function Image({ params }: PageProps) {
     notFound();
   }
 
-  return new ImageResponse(<OgBase name={curatedList.title} description={curatedList.description ?? "Explore this curated list of open source tools."} />, {
+  return new ImageResponse(<OgBase name={curatedList.title} description={curatedList.description ?? "Explore this curated list of open source tools."} tools={curatedList.tools} />, {
     width: 1200,
     height: 630,
   });

@@ -1,6 +1,5 @@
 import { getExcerpt } from "@primoui/utils";
 import type { PropsWithChildren } from "react";
-import { LogoSymbol } from "@/components/ui/logo-symbol-2";
 import { config } from "@/config";
 import { Favicon } from "@/components/ui/favicon";
 
@@ -9,6 +8,8 @@ type OgBaseProps = PropsWithChildren<{
   description: string | null;
   tools?: { faviconUrl: string | null; name: string }[];
 }>;
+
+const LogoImg = ({ style }: { style: React.CSSProperties }) => <img src="https://www.google.com/s2/favicons?sz=96&domain_url=21oss.com" alt="logo" style={style} />;
 
 export const OgBase = ({ name, description, children, tools }: OgBaseProps) => {
   return (
@@ -20,10 +21,9 @@ export const OgBase = ({ name, description, children, tools }: OgBaseProps) => {
         justifyContent: "center",
         backgroundColor: "#fafafa",
         color: "#1F1F1F",
-        fontFamily: "Geist",
       }}
     >
-      <LogoSymbol
+      <LogoImg
         style={{
           height: "36em",
           width: "36em",
@@ -47,7 +47,7 @@ export const OgBase = ({ name, description, children, tools }: OgBaseProps) => {
       >
         {/* Title */}
         <div style={{ display: "flex", alignItems: "center", gap: "24" }}>
-          <p style={{ fontSize: "3.4rem", fontFamily: "GeistBold", lineHeight: "1.05" }}>{name}</p>
+          <p style={{ fontSize: "3.4rem", lineHeight: "1.05" }}>{name}</p>
 
           {children}
         </div>
@@ -70,7 +70,17 @@ export const OgBase = ({ name, description, children, tools }: OgBaseProps) => {
                   zIndex: idx,
                 }}
               >
-                <Favicon src={tool.faviconUrl} title={tool.name} className="size-5 rounded-md border border-gray-200 p-[1px]" />
+                <Favicon
+                  src={tool.faviconUrl}
+                  title={tool.name}
+                  style={{
+                    width: "20px",
+                    height: "20px",
+                    borderRadius: "6px",
+                    border: "1px solid #e5e7eb",
+                    padding: "1px",
+                  }}
+                />
               </div>
             ))}
           </div>
@@ -105,7 +115,7 @@ export const OgBase = ({ name, description, children, tools }: OgBaseProps) => {
               fontSize: "2rem",
             }}
           >
-            <LogoSymbol style={{ height: "1.25em", width: "1.25em" }} />
+            <LogoImg style={{ height: "1.25em", width: "1.25em" }} />
             <span>{config.site.name}</span>
           </div>
 
