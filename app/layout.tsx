@@ -10,7 +10,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { UserSidebar } from "@/components/web/user-sidebar";
-
+import { Search } from "@/components/ui/search";
 export const metadata: Metadata = {
   title: siteConfig.name,
   description: siteConfig.description,
@@ -63,6 +63,7 @@ export default function RootLayout({
             <SearchProvider>
               <AppProviders mainSidebar={<UserSidebar />} adminSidebar={<AdminSidebar />}>
                 {children}
+                <Search />
               </AppProviders>
             </SearchProvider>
           </NuqsAdapter>

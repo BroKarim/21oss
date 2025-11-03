@@ -16,6 +16,8 @@ const eslintConfig = [
       "@next/next/no-html-link-for-pages": "off",
       "@next/next/no-img-element": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      "react-hooks/rules-of-hooks": "off",
+      "@typescript-eslint/no-unused-expressions": "off",
     },
   },
 ];

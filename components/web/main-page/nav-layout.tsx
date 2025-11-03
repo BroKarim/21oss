@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarHeader, SidebarRail, SidebarFooter } fr
 import { AdSlot, RippleFilter } from "@/components/web/ads/ad-slot";
 import { MainSidebarProps } from "@/types/sidebar";
 import { findCategoriesWithChildren } from "@/server/web/categories/queries";
-
+import { SearchTrigger } from "./search-trigger";
 const data = {
   navMain: [
     {
@@ -34,6 +34,7 @@ export async function NavLayout({ ad, ...props }: MainSidebarProps) {
         <NavLogo />
       </SidebarHeader>
       <SidebarContent>
+        <SearchTrigger />
         <NavMain items={data.navMain} />
         <NavSecondary items={items} />
       </SidebarContent>

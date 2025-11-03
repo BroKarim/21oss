@@ -1,52 +1,63 @@
 "use server";
 
+import { createServerAction } from "zsa";
+import { z } from "zod";
 import { db } from "@/services/db";
 
-export async function searchItems(query: string) {
-  if (!query || query.trim() === "") return { tools: [], curatedLists: [] };
+export const searchItems = createServerAction()
+  .input(
+    z.object({
+      query: z.string().min(1),
+    })
+  )
+  .handler(async ({ input }) => {
+    const { query } = input;
 
-  // Cari Tools
-  const tools = await db.tool.findMany({
-    where: {
-      OR: [{ name: { contains: query, mode: "insensitive" } }, { tagline: { contains: query, mode: "insensitive" } }, { description: { contains: query, mode: "insensitive" } }],
-      status: "Published",
-    },
-    take: 10,
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      tagline: true,
-      faviconUrl: true,
-      screenshotUrl: true,
-      websiteUrl: true,
-    },
-  });
+    if (!query || query.trim() === "") {
+      return { tools: [], curatedLists: [] };
+    }
 
-  // Cari CuratedList
-  const curatedLists = await db.curatedList.findMany({
-    where: {
-      OR: [
-        { title: { contains: query, mode: "insensitive" } },
-        { description: { contains: query, mode: "insensitive" } },
-        {
-          tools: {
-            some: {
-              name: { contains: query, mode: "insensitive" },
+    const searchQuery = query.trim();
+
+    // Cari Tools
+    const tools = await db.tool.findMany({
+      where: {
+        OR: [{ name: { contains: searchQuery, mode: "insensitive" } }, { tagline: { contains: searchQuery, mode: "insensitive" } }, { description: { contains: searchQuery, mode: "insensitive" } }],
+        status: "Published",
+      },
+      take: 10,
+      select: {
+        slug: true,
+        name: true,
+        tagline: true,
+        websiteUrl: true,
+        faviconUrl: true,
+      },
+    });
+
+    // Cari CuratedList
+    const curatedLists = await db.curatedList.findMany({
+      where: {
+        OR: [
+          { title: { contains: searchQuery, mode: "insensitive" } },
+          { description: { contains: searchQuery, mode: "insensitive" } },
+          {
+            tools: {
+              some: {
+                name: { contains: searchQuery, mode: "insensitive" },
+              },
             },
           },
-        },
-      ],
-    },
-    take: 10,
-    select: {
-      id: true,
-      title: true,
-      url: true,
-      description: true,
-      type: true,
-    },
-  });
+        ],
+      },
+      take: 10,
+      select: {
+        url: true,
+        title: true,
+        description: true,
+        type: true,
+      },
+    });
 
-  return { tools, curatedLists };
-}
+    return { tools, curatedLists };
+  });
