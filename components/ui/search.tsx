@@ -29,7 +29,7 @@ const SearchResults = <T extends { slug: string }>({ name, items, onItemSelect, 
   return (
     <CommandGroup heading={name}>
       {items.map((item) => (
-        <CommandItem key={item.slug} value={`${name.toLowerCase()}:${item.slug}`} onSelect={() => onItemSelect(getHref(item))}>
+        <CommandItem key={`${name}-${item.slug}`} value={`${name.toLowerCase()}:${item.slug}`} onSelect={() => onItemSelect(getHref(item))}>
           {renderItemDisplay(item)}
         </CommandItem>
       ))}
@@ -120,9 +120,8 @@ export const Search = () => {
     commandSections.push({
       name: "Quick Links",
       items: [
-        { label: "Tools", path: "/" },
-        { label: "Alternatives", path: "/alternatives" },
-        { label: "Categories", path: "/categories" },
+        { label: "Categories", path: "/categories/ai#agents-and-automation" },
+        { label: "Curated List", path: "/list/recent" },
       ],
     });
   }
@@ -159,9 +158,11 @@ export const Search = () => {
 
   return (
     <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange}>
-      <CommandInput placeholder="Type to search..." onValueChange={setQuery} className="pr-10">
-        {isPending && <Loader2 className="right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />}
-      </CommandInput>
+      <div className="relative">
+        <CommandInput placeholder="Type to search..." onValueChange={setQuery} className="pr-10" />
+        {isPending && <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />}
+      </div>
+
       {hasQuery && !isPending && <CommandEmpty>No results found. Please try a different query.</CommandEmpty>}
 
       <CommandList ref={listRef}>
@@ -212,7 +213,6 @@ export const Search = () => {
           )}
         />
       </CommandList>
-      {!!results && <div className="px-3 py-2 text-[10px] text-muted-foreground/50 border-t">Found {(results.tools?.length || 0) + (results.curatedLists?.length || 0)} results</div>}
     </CommandDialog>
   );
 };
