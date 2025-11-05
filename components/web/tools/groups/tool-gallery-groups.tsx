@@ -68,16 +68,16 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
   };
 
   return (
-    <section id={id} className={cx("w-full max-w-full space-y-4 border-[0.75px] relative border-border rounded-[1.5rem] p-1 md:p-2 overflow-hidden", className)}>
-      <div className="border-none md:border-[0.75px] md:rounded-[1.5rem] md:p-4 lg:p-4 overflow-hidden">
+    <section id={id} className={cx("w-full space-y-4 border-[0.75px] relative border-border rounded-[1.5rem] p-1 md:p-2", className)}>
+      <div className="border-none md:border-[0.75px] md:rounded-[1.5rem] md:p-4 lg:p-4">
         {showGlowingEffect && (
           <div className="hidden md:block">
             <GlowingEffect spread={40} glow proximity={64} inactiveZone={0.01} borderWidth={3} />
           </div>
         )}
-        <div className="flex flex-col sm:flex-row  sm:items-center mb-4 justify-between gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center mb-4 justify-between gap-2">
           <div className="flex flex-col max-w-lg">
-            <AnimatedGradientText speed={2} colorFrom="#4ade80" colorTo="#06b6d4" className="md:text-2xl text-lg font-bold ">
+            <AnimatedGradientText speed={2} colorFrom="#4ade80" colorTo="#06b6d4" className="md:text-2xl text-lg font-bold">
               {label}
             </AnimatedGradientText>
             {description && <p className="text-sm text-muted-foreground">{description}</p>}
@@ -103,10 +103,10 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
           </Dialog>
         </div>
 
-        <div className="w-full max-w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 overflow-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {displayedTools.map((tool, index) => (
-            <div key={tool.id} className="w-full min-w-0 overflow-hidden" style={{ order: index }}>
-              <div className="w-full max-w-full overflow-hidden md:px-0 px-2">
+            <div key={tool.id} className="min-w-0" style={{ order: index }}>
+              <div className="md:px-0 px-2">
                 <ToolCard tool={tool} />
               </div>
             </div>

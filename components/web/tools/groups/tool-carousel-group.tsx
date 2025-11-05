@@ -61,10 +61,10 @@ export const ToolCarouselGroup = ({ label, description, tools, id }: ToolCarouse
     setTimeout(() => setCopied(false), 1500);
   };
   return (
-    <section className="w-full max-w-full relative space-y-4 rounded-lg border p-3 md:p-4">
+    <section className="relative space-y-4 rounded-lg border p-3 md:p-4">
       {/* Header */}
-      <div className="w-full flex justify-between md:items-center md:flex-row flex-col">
-        <div className="flex flex-col ">
+      <div className="flex justify-between md:items-center md:flex-row flex-col">
+        <div className="flex flex-col">
           <AnimatedGradientText className="text-lg md:text-2xl font-semibold">{label}</AnimatedGradientText>
           {description && <p className="text-xs md:text-sm text-muted-foreground max-w-md">{description}</p>}
         </div>
@@ -90,12 +90,7 @@ export const ToolCarouselGroup = ({ label, description, tools, id }: ToolCarouse
       </div>
 
       {/* Unified Layout */}
-      <div
-        ref={containerRef}
-        className={cn("relative flex flex-col md:flex-row items-stretch gap-4 md:gap-6 rounded-lg overflow-hidden", "transition-all duration-300")}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-      >
+      <div ref={containerRef} className={cn("relative flex flex-col md:flex-row items-stretch gap-4 md:gap-6 rounded-lg", "transition-all duration-300")} onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
         <div className="relative w-full md:w-1/2 h-52 md:h-[33vh] rounded-lg overflow-hidden group">
           <ComponentPreviewImage src={primaryImage} alt={`${currentTool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover" priority={false} />
 
@@ -115,15 +110,15 @@ export const ToolCarouselGroup = ({ label, description, tools, id }: ToolCarouse
           )}
         </div>
 
-        <div className="flex-1 flex flex-col justify-between space-y-3">
-          <div className="flex items-center gap-2">
-            <Favicon src={currentTool.faviconUrl} title={currentTool.name} className="size-6 md:size-8 p-1 rounded-md" />
+        <div className="flex-1 flex flex-col justify-between space-y-3 min-w-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <Favicon src={currentTool.faviconUrl} title={currentTool.name} className="size-6 md:size-8 p-1 rounded-md shrink-0" />
             <h3 className="text-base md:text-lg font-semibold truncate">{currentTool.name}</h3>
           </div>
 
           <p className="text-xs md:text-sm text-foreground/80 line-clamp-3">{currentTool.description || currentTool.tagline}</p>
 
-          <div>
+          <div className="min-w-0">
             <p className="text-xs font-medium text-foreground/60 mb-1">Tech Stack</p>
             <div className="flex flex-wrap gap-2">
               <ToolStacks stacks={currentTool.stacks} />

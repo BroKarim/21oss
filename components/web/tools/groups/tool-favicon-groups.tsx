@@ -52,10 +52,10 @@ export const ToolFaviconGroup = ({ id, label, description, tools, options }: Too
   }
 
   return (
-    <section className="rounded-2xl border p-6 space-y-4" id={id}>
+    <section className="rounded-2xl border p-6 space-y-4 md:mb-2" id={id}>
       <div className="flex md:items-center justify-between md:flex-row flex-col gap-2">
         <div className="flex flex-col">
-          <AnimatedGradientText colorFrom="#84cc16" color="#22d3ee" className=" md:text-2xl text-lg  font-bold">
+          <AnimatedGradientText colorFrom="#84cc16" color="#22d3ee" className="md:text-2xl text-lg font-bold">
             {label}
           </AnimatedGradientText>
           {description && <p className="text-sm text-muted-foreground">{description}</p>}
@@ -81,13 +81,13 @@ export const ToolFaviconGroup = ({ id, label, description, tools, options }: Too
         </Dialog>
       </div>
 
-      <div className="grid md:grid-cols-4 grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {tools.map((tool) => (
-          <Link key={tool.id} href={`/${tool.slug}`} className="flex items-center gap-3 p-2 rounded-lg transition hover:bg-accent">
-            <Image src={tool.faviconUrl || "/placeholder.svg"} alt={`${tool.name} favicon`} width={48} height={48} className="rounded-sm border" />
-            <div className="flex flex-col">
-              <h3 className="text-sm font-medium leading-tight">{tool.name}</h3>
-              {tool.platforms?.length ? <p className="text-xs text-muted-foreground">{tool.platforms.map((p) => p.name).join(", ")}</p> : null}
+          <Link key={tool.id} href={`/${tool.slug}`} className="flex items-center gap-3 p-2 rounded-lg transition hover:bg-accent min-w-0">
+            <Image src={tool.faviconUrl || "/placeholder.svg"} alt={`${tool.name} favicon`} width={48} height={48} className="rounded-sm border shrink-0" />
+            <div className="flex flex-col min-w-0">
+              <h3 className="text-sm font-medium leading-tight truncate">{tool.name}</h3>
+              {tool.platforms?.length ? <p className="text-xs text-muted-foreground truncate">{tool.platforms.map((p) => p.name).join(", ")}</p> : null}
             </div>
           </Link>
         ))}

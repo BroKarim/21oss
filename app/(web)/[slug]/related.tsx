@@ -13,10 +13,10 @@ export const RelatedTools = async ({ tool }: { tool: ToolOne }) => {
   }
 
   return (
-    <Listing>
+    <Listing >
       <ToolGalleryGroup
         id="related-tools"
-        className="border-none p-0"
+        className="border-none md:p-0"
         label={`Open source tool alongside ${tool.name}:`}
         tools={tools}
         showGlowingEffect={false}

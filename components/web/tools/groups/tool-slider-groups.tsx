@@ -62,9 +62,9 @@ export const ToolSliderGroup = ({ id, label, tools, options, description }: Tool
   }
 
   return (
-    <section className="w-full  max-w-full space-y-4 border  p-2 rounded-lg overflow-hidden">
-      <div className="w-full flex justify-between md:items-center md:flex-row flex-col gap-2">
-        <div className="flex flex-col items-start max-w-md space-y-2 justify-between">
+    <section className="w-full space-y-4 border p-2 rounded-lg">
+      <div className="flex justify-between md:items-center md:flex-row flex-col gap-2">
+        <div className="flex flex-col items-start max-w-md space-y-2">
           <AnimatedGradientText speed={2} colorFrom="#8b5cf6" colorTo="#ec4899" className="md:text-2xl font-bold text-lg">
             {label}
           </AnimatedGradientText>
@@ -91,28 +91,26 @@ export const ToolSliderGroup = ({ id, label, tools, options, description }: Tool
         </Dialog>
       </div>
 
-      <div className="w-full">
-        {showScroll ? (
-          <ScrollArea className="whitespace-nowrap rounded-md pb-4">
-            <div className="flex w-max space-x-4">
-              {displayedTools.map((tool) => (
-                <div key={tool.id} className="w-[280px] shrink-0 sm:w-[320px]">
-                  <ToolCard tool={tool} />
-                </div>
-              ))}
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {showScroll ? (
+        <ScrollArea className="whitespace-nowrap rounded-md pb-4">
+          <div className="flex w-max space-x-4">
             {displayedTools.map((tool) => (
-              <div key={tool.id} className="w-full">
+              <div key={tool.id} className="w-[280px] shrink-0 sm:w-[320px]">
                 <ToolCard tool={tool} />
               </div>
             ))}
           </div>
-        )}
-      </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {displayedTools.map((tool) => (
+            <div key={tool.id} className="min-w-0">
+              <ToolCard tool={tool} />
+            </div>
+          ))}
+        </div>
+      )}
     </section>
   );
 };

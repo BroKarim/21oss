@@ -33,7 +33,7 @@ export default function LazySection({ section }: LazySectionProps) {
         const [entry] = entries;
         if (entry.isIntersecting) {
           setIsLoading(true);
-          observer.disconnect(); // Stop observing once visible
+          observer.disconnect(); 
         }
       },
       {
@@ -95,7 +95,7 @@ export default function LazySection({ section }: LazySectionProps) {
     const Component = sectionComponents[section.type];
     return (
       <div>
-        <Component {...section} />
+        <Component className="overflow-hidden" {...section} />
       </div>
     );
   }

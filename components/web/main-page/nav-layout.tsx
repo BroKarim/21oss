@@ -40,7 +40,7 @@ export async function NavLayout({ ad, ...props }: MainSidebarProps) {
       </SidebarContent>
       <SidebarFooter>
         <div className="p-1">
-          <AdSlot ad={ad} filter={<RippleFilter />} className="ripple w-full" />
+          {/* <AdSlot ad={ad} filter={<RippleFilter />} className="ripple w-full" /> */}
         </div>
       </SidebarFooter>
       <SidebarRail />

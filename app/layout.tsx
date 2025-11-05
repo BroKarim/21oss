@@ -62,8 +62,10 @@ export default function RootLayout({
           <NuqsAdapter>
             <SearchProvider>
               <AppProviders mainSidebar={<UserSidebar />} adminSidebar={<AdminSidebar />}>
-                {children}
-                <Search />
+                <div className="flex h-full w-full overflow-x-hidden">
+                  {children}
+                  <Search />
+                </div>
               </AppProviders>
             </SearchProvider>
           </NuqsAdapter>
