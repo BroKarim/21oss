@@ -15,13 +15,9 @@ import { useSearch } from "@/contexts/search-context";
 import { useSession } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 
-type ToolSearchItem = {
-  slug: string;
-  name: string;
-  tagline: string | null;
-  websiteUrl: string | null;
-  faviconUrl: string | null;
-};
+// Gunakan inferServerActionReturnData untuk type-safety
+type SearchResultData = inferServerActionReturnData<typeof searchItems>;
+type ToolSearchItem = SearchResultData["tools"][number];
 
 type SearchResultsProps = {
   name: string;
@@ -29,16 +25,6 @@ type SearchResultsProps = {
   onItemSelect: (url: string) => void;
   getHref: (item: ToolSearchItem) => string;
   renderItemDisplay: (item: ToolSearchItem) => ReactNode;
-};
-
-type SearchResultTools = {
-  tools: {
-    slug: string;
-    name: string;
-    tagline: string | null;
-    websiteUrl: string | null;
-    faviconUrl: string | null;
-  }[];
 };
 
 const SearchResults = ({ name, items, onItemSelect, getHref, renderItemDisplay }: SearchResultsProps) => {
@@ -68,7 +54,7 @@ export const Search = () => {
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearch();
-  const [results, setResults] = useState<SearchResultTools | undefined>();
+  const [results, setResults] = useState<SearchResultData | undefined>();
   const [query, setQuery] = useDebouncedState("", 500);
   const listRef = useRef<HTMLDivElement>(null);
 
