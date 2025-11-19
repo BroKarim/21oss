@@ -116,16 +116,6 @@ export const Search = () => {
         },
       ],
     });
-
-    // User command sections
-  } else {
-    commandSections.push({
-      name: "Quick Links",
-      items: [
-        { label: "Categories", path: "/categories/ai#agents-and-automation" },
-        { label: "Curated List", path: "/list/recent" },
-      ],
-    });
   }
 
   const { execute, isPending } = useServerAction(searchItems, {
@@ -159,7 +149,7 @@ export const Search = () => {
   }, [query, execute, hasQuery]);
 
   return (
-    <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange}>
+    <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange} showCloseButton={!isPending}>
       <div className="relative">
         <CommandInput placeholder="Type to search..." onValueChange={setQuery} className="pr-10" />
         {isPending && <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />}
