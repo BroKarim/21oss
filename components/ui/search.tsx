@@ -15,15 +15,33 @@ import { useSearch } from "@/contexts/search-context";
 import { useSession } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 
-type SearchResultsProps<T> = {
+type ToolSearchItem = {
+  slug: string;
   name: string;
-  items: T[] | undefined;
-  onItemSelect: (url: string) => void;
-  getHref: (item: T) => string;
-  renderItemDisplay: (item: T) => ReactNode;
+  tagline: string | null;
+  websiteUrl: string | null;
+  faviconUrl: string | null;
 };
 
-const SearchResults = <T extends { slug: string }>({ name, items, onItemSelect, getHref, renderItemDisplay }: SearchResultsProps<T>) => {
+type SearchResultsProps = {
+  name: string;
+  items: ToolSearchItem[] | undefined;
+  onItemSelect: (url: string) => void;
+  getHref: (item: ToolSearchItem) => string;
+  renderItemDisplay: (item: ToolSearchItem) => ReactNode;
+};
+
+type SearchResultTools = {
+  tools: {
+    slug: string;
+    name: string;
+    tagline: string | null;
+    websiteUrl: string | null;
+    faviconUrl: string | null;
+  }[];
+};
+
+const SearchResults = ({ name, items, onItemSelect, getHref, renderItemDisplay }: SearchResultsProps) => {
   if (!items?.length) return null;
 
   return (
@@ -50,12 +68,10 @@ export const Search = () => {
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearch();
-  const [results, setResults] = useState<inferServerActionReturnData<typeof searchItems>>();
+  const [results, setResults] = useState<SearchResultTools | undefined>();
   const [query, setQuery] = useDebouncedState("", 500);
   const listRef = useRef<HTMLDivElement>(null);
 
-  // const tools = results?.tools;
-  // const curatedLists = results?.curatedLists;
   const isAdmin = session?.user.role === "admin";
   const isAdminPath = pathname.startsWith("/admin");
   const hasQuery = !!query.length;
@@ -197,18 +213,6 @@ export const Search = () => {
               {faviconUrl && <img src={faviconUrl} alt="" width={16} height={16} />}
               <span className="flex-1 truncate">{name}</span>
               <span className="opacity-50">{getUrlHostname(websiteUrl ?? "")}</span>
-            </>
-          )}
-        />
-        <SearchResults
-          name="Curated Lists"
-          items={results?.curatedLists as any}
-          onItemSelect={navigateTo}
-          getHref={({ url }) => `${isAdminPath ? "/admin" : ""}/curated-lists/${url}`}
-          renderItemDisplay={({ title, description }: any) => (
-            <>
-              <span className="flex-1 truncate">{title}</span>
-              {description && <span className="opacity-50 text-xs truncate max-w-xs">{description}</span>}
             </>
           )}
         />

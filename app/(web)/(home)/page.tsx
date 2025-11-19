@@ -23,7 +23,7 @@ export default async function Page() {
     },
     // Dynamic sections from curated lists
     ...curatedLists.map((curatedList) => ({
-      id: curatedList.url,
+      id: curatedList.url ?? "",
       label: curatedList.title,
       description: curatedList.description ?? undefined,
       type: curatedList.type as "slider" | "favicon" | "gallery" | "carousel",

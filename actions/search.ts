@@ -35,29 +35,5 @@ export const searchItems = createServerAction()
       },
     });
 
-    // Cari CuratedList
-    const curatedLists = await db.curatedList.findMany({
-      where: {
-        OR: [
-          { title: { contains: searchQuery, mode: "insensitive" } },
-          { description: { contains: searchQuery, mode: "insensitive" } },
-          {
-            tools: {
-              some: {
-                name: { contains: searchQuery, mode: "insensitive" },
-              },
-            },
-          },
-        ],
-      },
-      take: 10,
-      select: {
-        url: true,
-        title: true,
-        description: true,
-        type: true,
-      },
-    });
-
-    return { tools, curatedLists };
+    return { tools };
   });
