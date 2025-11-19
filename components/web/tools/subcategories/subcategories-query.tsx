@@ -17,10 +17,13 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
   const ref = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const { filters } = useFilters();
+  const isLoadingRef = useRef(false);
 
   const fetchTools = useCallback(
     async (currentFilters: typeof filters) => {
-      if (isLoading) return;
+      if (isLoadingRef.current) return;
+
+      isLoadingRef.current = true;
       setIsLoading(true);
       setError(null);
 
@@ -71,7 +74,7 @@ export default function ToolsBySubcategoryLazy({ subcategorySlug, subcategoryLab
       fetchTools(filters);
     }, 400);
     return () => clearTimeout(timeout);
-  }, [filters]);
+  }, [filters, fetchTools, hasLoaded]);
 
   return (
     <div ref={ref} className="space-y-2">
