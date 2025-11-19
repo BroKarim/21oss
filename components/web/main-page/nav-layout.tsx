@@ -6,6 +6,8 @@ import { AdSlot, RippleFilter } from "@/components/web/ads/ad-slot";
 import { MainSidebarProps } from "@/types/sidebar";
 import { findCategoriesWithChildren } from "@/server/web/categories/queries";
 import { SearchTrigger } from "./search-trigger";
+
+
 const data = {
   navMain: [
     {

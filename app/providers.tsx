@@ -20,7 +20,7 @@ export function AppProviders({ children, mainSidebar, adminSidebar }: { children
   const showAdminUI = isMounted && isAdmin;
 
   return (
-    <SidebarProvider defaultOpen={open} open={open} onOpenChange={setOpen}>
+    <SidebarProvider defaultOpen={false} open={isMounted ? open : false} onOpenChange={setOpen}>
       <Suspense fallback={null}>{showAdminUI ? adminSidebar : mainSidebar}</Suspense>
       <SidebarInset>
         <MainLayout>
