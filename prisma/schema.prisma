@@ -18,6 +18,15 @@ enum ReportType {
   Other
 }
 
+enum PerkType {
+  Developer
+  Student
+  Designer
+  Creator
+  Other
+}
+
+
 enum AdType {
   Banner
   ToolPage
@@ -35,18 +44,7 @@ enum CuratedListType {
   carousel
 }
 
-enum AwesomeCategory {
-  Programming
-  Data
-  Productivity
-  Design
-  Learning
-}
 
-enum RepoStatus {
-  Draft
-  Published
-}
 
 enum ToolStatus {
   Draft
@@ -276,26 +274,31 @@ model License {
   @@index([slug])
 }
 
-model AwesomeList {
-  id              String   @id @default(cuid())
-  name            String   
-  repositoryUrl   String   @unique
-  description     String?  
-  stars           Int      @default(0)
-  forks           Int      @default(0)
-  license         String?  
-  owner           String   
-  contributors    String?     
-  firstCommitDate DateTime?
-  lastCommitDate  DateTime?
 
-  status          RepoStatus @default(Draft)
-  category        AwesomeCategory @default(Programming)
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+model DevPerk {
+  id          String      @id @default(cuid())
+  name        String      @db.Citext
+  slug        String      @unique
+  logoUrl     String?
+  value       String?     
+  description String?
+  claimUrl    String?
 
-  @@index([repositoryUrl])
+  type        PerkType   
+  tags        String[]    
+  isFree      Boolean     @default(false)    
+  isHot       Boolean     @default(false)
+  isNew       Boolean     @default(false)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Index
+  @@index([slug])
+  @@index([type])
+  @@index([isFree])
+  @@index([isHot])
 }
 
 
@@ -339,6 +342,7 @@ model Account {
   // Indexes
   @@index([userId])
 }
+
 
 model Report {
   id        String     @id @default(cuid())
