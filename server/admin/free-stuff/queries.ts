@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/services/db";
-import { type Prisma } from "@/generated/prisma/client";
+import { type Prisma } from "@prisma/client";
 import type { FreeStuffTableSchema } from "./schema";
 
 export const findFreeStuff = async (search: FreeStuffTableSchema, where?: Prisma.DevPerkWhereInput) => {
@@ -46,3 +46,21 @@ export const findFreeStuff = async (search: FreeStuffTableSchema, where?: Prisma
 
   return { items, total, pageCount };
 };
+
+export const findStuffById = async (id: string) => {
+  return db.devPerk.findUnique({
+    where: { id },
+  });
+};
+
+export async function getAllUniqueTags() {
+  const allData = await db.devPerk.findMany({
+    select: {
+      tags: true,
+    },
+  });
+
+  const flattenedTags = allData.flatMap((item : any) => item.tags);
+  const uniqueTags = Array.from(new Set(flattenedTags));
+  return uniqueTags.sort();
+}

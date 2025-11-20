@@ -1,7 +1,7 @@
 import { createSearchParamsCache, parseAsArrayOf, parseAsInteger, parseAsString } from "nuqs/server";
 import { z } from "zod";
 import { getSortingStateParser } from "@/lib/parsers";
-import { PerkType } from "@/generated/prisma/client";
+import { PerkType } from "@prisma/client";
 
 export const freeStuffTableParamsSchema = {
   // Search field
@@ -26,13 +26,18 @@ export const freeStuffSchema = z.object({
   slug: z.string().optional(),
 
   logoUrl: z.string().url().optional().or(z.literal("")),
-  value: z.string().optional().or(z.literal("")),
+  value: z.string().optional(),
   description: z.string().optional().or(z.literal("")),
   claimUrl: z.string().url().optional().or(z.literal("")),
 
   type: z.nativeEnum(PerkType),
-
-  tags: z.array(z.string()).optional().default([]),
+  tags: z
+    .array(
+      z.object({
+        value: z.string(),
+      })
+    )
+    .default([]),
 
   isFree: z.boolean().default(false),
   isHot: z.boolean().default(false),
@@ -40,4 +45,5 @@ export const freeStuffSchema = z.object({
 });
 export const freeStuffTableParamsCache = createSearchParamsCache(freeStuffTableParamsSchema);
 
+export type FreeStuffSchema = z.infer<typeof freeStuffSchema>;
 export type FreeStuffTableSchema = Awaited<ReturnType<typeof freeStuffTableParamsCache.parse>>;
