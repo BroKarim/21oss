@@ -35,16 +35,6 @@ export function FreeStuffTable({ freeStuffPromise }: FreeStuffTableProps) {
       label: "Name",
       placeholder: "Search by name...",
     },
-    {
-      id: "category",
-      label: "Category",
-      options: [
-        { label: "Developer", value: "Developer" },
-        { label: "Student", value: "Student" },
-        { label: "Designer", value: "Designer" },
-        { label: "Creator", value: "Creator" },
-      ],
-    },
   ];
 
   const { table } = useDataTable({
