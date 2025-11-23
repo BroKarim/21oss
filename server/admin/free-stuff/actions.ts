@@ -14,17 +14,19 @@ export const upsertFreeStuff = adminProcedure
   .createServerAction()
   .input(freeStuffSchema)
   .handler(async ({ input }) => {
-    const { id, ...rest } = input;
+    const { id, tags, ...rest } = input;
 
     const slug = rest.slug || slugify(rest.name);
+
+    const tagStrings = tags?.map((t) => t.value) ?? [];
 
     const item = id
       ? await db.devPerk.update({
           where: { id },
-          data: { ...rest, slug },
+          data: { ...rest, slug, tags: tagStrings },
         })
       : await db.devPerk.create({
-          data: { ...rest, slug },
+          data: { ...rest, slug, tags: tagStrings },
         });
 
     revalidateTag("free-stuff");

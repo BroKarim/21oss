@@ -53,6 +53,13 @@ export const findStuffById = async (id: string) => {
   });
 };
 
+export const findFreeStuffBySlug = async (slug: string) => {
+  return db.devPerk.findUnique({
+    where: { slug },
+  });
+};
+
+
 export async function getAllUniqueTags() {
   const allData = await db.devPerk.findMany({
     select: {
@@ -60,7 +67,8 @@ export async function getAllUniqueTags() {
     },
   });
 
-  const flattenedTags = allData.flatMap((item : any) => item.tags);
+  const flattenedTags = allData.flatMap((item: any) => item.tags);
   const uniqueTags = Array.from(new Set(flattenedTags));
   return uniqueTags.sort();
 }
+

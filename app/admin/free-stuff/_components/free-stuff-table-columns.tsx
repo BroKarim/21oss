@@ -64,12 +64,6 @@ export const getColumns = (): ColumnDef<DevPerk>[] => {
       cell: ({ row }) => <Badge variant={row.getValue("isFree") ? "success" : "soft"}>{row.getValue("isFree") ? "Yes" : "No"}</Badge>,
     },
 
-    {
-      accessorKey: "isNew",
-      size: 80,
-      header: ({ column }) => <DataTableColumnHeader column={column} title="New" />,
-      cell: ({ row }) => (row.getValue("isNew") ? <Badge variant="success">New</Badge> : <Note>—</Note>),
-    },
 
     {
       accessorKey: "createdAt",

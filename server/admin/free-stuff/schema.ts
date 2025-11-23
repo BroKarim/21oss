@@ -32,13 +32,9 @@ export const freeStuffSchema = z.object({
 
   type: z.nativeEnum(PerkType),
   tags: z
-    .array(
-      z.object({
-        value: z.string(),
-      })
-    )
+    .array(z.object({ value: z.string() }))
+    .optional()
     .default([]),
-
   isFree: z.boolean().default(false),
   isHot: z.boolean().default(false),
   isNew: z.boolean().default(false),

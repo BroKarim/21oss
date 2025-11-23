@@ -58,18 +58,17 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(outfit.className, " [scrollbar-gutter:stable]")}>
-        <div className="h-full">
-          <NuqsAdapter>
-            <SearchProvider>
-              <AppProviders mainSidebar={<UserSidebar />} adminSidebar={<AdminSidebar />}>
-                <div className="flex h-full w-full overflow-x-hidden">
-                  {children}
-                  <Search />
-                </div>
-              </AppProviders>
-            </SearchProvider>
-          </NuqsAdapter>
-        </div>
+        <NuqsAdapter>
+          <SearchProvider>
+            <AppProviders mainSidebar={<UserSidebar />} adminSidebar={<AdminSidebar />}>
+              <div className="flex h-full w-full overflow-x-hidden">
+                {children}
+                <Search />
+              </div>
+            </AppProviders>
+          </SearchProvider>
+        </NuqsAdapter>
+
         <Analytics />
         <SpeedInsights />
       </body>

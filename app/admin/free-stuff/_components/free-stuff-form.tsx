@@ -39,7 +39,7 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
       description: freeStuff?.description ?? "",
       claimUrl: freeStuff?.claimUrl ?? "",
       type: freeStuff?.type ?? PerkType.Developer,
-      tags: freeStuff?.tags ? freeStuff.tags.map((tag) => ({ value: tag })) : [],
+      tags: freeStuff?.tags?.map((t) => ({ value: t })) ?? [],
       isFree: freeStuff?.isFree ?? false,
     },
   });
