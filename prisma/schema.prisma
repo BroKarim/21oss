@@ -18,6 +18,15 @@ enum ReportType {
   Other
 }
 
+enum PerkType {
+  Developer
+  Student
+  Designer
+  Creator
+  Other
+}
+
+
 enum AdType {
   Banner
   ToolPage
@@ -35,7 +44,18 @@ enum CuratedListType {
   carousel
 }
 
+enum AwesomeCategory {
+  Programming
+  Data
+  Productivity
+  Design
+  Learning
+}
 
+enum RepoStatus {
+  Draft
+  Published
+}
 
 enum ToolStatus {
   Draft
@@ -307,6 +327,7 @@ model Account {
   // Indexes
   @@index([userId])
 }
+
 
 model Report {
   id        String     @id @default(cuid())

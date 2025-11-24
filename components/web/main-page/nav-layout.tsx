@@ -1,11 +1,12 @@
 import { NavMain } from "./nav-main";
 import { NavSecondary } from "./nav-secondary";
 import { NavLogo } from "./nav-logo";
-import { Sidebar, SidebarContent, SidebarHeader, SidebarRail, SidebarFooter } from "@/components/ui/sidebar";
-import { AdSlot, RippleFilter } from "@/components/web/ads/ad-slot";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
+// import { AdSlot, RippleFilter } from "@/components/web/ads/ad-slot";
 import { MainSidebarProps } from "@/types/sidebar";
 import { findCategoriesWithChildren } from "@/server/web/categories/queries";
 import { SearchTrigger } from "./search-trigger";
+
 const data = {
   navMain: [
     {
@@ -38,11 +39,11 @@ export async function NavLayout({ ad, ...props }: MainSidebarProps) {
         <NavMain items={data.navMain} />
         <NavSecondary items={items} />
       </SidebarContent>
-      <SidebarFooter>
+      {/* <SidebarFooter>
         <div className="p-1">
           <AdSlot ad={ad} filter={<RippleFilter />} className="ripple w-full" />
         </div>
-      </SidebarFooter>
+      </SidebarFooter> */}
       <SidebarRail />
     </Sidebar>
   );

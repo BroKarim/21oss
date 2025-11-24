@@ -38,16 +38,16 @@ export default async function Page() {
   ];
 
   return (
-    <main className={cn("flex flex-1 flex-col overflow-x-hidden")}>
+    <main className={cn("flex flex-1 flex-col ")}>
       <ScrollToSlug />
-      <div className="container py-4 space-y-6 overflow-hidden">
+      <div className="container py-4 space-y-6 ">
         <WidgetBanner />
-        <div className="space-y-10 overflow-hidden">
+        <div className="space-y-10 ">
           {sections.map((section, idx) => (
             <div key={section.id} id={section.id}>
               <LazySection section={section} />
               {(idx + 1) % 3 === 0 && idx < sections.length - 1 && (
-                <div className="overflow-hidden" key={`ad-banner-${idx}`}>
+                <div className="" key={`ad-banner-${idx}`}>
                   <AdBanner />
                 </div>
               )}
