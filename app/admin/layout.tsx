@@ -14,7 +14,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   const session = hasSessionCookie ? await getServerSession() : null;
   return (
     <>
-      <div className=" flex flex-col">
+      <div className=" flex flex-col w-full">
         <Header session={session} />
         <div className="grid grid-cols-1 content-start gap-4 p-4 flex-1 sm:px-6">{children}</div>
       </div>
