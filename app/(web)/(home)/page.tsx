@@ -5,55 +5,43 @@ import { AdBanner } from "@/components/web/ads/ad-banner";
 import { getCuratedLists } from "@/server/web/curated-lists/actions";
 import { getRecentTools } from "@/server/web/tools/actions";
 import ScrollToSlug from "@/components/web/scroll-to-slug";
+import Link from "next/link";
+import CuratedCard from "@/components/web/curated-card";
 
 export default async function Page() {
   const curatedLists = await getCuratedLists();
+  const recentTools = await getRecentTools();
 
-  const sections = [
-    {
-      id: "recent",
-      label: "Recently Added",
-      type: "gallery" as const,
-      tools: await getRecentTools(),
-      options: {
-        loadMore: true,
-        showScroll: false,
-        showViewAll: false,
-      },
+  const recentSection = {
+    id: "recent",
+    label: "Recently Added",
+    type: "gallery" as const,
+    tools: recentTools,
+    options: {
+      loadMore: true,
+      showScroll: false,
+      showViewAll: false,
     },
-    // Dynamic sections from curated lists
-    ...curatedLists.map((curatedList) => ({
-      id: curatedList.url ?? "",
-      label: curatedList.title,
-      description: curatedList.description ?? undefined,
-      type: curatedList.type as "slider" | "favicon" | "gallery" | "carousel",
-      tools: curatedList.tools,
-      options: {
-        showScroll: true,
-        showViewAll: false,
-        viewAllUrl: `/`,
-        loadMore: true,
-      },
-    })),
-  ];
+  };
 
   return (
     <main className={cn("flex flex-1 flex-col ")}>
       <ScrollToSlug />
       <div className="container py-4 space-y-6 ">
         <WidgetBanner />
-        <div className="space-y-10 ">
-          {sections.map((section, idx) => (
-            <div key={section.id} id={section.id}>
-              <LazySection section={section} />
-              {(idx + 1) % 3 === 0 && idx < sections.length - 1 && (
-                <div className="" key={`ad-banner-${idx}`}>
-                  <AdBanner />
-                </div>
-              )}
-            </div>
-          ))}
+        <div id="recent">
+          <LazySection section={recentSection} />
         </div>
+        <AdBanner />
+        <section id="curated-lists" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {curatedLists.map((list) => (
+              <Link key={list.id} href={`/curated/${list.url}`} className="block h-full">
+                <CuratedCard title={list.title} description={list.description ?? ""} previewTools={list.tools.map((t) => t.name)} totalToolCount={list._count?.tools ?? 0} />
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </main>
   );
