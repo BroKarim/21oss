@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getCuratedListByUrl } from "@/server/web/curated-lists/actions";
 import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button-shadcn";
 import { IntroDescription } from "@/components/ui/intro";
 import { FaviconImage } from "@/components/ui/favicon";
@@ -10,9 +11,10 @@ import { RepositoryDetails } from "@/components/web/repository-detail";
 import { MediaViewer } from "@/components/web/media-viewer";
 import { Section } from "@/components/ui/section";
 import { Stack } from "@/components/ui/stack";
-
+import { Link2 } from "lucide-react";
+import { Icons } from "@/components/web/icons";
 import { H2 } from "@/components/ui/heading";
-
+import { ShareLink } from "@/components/web/share-link";
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -26,17 +28,57 @@ export default async function CuratedListPage(props: PageProps) {
     notFound();
   }
 
+  const formattedDate = new Date(list.createdAt).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
   return (
-    <div className="flex w-full flex-col overflow-x-hidden pb-20">
+    <div className="flex w-full max-w-7xl mx-auto flex-col items-center justify-center overflow-x-hidden pb-20">
       {/* --- BAGIAN 1: HEADER CURATED LIST --- */}
-      <div className="bg-neutral-50/50 dark:bg-neutral-900/20 border-b py-12 mb-10">
-        <div className="container px-4 sm:px-6 lg:px-8 space-y-6 text-center max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight">{list.title}</h1>
-          {list.description && <p className="text-lg text-muted-foreground leading-relaxed">{list.description}</p>}
-          <div className="flex items-center justify-center gap-3 text-sm text-neutral-500 font-medium">
-            <span className="bg-neutral-100 dark:bg-neutral-800 px-3 py-1 rounded-full">{list.tools.length} Tools</span>
-            <span>Updated {new Date(list.updatedAt).toLocaleDateString()}</span>
+      <div className="w-full  mx-auto p-6 pt-10">
+        {/* Breadcrumb */}
+        <div className="text-sm text-neutral-500 flex items-center gap-2 mb-6">
+          <Link href="/" className="hover:text-neutral-300 transition-colors">
+            Home
+          </Link>
+          <span>/</span>
+          <span className="text-neutral-300 font-medium truncate max-w-[300px]">{list.title}</span>
+        </div>
+
+        {/* Title & Meta */}
+        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-100 mb-3 tracking-tight">{list.title}</h1>
+        <p className="text-sm text-neutral-500 mb-10">
+          Created at {formattedDate} • Updated {new Date(list.updatedAt).toLocaleDateString()}
+        </p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          {/* Main Content (Description) - Kolom Kiri */}
+          <div className="lg:col-span-2">
+            <div className="text-neutral-300 leading-relaxed text-[17px] space-y-6 whitespace-pre-wrap">
+              {list.description ? <p>{list.description}</p> : <p className="italic text-neutral-500">No description provided for this collection.</p>}
+            </div>
+
+            {/* Share Section (Dummy) */}
+            <ShareLink slug={list.url} />
           </div>
+
+          {/* Side Card (Dummy Static) - Kolom Kanan */}
+          <Card className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 h-fit sticky top-24">
+            <CardContent className="p-0">
+              <div className="flex flex-col gap-4">
+                {/* Author Dummy */}
+                <p className="text-xs text-neutral-500 mb-3 uppercase tracking-wider font-semibold">Curated by</p>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-neutral-700 shrink-0"></div>
+                  <div>
+                    <p className="font-medium text-sm text-neutral-200">Admin</p>
+                    <p className="text-neutral-500 text-xs">@opencrawl</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
 
@@ -44,16 +86,13 @@ export default async function CuratedListPage(props: PageProps) {
       <div className="container space-y-16 px-4 sm:px-6 lg:px-8">
         {list.tools.map((tool, index) => (
           <div key={tool.id} className="relative">
-            {/* Penanda Nomor Urut (Opsional, agar terlihat seperti list urutan) */}
-            <div className="absolute -left-4 top-0 hidden xl:block text-6xl font-black text-neutral-100 dark:text-neutral-800 -z-10 select-none">#{index + 1}</div>
-
-            {/* --- REUSE UI TOOL PAGE DISINI --- */}
-            <Section className="overflow-hidden border rounded-xl bg-background/50 p-6 shadow-sm">
+            <Section className="overflow-hidden  rounded-xl bg-background/50 p-6 shadow-sm">
+              {/* Tool Info */}
               <Section.Content className="max-md:contents">
                 <div className="flex flex-1 flex-col items-start space-y-6 max-md:order-1">
-                  {/* Tool Header */}
                   <div className="flex w-full flex-col items-start space-y-4">
                     <Stack className="w-full items-center">
+                      <div className=" text-4xl font-medium text-neutral-100 dark:text-neutral-800 -z-10 select-none">#{index + 1}</div>
                       <FaviconImage src={tool.faviconUrl} title={tool.name} className="size-10 flex-shrink-0 sm:size-12" />
                       <Stack className="flex-1 min-w-0">
                         <Link href={`/${tool.slug}`} className="hover:underline">
@@ -67,16 +106,13 @@ export default async function CuratedListPage(props: PageProps) {
                     {tool.description && <IntroDescription className="text-sm sm:text-base leading-relaxed line-clamp-3">{tool.description}</IntroDescription>}
                   </div>
 
-                  {/* Tech Stack */}
                   <div className="flex w-full flex-col space-y-3">
                     <Stack size="lg" direction="column" className="space-y-2">
                       <Note className="text-sm font-medium text-muted-foreground">Tech Stack:</Note>
-
                       <ToolStacks stacks={tool.stacks || []} />
                     </Stack>
                   </div>
 
-                  {/* Action Buttons */}
                   <Stack className="w-full flex-col gap-3 sm:flex-row sm:gap-4">
                     {tool.websiteUrl && (
                       <Button asChild>
@@ -85,11 +121,20 @@ export default async function CuratedListPage(props: PageProps) {
                         </Link>
                       </Button>
                     )}
-                    {/* Link ke Detail Page Tool Asli */}
+
                     <Button variant="outline" asChild>
                       <Link href={`/${tool.slug}`}>View Details</Link>
                     </Button>
                   </Stack>
+
+                  {/* Screenshots - Hanya selebar Tool Info */}
+                  {tool.screenshots && tool.screenshots.length > 0 && (
+                    <div className="w-full mt-6">
+                      <div className="min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] rounded-lg overflow-hidden border">
+                        <MediaViewer items={tool.screenshots.map((s) => s.imageUrl)} className="w-full h-full" />
+                      </div>
+                    </div>
+                  )}
                 </div>
               </Section.Content>
 
@@ -100,15 +145,6 @@ export default async function CuratedListPage(props: PageProps) {
                 </div>
               </Section.Sidebar>
             </Section>
-
-            {/* Screenshots (Ditaruh di bawah Section info) */}
-            {tool.screenshots && tool.screenshots.length > 0 && (
-              <div className="w-full mt-6">
-                <div className="min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] rounded-lg overflow-hidden border">
-                  <MediaViewer items={tool.screenshots.map((s) => s.imageUrl)} className="w-full h-full" />
-                </div>
-              </div>
-            )}
           </div>
         ))}
       </div>
