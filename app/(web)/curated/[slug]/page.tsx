@@ -11,8 +11,6 @@ import { RepositoryDetails } from "@/components/web/repository-detail";
 import { MediaViewer } from "@/components/web/media-viewer";
 import { Section } from "@/components/ui/section";
 import { Stack } from "@/components/ui/stack";
-import { Link2 } from "lucide-react";
-import { Icons } from "@/components/web/icons";
 import { H2 } from "@/components/ui/heading";
 import { ShareLink } from "@/components/web/share-link";
 type PageProps = {

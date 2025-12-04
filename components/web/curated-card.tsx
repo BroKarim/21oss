@@ -6,22 +6,22 @@ import { Card, CardContent } from "@/components/ui/card";
 interface CuratedCardProps {
   description: string;
   title: string;
-  previewTools: string[]; 
-  totalToolCount: number; 
+  previewTools: string[];
+  totalToolCount: number;
 }
 
 export default function CuratedCard({ description, title, previewTools, totalToolCount }: CuratedCardProps) {
-  
   const remaining = totalToolCount - previewTools.length;
 
   return (
-    <Card className="bg-neutral-950 border-neutral-800 text-neutral-200 p-4 w-full h-full hover:border-neutral-700 transition-colors duration-200 group cursor-pointer">
+    <Card className="bg-neutral-950 border-neutral-800 text-neutral-200 p-4 w-full h-full hover:border-neutral-700 transition-colors duration-200 group cursor-pointer rounded-none">
       <CardContent className="flex flex-col gap-3 p-0 h-full justify-between">
         <div className="space-y-3">
           {/* Description */}
-          <p className="text-sm text-neutral-400 line-clamp-2 min-h-[40px]">{description}</p>
+          <div className="p-2 bg-[#131313] font-mono">
+            <p className="text-sm text-neutral-400 line-clamp-3 min-h-[40px]">{description}</p>
+          </div>
 
-          {/* Title */}
           <h3 className="text-lg font-semibold text-neutral-100 leading-tight whitespace-normal break-words group-hover:text-white transition-colors">{title}</h3>
         </div>
 
