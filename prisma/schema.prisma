@@ -26,6 +26,8 @@ enum PerkType {
   Other
 }
 
+
+
 enum AdType {
   Banner
   ToolPage
@@ -150,7 +152,6 @@ model Tool {
     // Relations
 
     license    License?    @relation(fields: [licenseId], references: [id], onDelete: SetNull)
-    inspiredBy InspiredBy? @relation(fields: [inspiredById], references: [id], onDelete: SetNull)
     categories Category[]  @relation("ToolCategories")
     platforms  Platform[]  @relation("ToolPlatforms")
     stacks     Stack[]     @relation("ToolStacks")
@@ -224,21 +225,6 @@ model Platform {
   @@index([slug])
 }
 
-model InspiredBy {
-  id        String   @id @default(cuid())
-  name      String   @db.Citext
-  slug      String   @unique
-  iconUrl   String?
-  website   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  tools Tool[]
-
-  // Indexes
-  @@index([slug])
-}
 
 model Stack {
   id          String    @id @default(cuid())
@@ -339,6 +325,7 @@ model Account {
   // Indexes
   @@index([userId])
 }
+
 
 model Report {
   id        String     @id @default(cuid())

@@ -1,6 +1,7 @@
 "use client";
 
 import { slugify } from "@primoui/utils";
+import { useState } from "react";
 import { useServerAction } from "zsa-react";
 import { useRouter } from "next/navigation";
 import { useForm, useFieldArray } from "react-hook-form";
@@ -16,9 +17,10 @@ import Link from "next/link";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TagCombobox } from "./tag-combobox";
 import { freeStuffSchema } from "@/server/admin/free-stuff/schema";
-import { upsertFreeStuff } from "@/server/admin/free-stuff/actions";
+import { upsertFreeStuff, autoFillPerk } from "@/server/admin/free-stuff/actions";
 import { findStuffById } from "@/server/admin/free-stuff/queries";
 import { PerkType } from "@prisma/client";
+import { AIModelSelector, DEFAULT_AI_MODELS } from "../../_components/ai-model-selector";
 
 type FreeStuffFormProps = React.ComponentProps<"form"> & {
   freeStuff?: NonNullable<Awaited<ReturnType<typeof findStuffById>>>;
@@ -27,6 +29,7 @@ type FreeStuffFormProps = React.ComponentProps<"form"> & {
 
 export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }: FreeStuffFormProps) {
   const router = useRouter();
+  const [selectedModel, setSelectedModel] = useState("deepseek/deepseek-chat");
 
   const form = useForm({
     resolver: zodResolver(freeStuffSchema),
@@ -52,7 +55,6 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
     enabled: !freeStuff,
   });
 
-  // TAGS ARRAY
   const {
     fields: tagFields,
     append: appendTag,
@@ -62,6 +64,35 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
     name: "tags",
   });
 
+  const autoFillAction = useServerAction(autoFillPerk, {
+    onSuccess: ({ data }) => {
+      if (data.name) form.setValue("name", data.name);
+      if (data.description) form.setValue("description", data.description);
+      if (data.value) form.setValue("value", data.value);
+      if (data.isFree !== undefined) form.setValue("isFree", data.isFree);
+
+      if (data.name) form.setValue("slug", slugify(data.name));
+
+      if (data.tags && data.tags.length > 0) {
+        form.setValue(
+          "tags",
+          data.tags.map((t: any) => ({ value: t }))
+        );
+      }
+
+      toast.success("✨ Magic! Data auto-filled.");
+    },
+    onError: ({ err }) => toast.error(err.message),
+  });
+
+  const handleAutoFill = async () => {
+    const url = form.getValues("claimUrl");
+    if (!url) {
+      toast.error("Please enter a URL first to analyze");
+      return;
+    }
+    await autoFillAction.execute({ url, model: selectedModel });
+  };
   const upsertAction = useServerAction(upsertFreeStuff, {
     onSuccess: ({ data }) => {
       toast.success(`Free stuff ${freeStuff ? "updated" : "created"}`);
@@ -85,6 +116,9 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
     <Form {...form}>
       <div className="flex items-center justify-between w-full mb-4">
         <h3 className="text-xl font-semibold">{title}</h3>
+        <div className="inline-flex -space-x-px divide-x divide-primary-foreground/30 rounded-lg shadow-sm shadow-black/5 rtl:space-x-reverse">
+          <AIModelSelector models={DEFAULT_AI_MODELS} selectedModel={selectedModel} onModelChange={setSelectedModel} onAutoFill={handleAutoFill} isLoading={autoFillAction.isPending} />
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className={cx("grid gap-4 @sm:grid-cols-2", className)} noValidate {...props}>
@@ -123,10 +157,26 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
           control={form.control}
           name="claimUrl"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>URL</FormLabel>
+            <FormItem className="col-span-full">
+              <FormLabel>Claim / Info URL</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input placeholder="https://..." {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="value"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Estimated Value
+                <span className="text-xs text-muted-foreground ml-2">(e.g. $200/month)</span>
+              </FormLabel>
+              <FormControl>
+                <Input placeholder="$..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

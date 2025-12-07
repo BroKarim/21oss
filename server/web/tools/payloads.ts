@@ -53,6 +53,7 @@ export const ToolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   firstCommitDate: true,
   lastCommitDate: true,
   publishedAt: true,
+  license: true,
   updatedAt: true,
   categories: toolCategoriesPayload,
   stacks: {

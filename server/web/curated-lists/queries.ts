@@ -1,7 +1,7 @@
 import { db } from "@/services/db";
 import { unstable_cache as cache } from "next/cache";
 import { Prisma } from "@prisma/client";
-import { CuratedListPayload } from "./payloads";
+import { CuratedListDetailPayload, CuratedListCardPayload } from "./payloads";
 
 export const findCuratedLists = cache(
   async ({ where, ...args }: Prisma.CuratedListFindManyArgs = {}) => {
@@ -11,7 +11,7 @@ export const findCuratedLists = cache(
       ...args,
       where,
       orderBy: { createdAt: "desc" },
-      select: CuratedListPayload,
+      select: CuratedListCardPayload,
     });
   },
   ["curated-lists"],
@@ -21,3 +21,15 @@ export const findCuratedLists = cache(
   }
 );
 
+export const findCuratedListByUrl = cache(
+  async (url: string) => {
+    return db.curatedList.findUnique({
+      where: { url }, 
+      select: CuratedListDetailPayload, 
+    });
+  },
+  ["curated-list-detail"], 
+  {
+    revalidate: 3600,
+  }
+);

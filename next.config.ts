@@ -15,11 +15,11 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "**", // sementara izinkan semua domain
+        hostname: "**",
       },
       {
         protocol: "http",
-        hostname: "**", // kalau ada og-image non-https
+        hostname: "**",
       },
     ],
   },

@@ -14,7 +14,7 @@ export default async function DashboardLayout({ children }: PropsWithChildren) {
   const session = hasSessionCookie ? await getServerSession() : null;
   return (
     <>
-      <div className="min-h-screen w-full flex flex-col">
+      <div className=" flex flex-col w-full">
         <Header session={session} />
         <div className="flex-1 flex flex-col px-4 sm:px-6 py-4">{children}</div>
       </div>

@@ -9,8 +9,8 @@ import { siteConfig } from "@/config/site";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AdminSidebar } from "@/components/admin/sidebar";
-import { UserSidebar } from "@/components/web/user-sidebar";
 import { Search } from "@/components/ui/search";
+
 export const metadata: Metadata = {
   title: siteConfig.name,
   description: siteConfig.description,
@@ -58,17 +58,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={cn(outfit.className, " [scrollbar-gutter:stable]")}>
-        <NuqsAdapter>
-          <SearchProvider>
-            <AppProviders mainSidebar={<UserSidebar />} adminSidebar={<AdminSidebar />}>
-              <div className="flex h-full w-full overflow-x-hidden">
-                {children}
-                <Search />
-              </div>
-            </AppProviders>
-          </SearchProvider>
-        </NuqsAdapter>
-
+        <div className="h-full">
+          <NuqsAdapter>
+            <SearchProvider>
+              <AppProviders adminSidebar={<AdminSidebar />}>
+                <div className="flex h-full w-full">
+                  {children}
+                  <Search />
+                </div>
+              </AppProviders>
+            </SearchProvider>
+          </NuqsAdapter>
+        </div>
         <Analytics />
         <SpeedInsights />
       </body>

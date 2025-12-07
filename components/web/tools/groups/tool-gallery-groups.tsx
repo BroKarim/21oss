@@ -8,7 +8,6 @@ import { Link as LinkIcon, Copy, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button-shadcn";
 import { Input } from "@/components/ui/input";
-import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { AnimatedGradientText } from "@/components/ui/animated-gradient-text";
 import { cx } from "@/lib/utils";
 
@@ -26,7 +25,7 @@ type ToolGalleryGroupProps = {
   };
 };
 
-export const ToolGalleryGroup = ({ id, label, tools, description, options, className, showGlowingEffect = true }: ToolGalleryGroupProps) => {
+export const ToolGalleryGroup = ({ id, label, tools, description, options, className }: ToolGalleryGroupProps) => {
   const { showViewAll = false, viewAllUrl, loadMore = false } = options;
   const [visibleCount, setVisibleCount] = useState(6);
 
@@ -68,13 +67,8 @@ export const ToolGalleryGroup = ({ id, label, tools, description, options, class
   };
 
   return (
-    <section id={id} className={cx("w-full space-y-4 border-[0.75px] relative border-border rounded-[1.5rem] p-1 md:p-2", className)}>
-      <div className="border-none md:border-[0.75px] md:rounded-[1.5rem] md:p-4 lg:p-4">
-        {showGlowingEffect && (
-          <div className="hidden md:block">
-            <GlowingEffect spread={40} glow proximity={64} inactiveZone={0.01} borderWidth={3} />
-          </div>
-        )}
+    <section id={id} className={cx("w-full space-y-4 relative border rounded-[1.5rem] p-1 md:p-2", className)}>
+      <div className=" md:p-4 lg:p-4">
         <div className="flex flex-col sm:flex-row sm:items-center mb-4 justify-between gap-2">
           <div className="flex flex-col max-w-lg">
             <AnimatedGradientText speed={2} colorFrom="#4ade80" colorTo="#06b6d4" className="md:text-2xl text-lg font-bold">

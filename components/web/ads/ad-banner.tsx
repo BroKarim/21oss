@@ -15,7 +15,7 @@ const AdBanner = async ({ className, ...props }: ComponentProps<typeof Card>) =>
   }
 
   return (
-    <Card className={cx("relative overflow-hidden bg-gradient-to-r from-gray-100 to-[#826ce8] p-6 sm:p-8 rounded-2xl shadow-lg", className)} {...props}>
+    <Card className={cx("relative overflow-hidden bg-gradient-to-r from-gray-100 to-[#826ce8] p-6 sm:p-8 rounded-2xl md:mt-4 shadow-lg", className)} {...props}>
       <AnimatedGridPattern />
       <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 md:gap-8 z-50">
         {/* Left side content */}

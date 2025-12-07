@@ -52,7 +52,7 @@ export const ToolFaviconGroup = ({ id, label, description, tools, options }: Too
   }
 
   return (
-    <section className="rounded-2xl border p-6 space-y-4 md:mb-2" id={id}>
+    <section className="rounded-2xl overflow-hidden border p-6 space-y-4 md:mb-2" id={id}>
       <div className="flex md:items-center justify-between md:flex-row flex-col gap-2">
         <div className="flex flex-col">
           <AnimatedGradientText colorFrom="#84cc16" color="#22d3ee" className="md:text-2xl text-lg font-bold">

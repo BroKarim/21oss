@@ -6,6 +6,7 @@ import { z } from "zod";
 import { adminProcedure } from "@/lib/safe-actions";
 import { db } from "@/services/db";
 import { freeStuffSchema } from "./schema";
+import { env } from "@/env";
 
 /* ============================================================
    UPSERT: create / update DevPerk
@@ -58,4 +59,113 @@ export const deleteFreeStuff = adminProcedure
     revalidateTag("free-stuff");
 
     return result;
+  });
+
+// Schema validasi input untuk Auto Fill
+
+const autoFillPerkSchema = z.object({
+  url: z.string().url("Invalid URL"),
+
+  model: z.string().min(1, "Model is required"),
+});
+
+/* ============================================================
+
+   AUTO FILL: Generate Perk Details via AI
+
+   ============================================================ */
+
+export const autoFillPerk = adminProcedure
+
+  .createServerAction()
+
+  .input(autoFillPerkSchema)
+
+  .handler(async ({ input }) => {
+    const { url, model } = input;
+
+    console.log("🔍 Starting auto-fill for Perk:", url);
+
+    const prompt = `
+
+    Role: You are a Student Developer Advocate. Your job is to analyze a "Student Benefit" or "Dev Tool" URL and extract key information.
+    Target URL: ${url}
+    Task:
+    1. Identify the tool/service name.
+    2. Write a punchy, short description (max 20 words) explaining WHY a student needs it.
+    3. ESTIMATE the MONTHLY monetary value in USD for the pro/standard version.
+       - STRICT FORMAT: "$XX" or "$XX-$YY" (e.g., "$20", "$49", or "$10-$15").
+       - Do NOT include words like "/month", "approx", or "USD". Just the symbol and number.
+       - If it implies a yearly cost, divide by 12 to get the monthly equivalent.
+    4. Detect relevant tags.
+    5. Determine if it is totally free (isFree).
+
+    Respond ONLY with valid JSON:
+    {
+      "name": "Tool Name",
+      "description": "Short description...",
+      "value": "$20", 
+      "tags": ["tag1", "tag2"],
+      "isFree": false
+    }
+
+    `;
+
+    try {
+      // Sama persis dengan logic fetch OpenRouter Anda sebelumnya
+
+      const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+
+        headers: {
+          Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://your-domain.com", // Ganti dengan domain asli jika ada
+          "X-Title": "AutoFill Perk",
+        },
+
+        body: JSON.stringify({
+          model,
+          messages: [{ role: "user", content: prompt }],
+          temperature: 0.3,
+        }),
+      });
+
+      if (!res.ok) throw new Error(`API request failed: ${res.status}`);
+
+      const data = await res.json();
+
+      const content = data.choices?.[0]?.message?.content;
+
+      if (!content) throw new Error("AI returned empty response");
+
+      const jsonStr = content
+        .trim()
+        .replace(/```json\s*/g, "")
+        .replace(/```\s*/g, "");
+
+      const jsonStart = jsonStr.indexOf("{");
+
+      const jsonEnd = jsonStr.lastIndexOf("}") + 1;
+
+      if (jsonStart === -1 || jsonEnd === 0) throw new Error("No JSON object found");
+
+      const parsed = JSON.parse(jsonStr.slice(jsonStart, jsonEnd));
+
+      return {
+        name: parsed.name || "",
+
+        description: parsed.description || "",
+
+        value: parsed.value || "", // Ini yang penting
+
+        tags: Array.isArray(parsed.tags) ? parsed.tags : [],
+
+        isFree: typeof parsed.isFree === "boolean" ? parsed.isFree : false,
+      };
+    } catch (error) {
+      console.error("AutoFill Error:", error);
+
+      throw new Error("Failed to auto-fill perk details");
+    }
   });
