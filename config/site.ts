@@ -9,7 +9,13 @@ export const siteConfig = {
   url: env.NEXT_PUBLIC_SITE_URL,
   email: env.NEXT_PUBLIC_SITE_EMAIL,
   ogImage: "https://21oss.com/og.png",
+  author: "BroKarim",
+  links: {
+    thread: "https://www.threads.net/@brokariim",
+    github: "https://github.com/BroKarim",
+  },
 };
+
 
 export const META_THEME_COLORS = {
   light: "#ffffff",

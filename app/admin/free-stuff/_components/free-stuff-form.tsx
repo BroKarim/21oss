@@ -20,7 +20,9 @@ import { freeStuffSchema } from "@/server/admin/free-stuff/schema";
 import { upsertFreeStuff, autoFillPerk } from "@/server/admin/free-stuff/actions";
 import { findStuffById } from "@/server/admin/free-stuff/queries";
 import { PerkType } from "@prisma/client";
+import { RefreshCw } from "lucide-react";
 import { AIModelSelector, DEFAULT_AI_MODELS } from "../../_components/ai-model-selector";
+import { generateFavicon } from "@/server/admin/free-stuff/actions";
 
 type FreeStuffFormProps = React.ComponentProps<"form"> & {
   freeStuff?: NonNullable<Awaited<ReturnType<typeof findStuffById>>>;
@@ -63,12 +65,19 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
     control: form.control,
     name: "tags",
   });
-
+  const faviconAction = useServerAction(generateFavicon, {
+    onSuccess: ({ data }) => {
+      toast.success("Logo generated!");
+      form.setValue("logoUrl", data); // Update field logoUrl
+    },
+    onError: ({ err }) => toast.error(err.message),
+  });
   const autoFillAction = useServerAction(autoFillPerk, {
     onSuccess: ({ data }) => {
       if (data.name) form.setValue("name", data.name);
       if (data.description) form.setValue("description", data.description);
       if (data.value) form.setValue("value", data.value);
+      if (data.logoUrl) form.setValue("logoUrl", data.logoUrl);
       if (data.isFree !== undefined) form.setValue("isFree", data.isFree);
 
       if (data.name) form.setValue("slug", slugify(data.name));
@@ -85,6 +94,8 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
     onError: ({ err }) => toast.error(err.message),
   });
 
+  const claimUrlValue = form.watch("claimUrl"); // Watch value URL untuk tombol generate
+  const slugValue = form.watch("slug");
   const handleAutoFill = async () => {
     const url = form.getValues("claimUrl");
     if (!url) {
@@ -248,6 +259,51 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
               <FormControl>
                 <Textarea rows={5} {...field} />
               </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="logoUrl"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-end gap-4">
+                {/* Preview Image */}
+
+                <div className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-md border">
+                  {field.value ? <img src={field.value} alt="Logo" className="h-full w-full object-contain p-1" /> : <div className="flex h-full w-full items-center justify-center bg-muted text-xs text-muted-foreground">Img</div>}
+                </div>
+
+                {/* Input & Button Group */}
+
+                <div className="flex-1 space-y-2">
+                  <FormLabel>Logo URL</FormLabel>
+
+                  <div className="flex gap-2">
+                    <FormControl>
+                      <Input placeholder="https://..." {...field} />
+                    </FormControl>
+
+                    {/* Tombol Manual Generate */}
+
+                    <Button
+                      type="button"
+                      title="Generate from Website URL"
+                      disabled={!claimUrlValue || faviconAction.isPending}
+                      onClick={() => {
+                        faviconAction.execute({
+                          url: claimUrlValue ?? "",
+                          path: `perks/${slugValue || "temp"}`,
+                        });
+                      }}
+                    >
+                      <RefreshCw className={cx("h-4 w-4", faviconAction.isPending && "animate-spin")} />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
               <FormMessage />
             </FormItem>
           )}

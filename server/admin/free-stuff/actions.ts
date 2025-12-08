@@ -69,6 +69,26 @@ const autoFillPerkSchema = z.object({
   model: z.string().min(1, "Model is required"),
 });
 
+const generateFaviconSchema = z.object({
+  url: z.string().url(),
+  path: z.string().optional(),
+});
+export const generateFavicon = adminProcedure
+  .createServerAction()
+  .input(generateFaviconSchema)
+  .handler(async ({ input }) => {
+    const { url } = input;
+
+    try {
+      const domain = new URL(url).hostname;
+
+      const faviconUrl = `https://www.google.com/s2/favicons?sz=128&domain_url=${domain}`;
+
+      return faviconUrl;
+    } catch {
+      throw new Error("Invalid URL format");
+    }
+  });
 /* ============================================================
 
    AUTO FILL: Generate Perk Details via AI
@@ -151,17 +171,18 @@ export const autoFillPerk = adminProcedure
       if (jsonStart === -1 || jsonEnd === 0) throw new Error("No JSON object found");
 
       const parsed = JSON.parse(jsonStr.slice(jsonStart, jsonEnd));
-
+      let autoLogoUrl = "";
+      try {
+        const domain = new URL(url).hostname;
+        autoLogoUrl = `https://www.google.com/s2/favicons?sz=128&domain_url=${domain}`;
+      } catch {}
       return {
         name: parsed.name || "",
-
         description: parsed.description || "",
-
-        value: parsed.value || "", // Ini yang penting
-
+        value: parsed.value || "",
         tags: Array.isArray(parsed.tags) ? parsed.tags : [],
-
         isFree: typeof parsed.isFree === "boolean" ? parsed.isFree : false,
+        logoUrl: autoLogoUrl,
       };
     } catch (error) {
       console.error("AutoFill Error:", error);

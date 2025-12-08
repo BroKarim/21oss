@@ -13,6 +13,9 @@ import { Section } from "@/components/ui/section";
 import { Stack } from "@/components/ui/stack";
 import { H2 } from "@/components/ui/heading";
 import { ShareLink } from "@/components/web/share-link";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { siteConfig } from "@/config/site";
+
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
@@ -62,25 +65,30 @@ export default async function CuratedListPage(props: PageProps) {
           </div>
 
           {/* Side Card (Dummy Static) - Kolom Kanan */}
-          <Card className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 h-fit sticky top-24">
-            <CardContent className="p-0">
-              <div className="flex flex-col gap-4">
-                {/* Author Dummy */}
-                <p className="text-xs text-neutral-500 mb-3 uppercase tracking-wider font-semibold">Curated by</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-neutral-700 shrink-0"></div>
-                  <div>
-                    <p className="font-medium text-sm text-neutral-200">Admin</p>
-                    <p className="text-neutral-500 text-xs">@opencrawl</p>
+          <Link href={siteConfig.links.thread} target="_blank" className="block hover:opacity-90 transition-opacity">
+            <Card className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 h-fit sticky top-24">
+              <CardContent className="p-0">
+                <div className="flex flex-col gap-4">
+                  <p className="text-xs text-neutral-500 mb-3 uppercase tracking-wider font-semibold">Curated by</p>
+
+                  <div className="flex items-center gap-3">
+                    <Avatar className="w-10 h-10">
+                      <AvatarImage src={`${siteConfig.links.github}.png`} alt={siteConfig.author} />
+                      <AvatarFallback>{siteConfig.author.charAt(0)}</AvatarFallback>
+                    </Avatar>
+
+                    <div>
+                      <p className="font-medium text-sm text-neutral-200">{siteConfig.author}</p>
+                      <p className="text-neutral-500 text-xs">@{siteConfig.author}</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
 
-      {/* --- BAGIAN 2: DAFTAR TOOLS (Looping UI ToolPage) --- */}
       <div className="container space-y-16 px-4 sm:px-6 lg:px-8">
         {list.tools.map((tool, index) => (
           <div key={tool.id} className="relative">
@@ -125,7 +133,6 @@ export default async function CuratedListPage(props: PageProps) {
                     </Button>
                   </Stack>
 
-                  {/* Screenshots - Hanya selebar Tool Info */}
                   {tool.screenshots && tool.screenshots.length > 0 && (
                     <div className="w-full mt-6">
                       <div className="min-h-[300px] sm:min-h-[400px] lg:min-h-[500px] rounded-lg overflow-hidden border">
