@@ -1,6 +1,6 @@
 "use client";
 
-import type { DevPerk } from "@/generated/prisma/client";
+import type { DevPerk } from "@prisma/client";
 import { usePathname, useRouter } from "next/navigation";
 import { type ComponentProps, useState } from "react";
 import { Button } from "@/components/ui/button";
