@@ -1,6 +1,6 @@
 "use client";
 
-import type { DevPerk } from "@/generated/prisma/client";
+import type { DevPerk } from "@prisma/client";
 import type { ComponentProps } from "react";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";

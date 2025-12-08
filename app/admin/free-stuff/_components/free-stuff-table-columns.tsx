@@ -1,7 +1,7 @@
 "use client";
 
 import { formatDate } from "@primoui/utils";
-import { type DevPerk } from "@/generated/prisma/client";
+import { type DevPerk } from "@prisma/client";
 import type { ColumnDef } from "@tanstack/react-table";
 import { RowCheckbox } from "@/components/admin/row-checkbox";
 import { Badge } from "@/components/ui/badge";
@@ -63,7 +63,6 @@ export const getColumns = (): ColumnDef<DevPerk>[] => {
       header: ({ column }) => <DataTableColumnHeader column={column} title="Free" />,
       cell: ({ row }) => <Badge variant={row.getValue("isFree") ? "success" : "soft"}>{row.getValue("isFree") ? "Yes" : "No"}</Badge>,
     },
-
 
     {
       accessorKey: "createdAt",
