@@ -112,7 +112,7 @@ export const autoFillPerk = adminProcedure
     Target URL: ${url}
     Task:
     1. Identify the tool/service name.
-    2. Write a punchy, short description (max 20 words) explaining WHY a student needs it.
+    2. Write a punchy, short description (max 20 words) focusing EXCLUSIVELY on the student program's specific offering and direct benefit (e.g., "Free one-year access to all IDEs" or "Lifetime 50% discount on Pro Plan").
     3. ESTIMATE the MONTHLY monetary value in USD for the pro/standard version.
        - STRICT FORMAT: "$XX" or "$XX-$YY" (e.g., "$20", "$49", or "$10-$15").
        - Do NOT include words like "/month", "approx", or "USD". Just the symbol and number.

@@ -1,17 +1,16 @@
 import { Button } from "@/components/ui/button-shadcn";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { BadgeInfo } from "lucide-react";
 import { useState } from "react";
 import { SocialFooter } from "@/components/web/ui/social-footer";
-
+import { Icons } from "@/components/web/icons";
 export function InfoDialog() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" className="hidden z-50 md:flex gap-2">
-          <BadgeInfo /> About
+        <Button variant="ghost" className="hidden z-50 md:flex gap-1">
+          <Icons.circleBig /> About
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:min-w-[900px]">
