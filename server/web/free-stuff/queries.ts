@@ -3,11 +3,23 @@ import { unstable_cache as cache } from "next/cache";
 import { Prisma } from "@prisma/client";
 import { DevPerkCardPayload } from "./payloads";
 
+type FindPerksArgs = Prisma.DevPerkFindManyArgs & {
+  search?: string;
+};
+
 export const findFreeStuffPerks = cache(
-  async ({ where, ...args }: Prisma.DevPerkFindManyArgs = {}) => {
+  async ({ search, where, ...args }: FindPerksArgs = {}) => {
+    const searchFilter: Prisma.DevPerkWhereInput = search
+      ? {
+          OR: [{ name: { contains: search, mode: "insensitive" } }, { description: { contains: search, mode: "insensitive" } }],
+        }
+      : {};
     return db.devPerk.findMany({
       ...args,
-      where,
+      where: {
+        ...where,
+        ...searchFilter,
+      },
       orderBy: { createdAt: "desc" },
       select: DevPerkCardPayload,
     });

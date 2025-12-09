@@ -20,7 +20,7 @@ interface PerksTableProps {
   data: Perk[];
 }
 
-export function PerksTable({ data = [] }: PerksTableProps) {
+export function StuffTable({ data = [] }: PerksTableProps) {
   const [selectedPerk, setSelectedPerk] = useState<Perk | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
@@ -147,6 +147,7 @@ export function PerksTable({ data = [] }: PerksTableProps) {
               </div>
             </div>
 
+            {/* Tags */}
             {perk.tags.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
                 {perk.tags.map((tag) => (

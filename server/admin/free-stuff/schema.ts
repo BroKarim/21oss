@@ -4,17 +4,13 @@ import { getSortingStateParser } from "@/lib/parsers";
 import { PerkType } from "@prisma/client";
 
 export const freeStuffTableParamsSchema = {
-  // Search field
   name: parseAsString.withDefault(""),
 
-  // Sorting (default: createdAt desc)
   sort: getSortingStateParser<any>().withDefault([{ id: "createdAt", desc: true }]),
 
-  // Pagination
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(25),
 
-  // Filters
   type: parseAsArrayOf(z.nativeEnum(PerkType)).withDefault([]),
   isFree: parseAsArrayOf(z.boolean()).withDefault([]),
 };
