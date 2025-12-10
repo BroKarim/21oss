@@ -3,8 +3,9 @@
 import { useQueryState } from "nuqs";
 import { useMemo } from "react";
 import { StuffTable, type Perk } from "./stuff-table";
-
+import { submitUrl } from "@/config/site";
 import { StuffSearch } from "./stuff-search";
+import { Button } from "@/components/ui/button-shadcn";
 import { AnimatePresence, motion } from "framer-motion";
 
 interface StuffClientWrapperProps {
@@ -33,7 +34,18 @@ export function StuffClientWrapper({ initialData }: StuffClientWrapperProps) {
           <p className="text-muted-foreground">Curated list of free tools and discounts for developers & students.</p>
         </div>
       </div>
-      <StuffSearch />
+      <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex-1 md:w-[280px]">
+          <StuffSearch />
+        </div>
+
+        {/* Submit Button */}
+        <Button asChild>
+          <a href={submitUrl} target="_blank" rel="noreferrer">
+            Submit Resource
+          </a>
+        </Button>
+      </div>
 
       <AnimatePresence mode="wait">
         {filteredData.length > 0 ? (

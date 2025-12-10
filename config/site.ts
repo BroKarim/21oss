@@ -17,6 +17,8 @@ export const siteConfig = {
 };
 
 
+export const submitUrl = "https://forms.gle/vXwhH5psEkZYMqsu9";
+
 export const META_THEME_COLORS = {
   light: "#ffffff",
   
