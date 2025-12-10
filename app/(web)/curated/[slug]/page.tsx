@@ -57,7 +57,6 @@ export default async function CuratedListPage(props: PageProps) {
               {list.description ? <p>{list.description}</p> : <p className="italic text-neutral-500">No description provided for this collection.</p>}
             </div>
 
-            {/* Share Section (Dummy) */}
             <ShareLink slug={list.url} />
           </div>
 
