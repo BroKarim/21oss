@@ -79,7 +79,6 @@ export function ShareLink({ slug, baseUrl = "https://www.21oss.com/" }: ShareLin
           }}
         />
 
-        {/* Original content - URL and copy button */}
         <div
           className="absolute inset-0 flex items-center justify-between px-4"
           style={{

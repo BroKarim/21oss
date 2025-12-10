@@ -36,9 +36,7 @@ export default async function CuratedListPage(props: PageProps) {
   });
   return (
     <div className="flex w-full max-w-7xl mx-auto flex-col items-center justify-center overflow-x-hidden pb-20">
-      {/* --- BAGIAN 1: HEADER CURATED LIST --- */}
       <div className="w-full  mx-auto p-6 pt-10">
-        {/* Breadcrumb */}
         <div className="text-sm text-neutral-500 flex items-center gap-2 mb-6">
           <Link href="/" className="hover:text-neutral-300 transition-colors">
             Home
@@ -54,7 +52,6 @@ export default async function CuratedListPage(props: PageProps) {
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          {/* Main Content (Description) - Kolom Kiri */}
           <div className="lg:col-span-2">
             <div className="text-neutral-300 leading-relaxed text-[17px] space-y-6 whitespace-pre-wrap">
               {list.description ? <p>{list.description}</p> : <p className="italic text-neutral-500">No description provided for this collection.</p>}
@@ -64,12 +61,11 @@ export default async function CuratedListPage(props: PageProps) {
             <ShareLink slug={list.url} />
           </div>
 
-          {/* Side Card (Dummy Static) - Kolom Kanan */}
           <Link href={siteConfig.links.thread} target="_blank" className="block hover:opacity-90 transition-opacity">
             <Card className="bg-neutral-900 border border-neutral-800 rounded-xl p-4 h-fit sticky top-24">
               <CardContent className="p-0">
                 <div className="flex flex-col gap-4">
-                  <p className="text-xs text-neutral-500 mb-3 uppercase tracking-wider font-semibold">Curated by</p>
+                  <p className="text-xs text-neutral-500  uppercase tracking-wider font-semibold">Curated by</p>
 
                   <div className="flex items-center gap-3">
                     <Avatar className="w-10 h-10">
