@@ -28,7 +28,13 @@ export const resourceSchema = z.object({
   slug: z.string().optional(),
   websiteUrl: z.string().url().optional().or(z.literal("")),
   repoUrl: z.string().url().optional().or(z.literal("")),
-  media: z.array(z.string()).default([]),
+  media: z
+    .array(
+      z.object({
+        value: z.string().url("Must be a valid URL").or(z.literal("")),
+      })
+    )
+    .default([]),
   category: z.nativeEnum(RCategory),
 });
 

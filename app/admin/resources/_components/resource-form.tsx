@@ -40,7 +40,7 @@ export function ResourceForm({ className, title, resource, ...props }: ResourceF
       websiteUrl: resource?.websiteUrl ?? "",
       repoUrl: resource?.repoUrl ?? "",
       category: resource?.category ?? RCategory.Template,
-      media: resource?.media ?? [],
+      media: resource?.media?.map((url) => ({ value: url })) ?? [],
     },
   });
 
@@ -53,7 +53,6 @@ export function ResourceForm({ className, title, resource, ...props }: ResourceF
     enabled: !resource,
   });
 
-  // 3. Field Array untuk Media
   const {
     fields: mediaFields,
     append: appendMedia,
@@ -64,7 +63,7 @@ export function ResourceForm({ className, title, resource, ...props }: ResourceF
   });
 
   const { execute: executeUpload, isPending: isUploading } = useServerAction(uploadResourceMedia, {
-    onSuccess: ({ data }) => {
+    onSuccess: () => {
       toast.success("File uploaded successfully");
     },
     onError: ({ err }) => toast.error(err.message),
@@ -93,7 +92,7 @@ export function ResourceForm({ className, title, resource, ...props }: ResourceF
     if (err) return;
 
     if (res && res.url) {
-      form.setValue(`media.${index}`, res.url);
+      form.setValue(`media.${index}.value`, res.url, { shouldValidate: true });
     }
   };
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -199,63 +198,70 @@ export function ResourceForm({ className, title, resource, ...props }: ResourceF
         />
 
         {/* MEDIA SECTION (Simple Array of Strings) */}
+
+        {/* MEDIA SECTION */}
         <div className="space-y-4 col-span-full border p-4 rounded-xl mt-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold text-lg">Media (Images/Videos)</h3>
-            <Button type="button" variant="secondary" size="sm" onClick={() => appendMedia("")}>
+            {/* ✅ FIX 2: Append as object */}
+            <Button type="button" variant="secondary" size="sm" onClick={() => appendMedia({ value: "" })}>
               <Plus className="w-4 h-4 mr-1" /> Add Slot
             </Button>
           </div>
 
-          <p className="text-sm text-muted-foreground">Paste URL manually OR click the upload button. Index 0 is the thumbnail.</p>
+          <p className="text-sm text-muted-foreground">
+            Paste URL manually OR upload a file. <strong>Index 0 = thumbnail.</strong>
+          </p>
 
-          {mediaFields.map((fieldItem, index) => (
-            <div key={fieldItem.id} className="flex flex-col gap-2 p-3 border rounded-lg bg-muted/20">
-              <div className="flex gap-2 items-start">
-                {/* Input Text URL */}
-                <FormField
-                  control={form.control}
-                  name={`media.${index}`}
-                  render={({ field }) => (
-                    <FormItem className="flex-1">
-                      <FormControl>
-                        <Input {...field} placeholder="https://..." />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          {mediaFields.map((fieldItem, index) => {
+            // ✅ FIX 3: Access nested 'value' property
+            const currentValue = form.watch(`media.${index}.value`);
+            const isVideo = currentValue?.endsWith(".mp4") || currentValue?.endsWith(".webm");
 
-                {/* Tombol Upload */}
-                <div>
-                  <input type="file" id={`file-upload-${index}`} className="hidden" accept="image/*,video/mp4" onChange={(e) => handleFileUpload(e, index)} disabled={isUploading} />
-                  <Button type="button" disabled={isUploading} asChild>
-                    <label htmlFor={`file-upload-${index}`} className="cursor-pointer">
-                      {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
-                    </label>
+            return (
+              <div key={fieldItem.id} className="flex flex-col gap-2 p-3 border rounded-lg bg-muted/20">
+                <div className="flex gap-2 items-start">
+                  {/* ✅ FIX 4: Input field path includes '.value' */}
+                  <FormField
+                    control={form.control}
+                    name={`media.${index}.value`}
+                    render={({ field }) => (
+                      <FormItem className="flex-1">
+                        <FormControl>
+                          <Input {...field} placeholder="https://..." />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Upload Button */}
+                  <div>
+                    <input type="file" id={`file-upload-${index}`} className="hidden" accept="image/jpeg,image/jpg,image/png,image/webp,video/mp4,video/webm" onChange={(e) => handleFileUpload(e, index)} disabled={isUploading} />
+                    <Button type="button" disabled={isUploading} asChild>
+                      <label htmlFor={`file-upload-${index}`} className="cursor-pointer">
+                        {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                      </label>
+                    </Button>
+                  </div>
+
+                  {/* Delete Button */}
+                  <Button type="button" variant="destructive" onClick={() => removeMedia(index)}>
+                    Delete
                   </Button>
                 </div>
 
-                {/* Tombol Hapus */}
-                <Button type="button" variant="destructive" onClick={() => removeMedia(index)}>
-                  Delete
-                </Button>
+                {/* ✅ FIX 5: Preview uses nested value */}
+                {currentValue && (
+                  <div className="rounded-md border overflow-hidden w-full h-40 bg-black/5 flex items-center justify-center">
+                    {isVideo ? <video src={currentValue} className="h-full max-w-full object-contain" controls /> : <img src={currentValue} alt={`Preview ${index}`} className="h-full max-w-full object-contain" />}
+                  </div>
+                )}
               </div>
+            );
+          })}
 
-              {/* Preview */}
-              {form.watch(`media.${index}`) && (
-                <div className="rounded-md border overflow-hidden w-full h-40 bg-black/5 flex items-center justify-center">
-                  {form.watch(`media.${index}`).endsWith(".mp4") ? (
-                    <video src={form.watch(`media.${index}`)} className="h-full max-w-full object-contain" controls />
-                  ) : (
-                    <img src={form.watch(`media.${index}`)} alt="preview" className="h-full max-w-full object-contain" />
-                  )}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {mediaFields.length === 0 && <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">No media added yet.</div>}
+          {mediaFields.length === 0 && <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">No media added yet. Click `Add Slot` to begin.</div>}
         </div>
 
         {/* SUBMIT BUTTONS */}
