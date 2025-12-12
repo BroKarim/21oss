@@ -397,7 +397,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                     )}
                   />
                 </TabsContent>
-                {/* TAB 2: UPLOAD */}
+
                 <TabsContent value="upload" className="mt-2 space-y-4">
                   <FormItem>
                     <FormLabel>Upload Image / Video</FormLabel>
