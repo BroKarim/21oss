@@ -1,8 +1,8 @@
 "use client";
 
-import { getRandomString, isValidUrl, slugify } from "@primoui/utils";
+import { isValidUrl, slugify } from "@primoui/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type Tool, ToolStatus } from "@prisma/client";
+import { type Tool, ToolStatus, ToolType } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { use, useState } from "react";
@@ -31,7 +31,7 @@ import type { findPlatformList } from "@/server/admin/platforms/queries";
 import { StackCombobox } from "./stack-combobox";
 import type { findStackList } from "@/server/admin/stacks/queries";
 import { toolSchema, type ToolSchema } from "@/server/admin/tools/schema";
-import { generateFaviconUrl } from "@/lib/url-utils";
+import { generateFaviconUrl, computeFaviconUrl } from "@/lib/url-utils";
 import { cx } from "@/lib/utils";
 import { AIModelSelector, DEFAULT_AI_MODELS } from "../../_components/ai-model-selector";
 
@@ -76,6 +76,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       publishedAt: tool?.publishedAt ?? null,
       categories: tool?.categories.map((c) => c.id) ?? [],
       platforms: tool?.platforms.map((p) => p.id) ?? [],
+      type: tool?.type ?? "Tool",
       stacks: (tool?.stacks || []).map((s) => (typeof s === "string" ? { id: "", name: s, slug: s } : s)),
       screenshots:
         tool?.screenshots?.map((img) => ({
@@ -126,14 +127,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     enabled: !tool,
   });
 
-  useComputedField({
-    form,
-    sourceField: "websiteUrl",
-    computedField: "faviconUrl",
-    callback: generateFaviconUrl,
-    enabled: !tool,
-  });
-
   if (!stacksPromise) {
     throw new Error("stacksPromise tidak diberikan ke ToolForm");
   }
@@ -157,8 +150,19 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
   });
 
   // Keep track of the form values
-  const [slug, websiteUrl] = form.watch(["slug", "websiteUrl"]);
-
+  const [websiteUrl, type, repoUrl] = form.watch(["websiteUrl", "type", "repositoryUrl"]);
+  computeFaviconUrl({
+    form,
+    sourceFields: ["websiteUrl", "repositoryUrl", "type"],
+    computedField: "faviconUrl",
+    callback: (values) =>
+      generateFaviconUrl({
+        websiteUrl: values.websiteUrl || null,
+        repoUrl: values.repositoryUrl || null,
+        type: values.type || ToolType.Tool,
+      }),
+    enabled: !tool, // Hanya auto-generate saat create, tidak saat edit
+  });
   // Upsert tool
   const upsertAction = useServerAction(upsertTool, {
     onSuccess: ({ data }) => {
@@ -322,6 +326,24 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
               <FormLabel>Platforms</FormLabel>
               <FormControl>
                 <MultiSelectCheckbox options={platformOptions} value={field.value ?? []} onChange={field.onChange} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="type"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Type</FormLabel>
+              <FormControl>
+                <select className="border rounded-md px-3 py-2 bg-background" value={field.value} onChange={(e) => field.onChange(e.target.value)}>
+                  <option value="Tool">Tool</option>
+                  <option value="Template">Template</option>
+                  <option value="Component">Component</option>
+                  <option value="Asset">Asset</option>
+                </select>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -507,10 +529,15 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                     className="-my-1"
                     disabled={!isValidUrl(websiteUrl) || faviconAction.isPending}
                     onClick={() => {
-                      faviconAction.execute({
-                        url: websiteUrl,
-                        path: `tools/${slug || getRandomString(12)}`,
+                      const faviconUrl = generateFaviconUrl({
+                        websiteUrl,
+                        repoUrl,
+                        type: type ?? ToolType.Tool,
                       });
+
+                      if (faviconUrl) {
+                        form.setValue("faviconUrl", faviconUrl);
+                      }
                     }}
                   >
                     {field.value ? "Regenerate" : "Generate"}
