@@ -28,7 +28,6 @@ const extractGithubOwner = (repoUrl: string): string | null => {
   }
 };
 
-// Di utils atau hooks file
 export const computeFaviconUrl = ({ form, sourceFields, computedField, callback, enabled = true }: { form: any; sourceFields: string[]; computedField: string; callback: (values: any) => string; enabled?: boolean }) => {
   useEffect(() => {
     if (!enabled) return;

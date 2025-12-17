@@ -1,4 +1,4 @@
-import { type Prisma, ToolStatus } from "@prisma/client";
+import { type Prisma, ToolStatus, ToolType } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
 import { ToolManyPayload, toolOnePayload } from "./payloads";
@@ -178,5 +178,34 @@ export const findToolsByStack = async (slug: string, { take = 12 }: { take?: num
   return findTools({
     where: { stacks: { some: { slug } } },
     take,
+  });
+};
+
+
+export const findResources = async ({
+  orderBy = "stars",
+  take = 12,
+  where,
+}: {
+  orderBy?: "stars" | "latest";
+  take?: number;
+  where?: Prisma.ToolWhereInput;
+} = {}) => {
+  "use cache";
+
+  cacheTag("resources");
+  cacheLife("max");
+
+  return db.tool.findMany({
+    take,
+    where: {
+      status: ToolStatus.Published,
+      type: {
+        in: [ToolType.Template, ToolType.Component, ToolType.Asset],
+      },
+      ...where,
+    },
+    orderBy: orderBy === "latest" ? { lastCommitDate: "desc" } : { stars: "desc" },
+    select: ToolManyPayload,
   });
 };

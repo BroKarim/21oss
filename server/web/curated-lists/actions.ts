@@ -8,10 +8,8 @@ export async function getCuratedLists() {
 
 export async function getCuratedListByUrl(url: string) {
   const list = await findCuratedListByUrl(url);
-
   if (!list) {
     return null;
   }
-
   return list;
 }

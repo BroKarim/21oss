@@ -1,6 +1,6 @@
 "use server";
 
-import { findRecentTools, filterToolsBySubcategory } from "@/server/web/tools/queries";
+import { findRecentTools, filterToolsBySubcategory, findResources } from "@/server/web/tools/queries";
 
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
@@ -24,10 +24,24 @@ export async function getToolsBySubcategory(
       platform: filters?.platform,
     });
 
-    // console.log("[SERVER ACTION] Query result count:", result?.length || 0);
     return result;
   } catch (error) {
-    // console.error("[SERVER ACTION] Error in getToolsBySubcategory:", error);
     throw error;
   }
+}
+
+export async function getResources({
+  orderBy = "stars",
+  take = 12,
+  where,
+}: {
+  orderBy?: "stars" | "latest";
+  take?: number;
+  where?: import("@prisma/client").Prisma.ToolWhereInput;
+} = {}) {
+  return await findResources({
+    orderBy,
+    take,
+    where,
+  });
 }
