@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentProps } from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Link } from "@/components/ui/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -15,15 +15,29 @@ type ResourceCardProps = ComponentProps<typeof Card> & {
 };
 
 const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const cardRef = useRef(null);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "200px", // Load 200px sebelum masuk viewport
+      }
+    );
 
-  if (!isMounted) {
-    return <ResourceCardSkeleton />;
-  }
+    if (cardRef.current) {
+      observer.observe(cardRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const primaryImage = tool.screenshots?.find((s) => s.order === 0)?.imageUrl;
   const stacks = tool.stacks?.slice(0, 3) ?? [];
@@ -36,52 +50,59 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
   };
 
   return (
-    <Card asChild {...props} className="p-0 border-none gap-2 bg-transparent shadow-none group">
-      <div className="relative w-full">
-        <div
-          onClick={handleCardClick}
-          className="cursor-pointer"
-          role="link"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handleCardClick();
-            }
-          }}
-        >
-          <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-base">
-            <ComponentPreviewImage src={primaryImage} alt={`${tool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover" priority={false} />
+    <Card ref={cardRef} {...props} className="p-0 border-none bg-transparent shadow-none group">
+      <div className="relative w-full space-y-2">
+        {!isVisible ? (
+          // Skeleton sebelum visible
+          <ResourceCardSkeleton />
+        ) : (
+          <div
+            onClick={handleCardClick}
+            className="cursor-pointer"
+            role="link"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                handleCardClick();
+              }
+            }}
+          >
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-base">
+              <ComponentPreviewImage src={primaryImage} alt={`${tool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover" priority={false} />
 
-            <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 pointer-events-none">
-              <div className="flex flex-wrap gap-2">
-                {stacks.map((stack) => (
-                  <Badge key={stack.slug} variant="soft" className="bg-white/90 text-black">
-                    {stack.name}
-                  </Badge>
-                ))}
-              </div>
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center flex-col justify-center p-4">
-                <p className="text-white text-sm text-center leading-relaxed">{tool.tagline}</p>
-              </div>
-              {tool.repositoryUrl && (
-                <div className="flex justify-end">
-                  <Link href={tool.repositoryUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white hover:opacity-80 pointer-events-auto">
-                    <Icons.gitHubOpenmoji className="w-8 h-8" />
-                  </Link>
+              <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 pointer-events-none">
+                <div className="flex flex-wrap gap-2">
+                  {stacks.map((stack) => (
+                    <Badge key={stack.slug} variant="soft" className="bg-white/90 text-black">
+                      {stack.name}
+                    </Badge>
+                  ))}
                 </div>
-              )}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center flex-col justify-center p-4">
+                  <p className="text-white text-sm text-center leading-relaxed">{tool.tagline}</p>
+                </div>
+                {tool.repositoryUrl && (
+                  <div className="flex justify-end">
+                    <Link href={tool.repositoryUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="text-white hover:opacity-80 pointer-events-auto">
+                      <Icons.gitHubOpenmoji className="w-8 h-8" />
+                    </Link>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="flex items-center space-x-2 ">
-          {tool.faviconUrl && <img src={tool.faviconUrl} alt={`${tool.name} favicon`} className="w-6 h-6 rounded flex-shrink-0" loading="lazy" />}
+        {isVisible && (
+          <div className="flex items-center space-x-2 ">
+            {tool.faviconUrl && <img src={tool.faviconUrl} alt={`${tool.name} favicon`} className="w-6 h-6 rounded flex-shrink-0" loading="lazy" />}
 
-          <div className="flex-1 min-w-0">
-            <p className="text-base font-medium text-foreground truncate">{tool.name}</p>
+            <div className="flex-1 min-w-0">
+              <p className="text-base font-medium text-foreground truncate">{tool.name}</p>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </Card>
   );
