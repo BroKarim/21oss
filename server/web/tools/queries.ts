@@ -2,7 +2,7 @@ import { type Prisma, ToolStatus, ToolType } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
 import { ToolManyPayload, toolOnePayload } from "./payloads";
-import type { FilterSchema } from "../shared/schema";
+import type { FilterSchema, ResourcesParams } from "../shared/schema";
 
 export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {
   "use cache";
@@ -177,8 +177,7 @@ export const findToolsByStack = async (slug: string, { take = 12 }: { take?: num
     take,
   });
 };
-
-export const findResources = async ({ type }: { type: ToolType | "all" }) => {
+export const findResources = async ({ type }: ResourcesParams) => {
   "use cache";
   cacheTag("resources");
   cacheLife("max");
