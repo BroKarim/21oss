@@ -22,7 +22,7 @@ export function ResourcesTabs({ defaultValue }: { defaultValue: string }) {
     <Tabs value={type} onValueChange={setType}>
       <TabsList variant="pills" className="w-fit mx-auto">
         {TYPES.map((t) => (
-          <TabsTrigger key={t.value} value={t.value}>
+          <TabsTrigger key={t.value} value={t.value} className="text-neutral-400">
             {t.label}
           </TabsTrigger>
         ))}

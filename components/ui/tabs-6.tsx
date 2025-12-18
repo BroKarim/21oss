@@ -255,14 +255,14 @@ const TabsList = forwardRef<
 
     // Active indicator classes
     const activeIndicatorClasses = {
-      default: "h-[4px] bg-primary dark:bg-primary",
+      default: "h-[4px] bg-neutral-500 dark:bg-neutral-500",
       pills: "hidden",
-      underlined: "h-[4px] bg-primary dark:bg-primary",
+      underlined: "h-[4px] bg-neutral-500 dark:bg-neutral-500",
     };
 
     // Hover indicator classes
     const hoverIndicatorClasses = {
-      default: "bg-muted dark:bg-muted rounded-[6px]",
+      default: "bg-neutral-400 dark:bg-muted rounded-[6px]",
       pills: "bg-muted dark:bg-muted rounded-full",
       underlined: "bg-muted dark:bg-muted rounded-[6px]",
     };
@@ -335,7 +335,7 @@ const TabsList = forwardRef<
                     className={cn(
                       "px-3 py-2 sm:mb-1.5 mb-2 cursor-pointer transition-colors duration-300",
                       sizeClasses[size],
-                      variant === "pills" && isActive ? "bg-[#0e0f1114] dark:bg-[#ffffff1a] rounded-full" : "",
+                      variant === "pills" && isActive ? "bg-neutral-500 dark:bg-neutral-500 rounded-full" : "",
                       disabled ? "opacity-50 cursor-not-allowed" : "",
                       stretch ? "flex-1 text-center" : "",
                       isActive ? props.activeClassName || "text-foreground dark:text-foreground" : props.inactiveClassName || "text-muted-foreground dark:text-muted-foreground",
