@@ -90,8 +90,36 @@ export const toolManyExtendedPayload = Prisma.validator<Prisma.ToolSelect>()({
   categories: toolCategoriesPayload,
 });
 
+export const ToolListPayload = Prisma.validator<Prisma.ToolSelect>()({
+  id: true,
+  name: true,
+  slug: true,
+  websiteUrl: true,
+  repositoryUrl: true,
+  tagline: true,
+  faviconUrl: true,
+  stacks: {
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+    take: 3,
+  },
+  screenshots: {
+    select: {
+      imageUrl: true,
+      order: true,
+    },
+    where: { order: 0 },
+    take: 1,
+  },
+});
+
 export type ToolOne = Prisma.ToolGetPayload<{ select: typeof toolOnePayload }>;
 export type ToolMany = Prisma.ToolGetPayload<{
   select: typeof ToolManyPayload;
 }>;
+
+export type ToolList = Prisma.ToolGetPayload<{ select: typeof ToolListPayload }>;
 export type ToolManyExtended = Prisma.ToolGetPayload<{ select: typeof toolManyExtendedPayload }>;

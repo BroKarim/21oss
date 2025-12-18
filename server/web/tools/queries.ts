@@ -1,7 +1,7 @@
 import { type Prisma, ToolStatus, ToolType } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
-import { ToolManyPayload, toolOnePayload } from "./payloads";
+import { ToolManyPayload, toolOnePayload, ToolListPayload } from "./payloads";
 import type { FilterSchema, ResourcesParams } from "../shared/schema";
 
 export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {
@@ -195,7 +195,7 @@ export const findResources = async ({ type }: ResourcesParams) => {
 
   return db.tool.findMany({
     where,
-    select: ToolManyPayload,
+    select: ToolListPayload,
     orderBy: { stars: "desc" },
   });
 };

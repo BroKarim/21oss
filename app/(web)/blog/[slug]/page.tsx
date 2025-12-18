@@ -44,6 +44,10 @@ export default async function CuratedListPage(props: PageProps) {
             Home
           </Link>
           <span>/</span>
+          <Link href="/blogs" className="hover:text-neutral-300 transition-colors">
+            Blogs
+          </Link>
+          <span>/</span>
           <span className="text-neutral-300 font-medium truncate max-w-[300px]">{list.title}</span>
         </div>
 

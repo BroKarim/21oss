@@ -6,11 +6,12 @@ import { Card } from "@/components/ui/card";
 import { Link } from "@/components/ui/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import type { ToolMany } from "@/server/web/tools/payloads";
+import type { ToolList } from "@/server/web/tools/payloads";
 import ComponentPreviewImage from "../../card/card-image";
 import { Icons } from "../../icons";
+
 type ResourceCardProps = ComponentProps<typeof Card> & {
-  tool: ToolMany;
+  tool: ToolList;
 };
 
 const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
