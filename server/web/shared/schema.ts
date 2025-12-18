@@ -62,6 +62,8 @@ export const adDetailsSchema = z.object({
 });
 export const resourcesParamsCache = createSearchParamsCache({
   type: parseAsStringEnum<ToolType | "all">(["all", ToolType.Template, ToolType.Component, ToolType.Asset]).withDefault("all"),
+  sortBy: parseAsStringEnum(["stars", "forks", "newest", "oldest"]).withDefault("stars"),
+  stack: parseAsString.withDefault(""),
 });
 
 // schema.ts
