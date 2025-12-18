@@ -130,7 +130,6 @@ export const findToolsWithCategories = async ({ where, ...args }: Prisma.ToolFin
   });
 };
 
-// tool with filtering like searchTools without pagination
 type FilterOptions = {
   subcategory: string;
   stack?: string[];
@@ -157,8 +156,6 @@ export const filterToolsBySubcategory = async ({ subcategory, stack, license, pl
     whereQuery.OR = [{ name: { contains: q, mode: "insensitive" } }, { tagline: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }];
   }
 
-  // console.log("[QUERY] Generated where query:", JSON.stringify(whereQuery, null, 2));
-
   return db.tool.findMany({
     where: whereQuery,
     select: ToolManyPayload,
@@ -181,31 +178,25 @@ export const findToolsByStack = async (slug: string, { take = 12 }: { take?: num
   });
 };
 
-
-export const findResources = async ({
-  orderBy = "stars",
-  take = 12,
-  where,
-}: {
-  orderBy?: "stars" | "latest";
-  take?: number;
-  where?: Prisma.ToolWhereInput;
-} = {}) => {
+export const findResources = async ({ type }: { type: ToolType | "all" }) => {
   "use cache";
-
   cacheTag("resources");
   cacheLife("max");
 
+  const where: Prisma.ToolWhereInput = {
+    status: ToolStatus.Published,
+    ...(type === "all"
+      ? {
+          type: {
+            in: [ToolType.Template, ToolType.Component, ToolType.Asset],
+          },
+        }
+      : { type }),
+  };
+
   return db.tool.findMany({
-    take,
-    where: {
-      status: ToolStatus.Published,
-      type: {
-        in: [ToolType.Template, ToolType.Component, ToolType.Asset],
-      },
-      ...where,
-    },
-    orderBy: orderBy === "latest" ? { lastCommitDate: "desc" } : { stars: "desc" },
+    where,
     select: ToolManyPayload,
+    orderBy: { stars: "desc" },
   });
 };

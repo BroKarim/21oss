@@ -1,7 +1,8 @@
 import { getResources } from "@/server/web/tools/actions";
-import { ResourceCard } from "@/components/web/tools/tool-resources";
+import ResourceTabs from "@/components/web/tools/resources/resources-tab";
+
 export default async function ResourcePage() {
-  const resources = await getResources({ take: 24 });
+  const resources = await getResources();
 
   return (
     <div className="min-h-screen bg-background/50 flex flex-1 flex-col items-center py-10 px-4 md:px-8">
@@ -12,12 +13,8 @@ export default async function ResourcePage() {
         </div>
       </div>
 
-      <div className="max-w-8xl mx-auto w-full mt-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2">
-          {resources.map((tool) => (
-            <ResourceCard key={tool.id} tool={tool} />
-          ))}
-        </div>
+      <div className=" mx-auto w-full mt-16">
+        <ResourceTabs initialResources={resources} />
       </div>
     </div>
   );

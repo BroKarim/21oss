@@ -1,6 +1,8 @@
 "use server";
 
 import { findRecentTools, filterToolsBySubcategory, findResources } from "@/server/web/tools/queries";
+import { ToolType } from "@prisma/client";
+
 
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
@@ -30,18 +32,8 @@ export async function getToolsBySubcategory(
   }
 }
 
-export async function getResources({
-  orderBy = "stars",
-  take = 12,
-  where,
-}: {
-  orderBy?: "stars" | "latest";
-  take?: number;
-  where?: import("@prisma/client").Prisma.ToolWhereInput;
-} = {}) {
+export async function getResources(type: ToolType | "all" = "all") {
   return await findResources({
-    orderBy,
-    take,
-    where,
+    type,
   });
 }
