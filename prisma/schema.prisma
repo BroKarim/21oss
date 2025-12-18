@@ -291,30 +291,30 @@ model DevPerk {
   @@index([isHot])
 }
 
-enum RCategory {
-  Template
-  Component
-  Asset
-  Inspiration 
-}
+// enum RCategory {
+//   Template
+//   Component
+//   Asset
+//   Inspiration 
+// }
 
-model Resource {
-  id          String   @id @default(cuid())
-  name        String   @db.Citext
-  slug        String   @unique
+// model Resource {
+//   id          String   @id @default(cuid())
+//   name        String   @db.Citext
+//   slug        String   @unique
 
-  websiteUrl  String?  
-  repoUrl     String?  
+//   websiteUrl  String?  
+//   repoUrl     String?  
 
-  media       String[] 
+//   media       String[] 
 
-  category    RCategory
+//   category    RCategory
   
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+//   createdAt   DateTime @default(now())
+//   updatedAt   DateTime @updatedAt
 
-  @@index([category])
-}
+//   @@index([category])
+// }
 
 model Session {
   id             String   @id @default(cuid())
