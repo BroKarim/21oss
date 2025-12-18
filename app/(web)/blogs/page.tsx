@@ -18,7 +18,7 @@ export default async function Page() {
         <section id="curated-lists" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {curatedLists.map((list) => (
-              <Link key={list.id} href={`/blog/${list.url}`} className="block h-full">
+              <Link key={list.id} href={`/blogs/${list.url}`} className="block h-full">
                 <CuratedCard title={list.title} description={list.description ?? ""} previewTools={list.tools.map((t) => t.name)} totalToolCount={list._count?.tools ?? 0} />
               </Link>
             ))}

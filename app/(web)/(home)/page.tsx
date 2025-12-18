@@ -23,7 +23,7 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
       <div className="space-y-2 mx-auto w-full mt-16">
         <ResourcesTabs defaultValue={params.type} />
         <Suspense
-          key={params.type} // Re-mount on filter change
+          key={params.type}
           fallback={
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(6)].map((_, i) => (

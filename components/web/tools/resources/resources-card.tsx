@@ -36,7 +36,7 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
   };
 
   return (
-    <Card asChild {...props} className="p-0 border-none bg-transparent shadow-none group">
+    <Card asChild {...props} className="p-0 border-none gap-2 bg-transparent shadow-none group">
       <div className="relative w-full">
         <div
           onClick={handleCardClick}
@@ -75,7 +75,7 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 ">
+        <div className="flex items-center space-x-2 ">
           {tool.faviconUrl && <img src={tool.faviconUrl} alt={`${tool.name} favicon`} className="w-6 h-6 rounded flex-shrink-0" loading="lazy" />}
 
           <div className="flex-1 min-w-0">
