@@ -97,6 +97,9 @@ export const ToolListPayload = Prisma.validator<Prisma.ToolSelect>()({
   websiteUrl: true,
   repositoryUrl: true,
   tagline: true,
+  stars: true,
+  forks: true,
+  lastCommitDate: true,
   faviconUrl: true,
   stacks: {
     select: {

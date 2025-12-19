@@ -1,7 +1,9 @@
 "use client";
 
 import type { ComponentProps } from "react";
+import { formatNumber } from "@primoui/utils";
 import { useEffect, useState, useRef } from "react";
+import { GitFork, Star, Timer } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Link } from "@/components/ui/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -9,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import type { ToolList } from "@/server/web/tools/payloads";
 import ComponentPreviewImage from "../../card/card-image";
 import { Icons } from "../../icons";
+import { formatDistanceToNowStrict } from "date-fns";
+import { Insights } from "@/components/ui/insights";
 
 type ResourceCardProps = ComponentProps<typeof Card> & {
   tool: ToolList;
@@ -17,6 +21,7 @@ type ResourceCardProps = ComponentProps<typeof Card> & {
 const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
+  const lastCommitDate = tool.lastCommitDate && formatDistanceToNowStrict(tool.lastCommitDate, { addSuffix: true });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,6 +44,20 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
     return () => observer.disconnect();
   }, []);
 
+  const insights = [
+    {
+      label: "Stars",
+      value: formatNumber(tool.stars, "standard"),
+      icon: <Star />,
+    },
+    {
+      label: "Forks",
+      value: formatNumber(tool.forks, "standard"),
+      icon: <GitFork />,
+    },
+    { label: "Last commit", value: lastCommitDate, icon: <Timer /> },
+  ];
+
   const primaryImage = tool.screenshots?.find((s) => s.order === 0)?.imageUrl;
   const stacks = tool.stacks?.slice(0, 3) ?? [];
   const href = tool.websiteUrl ?? tool.repositoryUrl;
@@ -50,7 +69,7 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
   };
 
   return (
-    <Card ref={cardRef} {...props} className="p-0 border-none bg-transparent shadow-none group">
+    <Card ref={cardRef} {...props} className="p-0 border-none bg-transparent shadow-none  group">
       <div className="relative w-full space-y-2">
         {!isVisible ? (
           // Skeleton sebelum visible
@@ -68,19 +87,19 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
               }
             }}
           >
-            <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-base">
-              <ComponentPreviewImage src={primaryImage} alt={`${tool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover" priority={false} />
+            <div className="relative w-full aspect-video  overflow-hidden shadow-base">
+              <ComponentPreviewImage src={primaryImage} alt={`${tool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover " priority={false} />
 
               <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 pointer-events-none">
-                <div className="flex flex-wrap gap-2">
-                  {stacks.map((stack) => (
-                    <Badge key={stack.slug} variant="soft" className="bg-white/90 text-black">
-                      {stack.name}
-                    </Badge>
-                  ))}
-                </div>
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center flex-col justify-center p-4">
-                  <p className="text-white text-sm text-center leading-relaxed">{tool.tagline}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {stacks.map((stack) => (
+                      <Badge key={stack.slug} variant="soft" className="bg-white/90 text-black">
+                        {stack.name}
+                      </Badge>
+                    ))}
+                  </div>
+                  <Insights insights={insights.filter((i) => i.value)} />
                 </div>
                 {tool.repositoryUrl && (
                   <div className="flex justify-end">
@@ -98,8 +117,9 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
           <div className="flex items-center space-x-2 ">
             {tool.faviconUrl && <img src={tool.faviconUrl} alt={`${tool.name} favicon`} className="w-6 h-6 rounded flex-shrink-0" loading="lazy" />}
 
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 flex flex-col min-w-0">
               <p className="text-base font-medium text-foreground truncate">{tool.name}</p>
+              <p className="text-neutral-500 text-sm  leading-relaxed">{tool.tagline}</p>
             </div>
           </div>
         )}

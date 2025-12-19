@@ -20,7 +20,7 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
         </div>
       </div>
 
-      <div className="space-y-2 mx-auto w-full mt-16">
+      <div className="space-y-4 mx-auto w-full mt-16">
         <ResourcesTabs defaultValue={params.type} />
         <Suspense
           key={params.type}

@@ -9,7 +9,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { Search } from "@/components/ui/search";
-import { Geist } from "next/font/google";
+import { Bricolage_Grotesque } from "next/font/google";
 
 export const metadata: Metadata = {
   title: siteConfig.name,
@@ -48,7 +48,7 @@ export const viewport: Viewport = {
   ],
 };
 
-const geist = Geist({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
 });
 
@@ -59,7 +59,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={cn(`${geist.className} `, " [scrollbar-gutter:stable]")}>
+      <body className={cn(`${bricolage.className} `, " [scrollbar-gutter:stable]")}>
         <div className="h-full">
           <NuqsAdapter>
             <SearchProvider>

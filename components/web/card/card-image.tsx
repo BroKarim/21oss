@@ -41,7 +41,7 @@ export default function ComponentPreviewImage({ src, alt, fallbackSrc, className
         alt={alt}
         fill
         sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 350px"
-        className={cn("object-cover rounded-t-lg transition-opacity duration-300", isLoading ? "opacity-0" : "opacity-100")}
+        className={cn("object-cover  transition-opacity duration-300 rounded-sm", isLoading ? "opacity-0" : "opacity-100")}
         onError={handleError}
         onLoad={handleLoad}
         priority={priority}
