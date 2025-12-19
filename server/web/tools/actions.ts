@@ -1,7 +1,7 @@
 "use server";
 
 import { findRecentTools, filterToolsBySubcategory, findResources } from "@/server/web/tools/queries";
-import { ToolType } from "@prisma/client";
+import { ResourcesParams } from "../shared/schema";
 
 
 export async function getRecentTools() {
@@ -32,8 +32,6 @@ export async function getToolsBySubcategory(
   }
 }
 
-export async function getResources(type: ToolType | "all" = "all") {
-  return await findResources({
-    type,
-  });
+export async function getResources(searchParams: ResourcesParams) {
+  return await findResources(searchParams);
 }

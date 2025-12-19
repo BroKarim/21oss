@@ -177,7 +177,7 @@ export const findToolsByStack = async (slug: string, { take = 12 }: { take?: num
     take,
   });
 };
-export const findResources = async ({ type }: ResourcesParams) => {
+export const findResources = async ({ type, sort }: ResourcesParams) => { // Destructure sort
   "use cache";
   cacheTag("resources");
   cacheLife("max");
@@ -185,17 +185,24 @@ export const findResources = async ({ type }: ResourcesParams) => {
   const where: Prisma.ToolWhereInput = {
     status: ToolStatus.Published,
     ...(type === "all"
-      ? {
-          type: {
-            in: [ToolType.Template, ToolType.Component, ToolType.Asset],
-          },
-        }
+      ? { type: { in: [ToolType.Template, ToolType.Component, ToolType.Asset] } }
       : { type }),
   };
+
+  // Logic Sorting
+  let orderBy: Prisma.ToolOrderByWithRelationInput = { stars: "desc" }; // Default default jika sort null
+
+  if (sort === "stars") {
+    orderBy = { stars: "desc" };
+  } else if (sort === "latest") {
+    orderBy = { lastCommitDate: "desc" };
+  } else if (sort === "oldest") {
+    orderBy = { firstCommitDate: "asc" };
+  }
 
   return db.tool.findMany({
     where,
     select: ToolListPayload,
-    orderBy: { stars: "desc" },
+    orderBy, 
   });
 };

@@ -60,8 +60,14 @@ export const adDetailsSchema = z.object({
   websiteUrl: z.string().url("Please enter a valid website URL"),
   buttonLabel: z.string().optional(),
 });
+
+export const SORT_OPTIONS = ["stars", "latest", "oldest"] as const;
+export type SortOption = (typeof SORT_OPTIONS)[number];
+
 export const resourcesParamsCache = createSearchParamsCache({
   type: parseAsStringEnum<ToolType | "all">(["all", ToolType.Template, ToolType.Component, ToolType.Asset]).withDefault("all"),
+  sort: parseAsStringEnum<SortOption>([...SORT_OPTIONS]),
+  // stack: parseAsString.withDefault(""),
 });
 
 // schema.ts

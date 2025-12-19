@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { ResourcesTabs } from "@/components/web/tools/resources/resources-tab";
 import { ResourcesList } from "@/components/web/tools/resources/resources-list";
+import { SortFilter } from "@/components/web/tools/resources/sort-filter";
 import type { SearchParams } from "nuqs";
 import { resourcesParamsCache } from "@/server/web/shared/schema";
 
@@ -21,7 +22,13 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
       </div>
 
       <div className="space-y-4 mx-auto w-full mt-16">
+       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+        {/* Filter 1: Type (Tabs) */}
         <ResourcesTabs defaultValue={params.type} />
+        
+        {/* Filter 2: Sort (Dropdown) */}
+        <SortFilter />
+      </div>
         <Suspense
           key={params.type}
           fallback={
