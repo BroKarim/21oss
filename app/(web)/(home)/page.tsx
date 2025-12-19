@@ -1,30 +1,42 @@
-import { cn } from "@/lib/utils";
-import WidgetBanner from "@/components/web/ui/banner";
-import { AdBanner } from "@/components/web/ads/ad-banner";
-import { getCuratedLists } from "@/server/web/curated-lists/actions";
-import ScrollToSlug from "@/components/web/scroll-to-slug";
-import Link from "next/link";
-import CuratedCard from "@/components/web/curated-card";
+import { Suspense } from "react";
+import { ResourcesTabs } from "@/components/web/tools/resources/resources-tab";
+import { ResourcesList } from "@/components/web/tools/resources/resources-list";
+import type { SearchParams } from "nuqs";
+import { resourcesParamsCache } from "@/server/web/shared/schema";
 
-export default async function Page() {
-  const curatedLists = await getCuratedLists();
+type ResourcesPageProps = {
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function Page({ searchParams }: ResourcesPageProps) {
+  const params = resourcesParamsCache.parse(await searchParams);
 
   return (
-    <main className={cn("flex flex-1 flex-col ")}>
-      <ScrollToSlug />
-      <div className="container py-4 space-y-6 ">
-        <WidgetBanner />
-        <AdBanner />
-        <section id="curated-lists" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {curatedLists.map((list) => (
-              <Link key={list.id} href={`/curated/${list.url}`} className="block h-full">
-                <CuratedCard title={list.title} description={list.description ?? ""} previewTools={list.tools.map((t) => t.name)} totalToolCount={list._count?.tools ?? 0} />
-              </Link>
-            ))}
-          </div>
-        </section>
+    <div className="min-h-screen bg-background/50 flex flex-1 flex-col items-center py-10 px-4 md:px-8">
+      <div className="w-full max-w-3xl md:mt-8 space-y-10 text-center">
+        <div className="space-y-4 flex items-center justify-center flex-col">
+          <h2 className="text-3xl sm:text-4xl  font-bold tracking-tight px-4">Open-Source Resources That Actually Ship</h2>
+          <p className="text-neutral-400 font-mono text-sm sm:text-base lg:text-lg leading-relaxed">Hand-picked templates, components, and assets to speed up your workflow—ready to use, open-source friendly.</p>
+        </div>
       </div>
-    </main>
+
+      <div className="space-y-4 mx-auto w-full mt-16">
+        <ResourcesTabs defaultValue={params.type} />
+        <Suspense
+          key={params.type}
+          fallback={
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="animate-pulse">
+                  <div className="aspect-video bg-muted rounded-lg" />
+                </div>
+              ))}
+            </div>
+          }
+        >
+          <ResourcesList params={params} />
+        </Suspense>
+      </div>
+    </div>
   );
 }
