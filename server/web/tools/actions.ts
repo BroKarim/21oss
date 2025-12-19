@@ -1,6 +1,6 @@
 "use server";
 
-import { findRecentTools, filterToolsBySubcategory, findResources } from "@/server/web/tools/queries";
+import { findRecentTools, filterToolsBySubcategory, findResources, findStackFilters } from "@/server/web/tools/queries";
 import { ResourcesParams } from "../shared/schema";
 
 
@@ -34,4 +34,8 @@ export async function getToolsBySubcategory(
 
 export async function getResources(searchParams: ResourcesParams) {
   return await findResources(searchParams);
+}
+
+export async function getStackFilters() {
+  return await findStackFilters();
 }

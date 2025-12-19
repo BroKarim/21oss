@@ -3,7 +3,7 @@ import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "
 import { db } from "@/services/db";
 import { ToolManyPayload, toolOnePayload, ToolListPayload } from "./payloads";
 import type { FilterSchema, ResourcesParams } from "../shared/schema";
-
+import { FEATURED_STACK } from "./config";
 export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {
   "use cache";
 
@@ -177,7 +177,30 @@ export const findToolsByStack = async (slug: string, { take = 12 }: { take?: num
     take,
   });
 };
-export const findResources = async ({ type, sort }: ResourcesParams) => { // Destructure sort
+
+export const findStackFilters = async () => {
+  "use cache";
+  cacheTag("stack-filters"); 
+  cacheLife("max"); 
+
+  return db.stack.findMany({
+    where: {
+      slug: {
+        in: FEATURED_STACK, 
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      faviconUrl: true, 
+      slug: true,
+    },
+    
+  });
+};
+
+
+export const findResources = async ({ type, sort, stack }: ResourcesParams) => { 
   "use cache";
   cacheTag("resources");
   cacheLife("max");
@@ -187,10 +210,19 @@ export const findResources = async ({ type, sort }: ResourcesParams) => { // Des
     ...(type === "all"
       ? { type: { in: [ToolType.Template, ToolType.Component, ToolType.Asset] } }
       : { type }),
+    ...(stack
+      ? {
+          stacks: {
+            some: {
+              slug: stack,
+            },
+          },
+        }
+      : {}),
   };
 
-  // Logic Sorting
-  let orderBy: Prisma.ToolOrderByWithRelationInput = { stars: "desc" }; // Default default jika sort null
+  
+  let orderBy: Prisma.ToolOrderByWithRelationInput = { stars: "desc" }; 
 
   if (sort === "stars") {
     orderBy = { stars: "desc" };

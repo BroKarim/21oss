@@ -67,7 +67,7 @@ export type SortOption = (typeof SORT_OPTIONS)[number];
 export const resourcesParamsCache = createSearchParamsCache({
   type: parseAsStringEnum<ToolType | "all">(["all", ToolType.Template, ToolType.Component, ToolType.Asset]).withDefault("all"),
   sort: parseAsStringEnum<SortOption>([...SORT_OPTIONS]),
-  // stack: parseAsString.withDefault(""),
+  stack: parseAsString.withDefault(""),
 });
 
 // schema.ts

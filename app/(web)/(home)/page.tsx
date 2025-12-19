@@ -2,16 +2,17 @@ import { Suspense } from "react";
 import { ResourcesTabs } from "@/components/web/tools/resources/resources-tab";
 import { ResourcesList } from "@/components/web/tools/resources/resources-list";
 import { SortFilter } from "@/components/web/tools/resources/sort-filter";
+import { StackFilter } from "@/components/web/tools/resources/stack-filter";
 import type { SearchParams } from "nuqs";
 import { resourcesParamsCache } from "@/server/web/shared/schema";
-
+import { getStackFilters } from "@/server/web/tools/actions";
 type ResourcesPageProps = {
   searchParams: Promise<SearchParams>;
 };
 
 export default async function Page({ searchParams }: ResourcesPageProps) {
   const params = resourcesParamsCache.parse(await searchParams);
-
+const stacks = await getStackFilters();
   return (
     <div className="min-h-screen bg-background/50 flex flex-1 flex-col items-center py-10 px-4 md:px-8">
       <div className="w-full max-w-3xl md:mt-8 space-y-10 text-center">
@@ -28,6 +29,7 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
         
         {/* Filter 2: Sort (Dropdown) */}
         <SortFilter />
+        <StackFilter stacks={stacks} />
       </div>
         <Suspense
           key={params.type}
