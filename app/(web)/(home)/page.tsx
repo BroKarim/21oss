@@ -12,9 +12,9 @@ type ResourcesPageProps = {
 
 export default async function Page({ searchParams }: ResourcesPageProps) {
   const params = resourcesParamsCache.parse(await searchParams);
-const stacks = await getStackFilters();
+  const stacks = await getStackFilters();
   return (
-    <div className="min-h-screen bg-background/50 flex flex-1 flex-col items-center py-10 px-4 md:px-8">
+    <div className="min-h-screen  mx-auto bg-background/50 flex flex-1 flex-col items-center py-10 px-4 md:px-8">
       <div className="w-full max-w-3xl md:mt-8 space-y-10 text-center">
         <div className="space-y-4 flex items-center justify-center flex-col">
           <h2 className="text-3xl sm:text-4xl  font-bold tracking-tight px-4">Open-Source Resources That Actually Ship</h2>
@@ -23,14 +23,25 @@ const stacks = await getStackFilters();
       </div>
 
       <div className="space-y-4 mx-auto w-full mt-16">
-       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        {/* Filter 1: Type (Tabs) */}
-        <ResourcesTabs defaultValue={params.type} />
-        
-        {/* Filter 2: Sort (Dropdown) */}
-        <SortFilter />
-        <StackFilter stacks={stacks} />
-      </div>
+
+      <div className="relative flex items-center">
+
+    <div className="mx-auto">
+      <ResourcesTabs defaultValue={params.type} />
+    </div>
+
+
+    <div className="absolute right-0">
+      <SortFilter />
+    </div>
+  </div>
+
+  {/* Row 2 */}
+  <div className="w-full flex items-center justify-center">
+    <StackFilter stacks={stacks} />
+  </div>
+
+
         <Suspense
           key={params.type}
           fallback={

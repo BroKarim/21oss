@@ -23,28 +23,15 @@ export function StackFilter({ stacks }: StackFilterProps) {
 
   const handleSelect = (slug: string) => {
     if (activeStack === slug) {
-      setActiveStack(null);
+      setActiveStack(null); // nonaktif → tidak ada filter
     } else {
       setActiveStack(slug);
     }
   };
 
   return (
-    <div className="w-full relative group">
-      {/* Container Scroll Horizontal */}
+    <div className="relative group w-full">
       <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade">
-        {/* Tombol "All" (Optional: Reset Filter) */}
-        <button
-          onClick={() => setActiveStack(null)}
-          className={cn(
-            "flex items-center px-3 py-1.5 text-sm font-medium rounded-full border transition-all whitespace-nowrap",
-            !activeStack ? "bg-primary text-primary-foreground border-primary" : "bg-background text-muted-foreground border-input hover:border-foreground/50"
-          )}
-        >
-          All Stacks
-        </button>
-
-        {/* List Stacks */}
         {stacks.map((stack) => {
           const isActive = activeStack === stack.slug;
 
@@ -57,12 +44,11 @@ export function StackFilter({ stacks }: StackFilterProps) {
                 isActive ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-background text-foreground border-input hover:bg-muted hover:border-foreground/50"
               )}
             >
-              {stack.faviconUrl ? (
+              {stack.faviconUrl && (
                 <div className="relative w-4 h-4 rounded-full overflow-hidden shrink-0 bg-white/10">
-                  {/* Gunakan unoptimized jika gambar dari external url yg belum di whitelist */}
                   <Image src={stack.faviconUrl} alt={stack.name} fill className="object-contain" />
                 </div>
-              ) : null}
+              )}
               <span>{stack.name}</span>
             </button>
           );
