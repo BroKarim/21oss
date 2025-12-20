@@ -4,6 +4,7 @@ import { ResourcesList } from "@/components/web/tools/resources/resources-list";
 import { SortFilter } from "@/components/web/tools/resources/sort-filter";
 import { StackFilter } from "@/components/web/tools/resources/stack-filter";
 import type { SearchParams } from "nuqs";
+import { SubmitForm } from "@/components/web/tools/resources/submit-form";
 import { resourcesParamsCache } from "@/server/web/shared/schema";
 import { getStackFilters } from "@/server/web/tools/actions";
 type ResourcesPageProps = {
@@ -19,28 +20,25 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
         <div className="space-y-4 flex items-center justify-center flex-col">
           <h2 className="text-3xl sm:text-4xl  font-bold tracking-tight px-4">Open-Source Resources That Actually Ship</h2>
           <p className="text-neutral-400 font-mono text-sm sm:text-base lg:text-lg leading-relaxed">Hand-picked templates, components, and assets to speed up your workflow—ready to use, open-source friendly.</p>
+          <SubmitForm />
         </div>
       </div>
 
       <div className="space-y-4 mx-auto w-full mt-16">
+        <div className="relative flex items-center">
+          <div className="mx-auto">
+            <ResourcesTabs defaultValue={params.type} />
+          </div>
 
-      <div className="relative flex items-center">
+          <div className="absolute right-0">
+            <SortFilter />
+          </div>
+        </div>
 
-    <div className="mx-auto">
-      <ResourcesTabs defaultValue={params.type} />
-    </div>
-
-
-    <div className="absolute right-0">
-      <SortFilter />
-    </div>
-  </div>
-
-  {/* Row 2 */}
-  <div className="w-full flex items-center justify-center">
-    <StackFilter stacks={stacks} />
-  </div>
-
+        {/* Row 2 */}
+        <div className="w-full flex items-center justify-center">
+          <StackFilter stacks={stacks} />
+        </div>
 
         <Suspense
           key={params.type}

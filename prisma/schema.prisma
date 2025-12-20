@@ -292,6 +292,22 @@ model DevPerk {
 }
 
 
+model ToolSubmission {
+  id         String   @id @default(cuid())
+  websiteUrl String
+  githubUrl  String
+  status     SubmissionStatus @default(Pending)
+  createdAt  DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum SubmissionStatus {
+  Pending
+  Approved
+  Rejected
+}
 
 model Session {
   id             String   @id @default(cuid())

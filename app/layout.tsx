@@ -9,6 +9,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { AdminSidebar } from "@/components/admin/sidebar";
 import { Search } from "@/components/ui/search";
+import { Toaster } from "@/components/ui/sonner";
 import { Bricolage_Grotesque } from "next/font/google";
 
 export const metadata: Metadata = {
@@ -66,6 +67,7 @@ export default function RootLayout({
               <AppProviders adminSidebar={<AdminSidebar />}>
                 <div className=" h-full w-full">
                   {children}
+                  <Toaster />
                   <Search />
                 </div>
               </AppProviders>
