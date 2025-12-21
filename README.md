@@ -1,19 +1,34 @@
-
 # 🚀 Welcome to 21OSS.com!
 
-**[21OSS.com](https://21oss.com)** is open-source catalog designed to make discovering tools easier.  Whether you’re looking for a library, a framework, or an everyday utility, the goal is simple: make open-source tools accessible, clear, and useful for daily life.
- 
+**[21OSS.com](https://21oss.com)** is an open-source resource hub for developers and creators.  
+It curates **templates, components, tools, and assets** that help you move faster—from idea to shipped product.
+
+No noise. No fluff. Just practical, open-source resources that actually ship.
+
 ![Preview](./public/og.png)
 
 ---
 
 ## 🌟 Why I Built This
 
-I’ve always believed that open-source tools have the power to change how we work, create, and live. But too often, they’re scattered across the internet, hard to discover, and even harder to compare.
+I’ve always believed open-source is one of the most powerful forces in tech.  
+But discovering good open-source resources is still harder than it should be.
 
-I built this platform because I wanted to help people like me—students, developers, researchers, and creators—find the right tools without wasting hours searching. It’s not just about software, it’s about empowering people to learn, build, and solve real problems faster.
+Great templates are buried in repos.  
+Useful components are scattered across tweets and blog posts.  
+Assets live everywhere—with no context, no curation, and no clear starting point.
 
-**If even one person finds a tool here that makes their day easier, this project is worth it.**
+I built **21OSS** to solve that problem.
+
+This is a place where developers, designers, and makers can:
+- Discover high-quality open-source resources
+- Understand what’s actually useful in real projects
+- Spend less time searching and more time building
+
+It’s not about collecting everything.  
+It’s about curating what works.
+
+**If this helps someone ship faster, learn better, or avoid decision fatigue—even once—then this project has done its job.**
 
 ---
 
