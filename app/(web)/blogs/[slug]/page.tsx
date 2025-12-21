@@ -42,10 +42,13 @@ export default async function CuratedListPage(props: PageProps) {
             Home
           </Link>
           <span>/</span>
+          <Link href="/blogs" className="hover:text-neutral-300 transition-colors">
+            Blogs
+          </Link>
+          <span>/</span>
           <span className="text-neutral-300 font-medium truncate max-w-[300px]">{list.title}</span>
         </div>
 
-        {/* Title & Meta */}
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-100 mb-3 tracking-tight">{list.title}</h1>
         <p className="text-sm text-neutral-500 mb-10">
           Created at {formattedDate} • Updated {new Date(list.updatedAt).toLocaleDateString()}

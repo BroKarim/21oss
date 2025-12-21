@@ -118,6 +118,13 @@ model Ad {
   updatedAt      DateTime @updatedAt
 }
 
+enum ToolType {
+  Tool        
+  Template    
+  Component  
+  Asset      
+}
+
 
 model Tool {
     id              String    @id @default(cuid())
@@ -156,6 +163,7 @@ model Tool {
     platforms  Platform[]  @relation("ToolPlatforms")
     stacks     Stack[]     @relation("ToolStacks")
     curatedLists CuratedList[] @relation("CuratedListTools")
+    type        ToolType @default(Tool)
     likes      Like[]
     reports    Report[]
 
@@ -284,7 +292,22 @@ model DevPerk {
 }
 
 
+model ToolSubmission {
+  id         String   @id @default(cuid())
+  websiteUrl String
+  githubUrl  String
+  status     SubmissionStatus @default(Pending)
+  createdAt  DateTime @default(now())
 
+  @@index([status])
+  @@index([createdAt])
+}
+
+enum SubmissionStatus {
+  Pending
+  Approved
+  Rejected
+}
 
 model Session {
   id             String   @id @default(cuid())

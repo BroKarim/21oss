@@ -4,6 +4,7 @@ import { slugify, getRandomString } from "@primoui/utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
+import { ToolType } from "@prisma/client";
 import { removeS3Directories, uploadToS3Storage } from "@/lib/media";
 import { getToolRepositoryData } from "@/lib/repositories";
 import { adminProcedure } from "@/lib/safe-actions";
@@ -33,7 +34,7 @@ export const upsertTool = adminProcedure
   .handler(async ({ input }) => {
     console.log("✅ upsertTool called", input);
     const { id, categories, platforms, stacks, ...rest } = input;
-
+    const toolType: ToolType = rest.type ?? ToolType.Tool;
     const slug = rest.slug || slugify(rest.name);
 
     const categoryIds = categories?.map((id) => ({ id }));
@@ -75,6 +76,7 @@ export const upsertTool = adminProcedure
           data: {
             ...rest,
             slug,
+            type: toolType,
             categories: { set: categoryIds },
             platforms: { set: platformIds },
             stacks: { set: stackIds },
@@ -93,6 +95,7 @@ export const upsertTool = adminProcedure
           data: {
             ...rest,
             slug,
+            type: toolType,
             categories: { connect: categoryIds },
             platforms: { connect: platformIds },
             stacks: { connect: stackIds },

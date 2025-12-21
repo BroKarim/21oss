@@ -1,5 +1,5 @@
-import { ReportType } from "@prisma/client";
-import { createSearchParamsCache, parseAsArrayOf, parseAsInteger, parseAsString } from "nuqs/server";
+import { ReportType, ToolType } from "@prisma/client";
+import { createSearchParamsCache, parseAsArrayOf, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
 import { z } from "zod";
 import { config } from "@/config";
 import { githubRegex } from "@/lib/github/utils";
@@ -60,6 +60,18 @@ export const adDetailsSchema = z.object({
   websiteUrl: z.string().url("Please enter a valid website URL"),
   buttonLabel: z.string().optional(),
 });
+
+export const SORT_OPTIONS = ["stars", "latest", "oldest"] as const;
+export type SortOption = (typeof SORT_OPTIONS)[number];
+
+export const resourcesParamsCache = createSearchParamsCache({
+  type: parseAsStringEnum<ToolType | "all">(["all", ToolType.Template, ToolType.Component, ToolType.Asset]).withDefault("all"),
+  sort: parseAsStringEnum<SortOption>([...SORT_OPTIONS]),
+  stack: parseAsString.withDefault(""),
+});
+
+// schema.ts
+export type ResourcesParams = Awaited<ReturnType<typeof resourcesParamsCache.parse>>;
 
 export type SubmitToolSchema = z.infer<typeof submitToolSchema>;
 export type NewsletterSchema = z.infer<typeof newsletterSchema>;

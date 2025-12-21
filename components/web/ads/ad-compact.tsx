@@ -4,7 +4,6 @@ import Link from "next/link";
 import { cx } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { FaviconImage } from "@/components/ui/favicon";
-import { BGPattern } from "../background/pattern-bg";
 
 export async function AdCompact({ className, ...props }: ComponentProps<typeof Card>) {
   const ad = await findAd({ where: { type: "WidgetBanner" } });
@@ -13,9 +12,6 @@ export async function AdCompact({ className, ...props }: ComponentProps<typeof C
   return (
     <Card className={cx("relative isolate overflow-hidden z-30 rounded-lg border", "p-0 sm:p-1 sm:pl-4 sm:pr-12", "flex flex-col sm:flex-row items-start sm:items-center justify-between", "gap-0 sm:gap-3 md:gap-4", className)} {...props}>
       {/* background */}
-      <div className="hidden sm:block">
-        <BGPattern variant="diagonal-stripes" mask="fade-y" />
-      </div>
 
       {/* left section */}
       <div className="flex items-center gap-2 w-full sm:w-auto flex-1 min-w-0">

@@ -1,9 +1,9 @@
-import { type Prisma, ToolStatus } from "@prisma/client";
+import { type Prisma, ToolStatus, ToolType } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
-import { ToolManyPayload, toolOnePayload } from "./payloads";
-import type { FilterSchema } from "../shared/schema";
-
+import { ToolManyPayload, toolOnePayload, ToolListPayload } from "./payloads";
+import type { FilterSchema, ResourcesParams } from "../shared/schema";
+import { FEATURED_STACK } from "./config";
 export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {
   "use cache";
 
@@ -130,7 +130,6 @@ export const findToolsWithCategories = async ({ where, ...args }: Prisma.ToolFin
   });
 };
 
-// tool with filtering like searchTools without pagination
 type FilterOptions = {
   subcategory: string;
   stack?: string[];
@@ -157,8 +156,6 @@ export const filterToolsBySubcategory = async ({ subcategory, stack, license, pl
     whereQuery.OR = [{ name: { contains: q, mode: "insensitive" } }, { tagline: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }];
   }
 
-  // console.log("[QUERY] Generated where query:", JSON.stringify(whereQuery, null, 2));
-
   return db.tool.findMany({
     where: whereQuery,
     select: ToolManyPayload,
@@ -178,5 +175,66 @@ export const findToolsByStack = async (slug: string, { take = 12 }: { take?: num
   return findTools({
     where: { stacks: { some: { slug } } },
     take,
+  });
+};
+
+export const findStackFilters = async () => {
+  "use cache";
+  cacheTag("stack-filters"); 
+  cacheLife("max"); 
+
+  return db.stack.findMany({
+    where: {
+      slug: {
+        in: FEATURED_STACK, 
+      },
+    },
+    select: {
+      id: true,
+      name: true,
+      faviconUrl: true, 
+      slug: true,
+    },
+    
+  });
+};
+
+
+export const findResources = async ({ type, sort, stack }: ResourcesParams) => { 
+  "use cache";
+  cacheTag("resources");
+  cacheLife("max");
+
+  const where: Prisma.ToolWhereInput = {
+    status: ToolStatus.Published,
+    ...(type === "all"
+      ? { type: { in: [ToolType.Template, ToolType.Component, ToolType.Asset] } }
+      : { type }),
+    ...(stack
+      ? {
+          stacks: {
+            some: {
+              slug: stack,
+            },
+          },
+        }
+      : {}),
+  };
+
+  
+  let orderBy: Prisma.ToolOrderByWithRelationInput = { stars: "desc" }; 
+
+  if (sort === "stars") {
+    orderBy = { stars: "desc" };
+  } else if (sort === "latest") {
+    orderBy = { lastCommitDate: "desc" };
+  } else if (sort === "oldest") {
+    orderBy = { firstCommitDate: "asc" };
+  }
+
+  return db.tool.findMany({
+    where,
+    select: ToolListPayload,
+    orderBy, 
   });
 };

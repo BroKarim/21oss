@@ -2,7 +2,6 @@
 
 import { cx } from "cva";
 import type { ComponentProps } from "react";
-import { ToolFilters } from "@/components/web/tools/tool-filter";
 
 export type ToolSearchProps = ComponentProps<"div"> & {
   placeholder?: string;
@@ -19,9 +18,6 @@ export const ToolSearch = ({ className, ...props }: ToolSearchProps) => {
         </div> */}
 
         {/* Filters (1/3) */}
-        <div className=" flex">
-          <ToolFilters />
-        </div>
       </div>
     </div>
   );

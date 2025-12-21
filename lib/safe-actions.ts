@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { createServerActionProcedure as createProcedure } from "zsa";
 import { auth } from "@/lib/auth";
 
+
 /**
  * A procedure that checks if the user is authenticated.
  */

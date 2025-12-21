@@ -1,6 +1,8 @@
 "use server";
 
-import { findRecentTools, filterToolsBySubcategory } from "@/server/web/tools/queries";
+import { findRecentTools, filterToolsBySubcategory, findResources, findStackFilters } from "@/server/web/tools/queries";
+import { ResourcesParams } from "../shared/schema";
+
 
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
@@ -24,10 +26,16 @@ export async function getToolsBySubcategory(
       platform: filters?.platform,
     });
 
-    // console.log("[SERVER ACTION] Query result count:", result?.length || 0);
     return result;
   } catch (error) {
-    // console.error("[SERVER ACTION] Error in getToolsBySubcategory:", error);
     throw error;
   }
+}
+
+export async function getResources(searchParams: ResourcesParams) {
+  return await findResources(searchParams);
+}
+
+export async function getStackFilters() {
+  return await findStackFilters();
 }
