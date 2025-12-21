@@ -8,20 +8,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const footerLinks = {
   pages: [
-    { href: "/docs", label: "Explore" },
-    { href: "/docs", label: "Awesome list" },
-    { href: "/examples", label: "Blog" },
-    { href: "/pricing", label: "Alternative" },
-    { href: "categories/programming#apis-and-integration", label: "Categories" },
+    { href: "/blogs", label: "Blogs" },
+    { href: "/collage", label: "For students" },
   ],
   socials: [
     { href: "https://github.com/BroKarim/open-layout", label: "Github" },
     { href: "https://www.threads.com/@brokariim", label: "Thread" },
     { href: "https://x.com/BroKariim", label: "X" },
-  ],
-  legal: [
-    { href: "/privacy-policy", label: "Privacy Policy" },
-    { href: "/tos", label: "Terms of Service" },
   ],
 };
 
@@ -93,7 +86,6 @@ function Footer() {
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 lg:gap-8">
             <FooterSection title="Pages" links={footerLinks.pages} />
             <FooterSection title="Socials" links={footerLinks.socials} />
-            <FooterSection title="Legal" links={footerLinks.legal} />
           </div>
         </div>
 

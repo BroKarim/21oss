@@ -33,6 +33,7 @@ export default function ComponentPreviewImage({ src, alt, fallbackSrc, className
   const handleLoad = () => {
     setIsLoading(false);
   };
+  
 
   return (
     <div className={`relative w-full h-full ${className || ""}`}>
