@@ -25,7 +25,6 @@ export const submitTool = publicProcedure
       revalidateTag("tool-submissions");
       return submission;
     } catch (error) {
-      console.error("Submission failed:", error);
       throw error;
     }
   });

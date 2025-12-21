@@ -15,20 +15,21 @@ export function SubmitForm() {
         className="flex flex-col sm:flex-row items-center"
         onSubmit={(e) => {
           e.preventDefault();
-          const formData = new FormData(e.currentTarget);
+          const form = e.currentTarget;
+          const formData = new FormData(form);
           const websiteUrl = formData.get("websiteUrl") as string;
           const githubUrl = formData.get("githubUrl") as string;
 
           startTransition(async () => {
-            try {
-              await submitTool({ websiteUrl, githubUrl });
-              toast.success("Submitted successfully! We’ll review it soon.", {
-                description: "Thank you for helping us collect more beautiful & functional websites.",
-              });
-              e.currentTarget.reset();
-            } catch {
+            const [, err] = await submitTool({ websiteUrl, githubUrl });
+
+            if (err) {
               toast.error("Failed to submit. Please try again.");
+              return;
             }
+
+            toast.success("Submitted successfully!");
+            form.reset();
           });
         }}
       >
