@@ -6,6 +6,21 @@ import QueryStringAddon from "wretch/addons/queryString";
 import { env, isProd } from "@/env";
 import { s3Client } from "@/services/s3";
 import { tryCatch } from "@/utils/helpers";
+import sharp from "sharp";
+
+
+
+export async function optimizeImage(buffer: Buffer) {
+  return sharp(buffer)
+    .rotate()
+    .resize({ width: 1600, withoutEnlargement: true })
+    .webp({
+      quality: 78,
+      effort: 4, // tradeoff speed vs size
+    })
+    .toBuffer();
+}
+
 
 /**
  * Uploads a file to S3 and returns the S3 location.
@@ -22,6 +37,7 @@ export const uploadToS3Storage = async (file: Buffer, key: string) => {
       Bucket: env.S3_BUCKET,
       Key: key,
       Body: file,
+      ContentType: key.endsWith(".webp") ? "image/webp" : key.endsWith(".mp4") ? "video/mp4" : "application/octet-stream",
       StorageClass: "STANDARD",
     },
     queueSize: 4,

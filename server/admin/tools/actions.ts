@@ -5,7 +5,7 @@ import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
 import { ToolType } from "@prisma/client";
-import { removeS3Directories, uploadToS3Storage } from "@/lib/media";
+import { removeS3Directories, uploadToS3Storage, optimizeImage } from "@/lib/media";
 import { getToolRepositoryData } from "@/lib/repositories";
 import { adminProcedure } from "@/lib/safe-actions";
 import { toolSchema } from "@/server/admin/tools/schema";
@@ -25,7 +25,7 @@ const autoFillSchema = z.object({
   model: z.string().min(1, "Model is required"),
 });
 
-const VALID_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png"];
+const VALID_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const VALID_VIDEO_TYPES = ["video/mp4"];
 
 export const upsertTool = adminProcedure
@@ -222,13 +222,18 @@ export const uploadToolMedia = adminProcedure
     const isVideo = VALID_VIDEO_TYPES.includes(file.type);
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const extension = file.name.split(".").pop() || (isVideo ? "mp4" : "jpg");
+
+    const finalBuffer = isVideo ? buffer : await optimizeImage(buffer);
+    const extension = isVideo ? "mp4" : "webp";
     const randomKey = getRandomString();
     const key = `${slugify(toolName)}/${randomKey}.${extension}`;
 
-    const fileUrl = await uploadToS3Storage(buffer, key);
+    const fileUrl = await uploadToS3Storage(finalBuffer, key);
 
-    return { url: fileUrl, type: isVideo ? "video" : "image" };
+    return {
+      url: fileUrl,
+      type: isVideo ? "video" : "image",
+    };
   });
 
 export const autoFillFromRepo = adminProcedure

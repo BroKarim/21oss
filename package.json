@@ -68,6 +68,7 @@
     "react-email": "^4.0.17",
     "react-hook-form": "^7.60.0",
     "schema-dts": "^1.1.5",
+    "sharp": "^0.34.5",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.2.0",
     "wretch": "^2.11.0",
