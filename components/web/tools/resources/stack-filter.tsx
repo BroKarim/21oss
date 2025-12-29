@@ -23,7 +23,7 @@ export function StackFilter({ stacks }: StackFilterProps) {
 
   const handleSelect = (slug: string) => {
     if (activeStack === slug) {
-      setActiveStack(null); // nonaktif → tidak ada filter
+      setActiveStack(null);
     } else {
       setActiveStack(slug);
     }
@@ -31,7 +31,17 @@ export function StackFilter({ stacks }: StackFilterProps) {
 
   return (
     <div className="relative group w-full">
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade">
+      <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+
+      {/* Fade overlay kanan */}
+      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+      <div
+        className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+        }}
+      >
         {stacks.map((stack) => {
           const isActive = activeStack === stack.slug;
 

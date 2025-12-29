@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   reactStrictMode: false,
   experimental: {
     useCache: true,
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
   },
   images: {
     minimumCacheTTL: 31536000,

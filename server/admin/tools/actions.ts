@@ -200,12 +200,15 @@ const validateFileType = (file: File): boolean => {
   return isImage || isVideo;
 };
 
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024;
+const MAX_VIDEO_SIZE = 20 * 1024 * 1024;
+
 const validateFileSize = (file: File): boolean => {
   if (VALID_IMAGE_TYPES.includes(file.type)) {
-    return file.size <= 1024 * 1024; // 1 MB
+    return file.size <= MAX_IMAGE_SIZE;
   }
   if (VALID_VIDEO_TYPES.includes(file.type)) {
-    return file.size <= 1024 * 1024 * 20; // 20 MB
+    return file.size <= MAX_VIDEO_SIZE;
   }
   return false;
 };
