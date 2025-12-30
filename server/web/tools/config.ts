@@ -19,7 +19,6 @@ export const FEATURED_STACK = [
   // Languages
   "typescript",
   "javascript",
-  "go",
 
   // Mobile
   "react-native",

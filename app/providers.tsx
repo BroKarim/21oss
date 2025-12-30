@@ -5,6 +5,7 @@ import { NavLogo } from "@/components/web/main-page/nav-logo";
 import { usePathname } from "next/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { useMounted } from "@mantine/hooks";
 import { Icons } from "@/components/web/icons";
 import { sidebarOpenAtom } from "@/components/web/main-page/main-layout";
@@ -12,6 +13,9 @@ import { InfoDialog } from "@/components/web/ui/info-dialog";
 import { useAtom } from "jotai";
 import { Footer } from "@/components/web/footer";
 import { Button } from "@/components/ui/button-shadcn";
+// import { StuffSearch } from "@/components/web/free-stuff/stuff-search";
+import { useSearch } from "@/contexts/search-context";
+
 export function AppProviders({ children, adminSidebar }: { children: React.ReactNode; adminSidebar: React.ReactNode }) {
   const pathname = usePathname();
   const isMounted = useMounted();
@@ -34,6 +38,7 @@ export function AppProviders({ children, adminSidebar }: { children: React.React
   );
 }
 function Header() {
+  const search = useSearch();
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4 md:px-8 justify-between">
       <div className="flex items-center gap-3">
@@ -43,6 +48,10 @@ function Header() {
       </div>
 
       <div className="hidden sm:flex items-center justify-center">
+        <Button variant="ghost" className="gap-2" onClick={search.open}>
+          <Search className="size-4" />
+          Search Tools
+        </Button>
         <Link href="/collage">
           <Button variant="ghost" className="hidden z-50 md:flex gap-1">
             <Icons.fire />

@@ -1,15 +1,14 @@
 "use client";
 
 import { useDebouncedState } from "@mantine/hooks";
-import { getUrlHostname } from "@primoui/utils";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { posthog } from "posthog-js";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import type { inferServerActionReturnData } from "zsa";
 import { useServerAction } from "zsa-react";
-import { fetchRepositoryData } from "@/actions/misc";
-import { searchItems } from "@/actions/search";
+// import { fetchRepositoryData } from "@/actions/misc";
+import { searchItems, getRandomTools } from "@/actions/search";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { useSearch } from "@/contexts/search-context";
 import { useSession } from "@/lib/auth-client";
@@ -33,7 +32,7 @@ const SearchResults = ({ name, items, onItemSelect, getHref, renderItemDisplay }
   return (
     <CommandGroup heading={name}>
       {items.map((item) => (
-        <CommandItem key={`${name}-${item.slug}`} value={`${name.toLowerCase()}:${item.slug}`} onSelect={() => onItemSelect(getHref(item))}>
+        <CommandItem key={`${name}-${item.websiteUrl}`} value={`${name.toLowerCase()}:${item.slug}`} onSelect={() => onItemSelect(getHref(item))}>
           {renderItemDisplay(item)}
         </CommandItem>
       ))}
@@ -52,31 +51,26 @@ type CommandSection = {
 export const Search = () => {
   const { data: session } = useSession();
   const router = useRouter();
-  const pathname = usePathname();
   const search = useSearch();
   const [results, setResults] = useState<SearchResultData | undefined>();
+  const [defaultTools, setDefaultTools] = useState<ToolSearchItem[]>([]);
   const [query, setQuery] = useDebouncedState("", 500);
   const listRef = useRef<HTMLDivElement>(null);
 
   const isAdmin = session?.user.role === "admin";
-  const isAdminPath = pathname.startsWith("/admin");
   const hasQuery = !!query.length;
 
-  const actions = [
-    {
-      action: fetchRepositoryData,
-      label: "Fetch Repository Data",
-      successMessage: "Repository data fetched",
+  const { execute: fetchDefaultTools } = useServerAction(getRandomTools, {
+    onSuccess: ({ data }) => {
+      setDefaultTools(data.tools);
     },
-  ] as const;
+  });
 
-  const adminActions = actions.map(({ label, action, successMessage }) => ({
-    label,
-    execute: useServerAction(action, {
-      onSuccess: () => toast.success(successMessage),
-      onError: ({ err }) => toast.error(err.message),
-    }).execute,
-  }));
+  useEffect(() => {
+    if (search.isOpen && defaultTools.length === 0) {
+      fetchDefaultTools();
+    }
+  }, [search.isOpen, defaultTools.length, fetchDefaultTools]);
 
   const clearSearch = () => {
     setTimeout(() => {
@@ -97,7 +91,6 @@ export const Search = () => {
 
   const commandSections: CommandSection[] = [];
 
-  // Admin command sections
   if (isAdmin) {
     commandSections.push({
       name: "Create",
@@ -148,6 +141,8 @@ export const Search = () => {
     performSearch();
   }, [query, execute, hasQuery]);
 
+  const displayItems = hasQuery ? results?.tools : defaultTools;
+
   return (
     <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange} showCloseButton={!isPending}>
       <div className="relative">
@@ -158,38 +153,27 @@ export const Search = () => {
       {hasQuery && !isPending && <CommandEmpty>No results found. Please try a different query.</CommandEmpty>}
 
       <CommandList ref={listRef}>
-        {!hasQuery &&
-          commandSections.map(({ name, items }) => (
-            <CommandGroup key={name} heading={name}>
-              {items.map(({ path, label }) => (
-                <CommandItem key={path} onSelect={() => navigateTo(path)}>
-                  {label}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          ))}
-
-        {!hasQuery && isAdmin && (
-          <CommandGroup heading="Admin">
-            {adminActions.map(({ label, execute }) => (
-              <CommandItem key={label} onSelect={() => execute()}>
-                {label}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        )}
-
         <SearchResults
           name="Tools"
-          items={results?.tools}
+          items={displayItems}
           onItemSelect={navigateTo}
-          getHref={({ slug }) => `${isAdminPath ? "/admin/tools" : ""}/${slug}`}
-          renderItemDisplay={({ name, faviconUrl, websiteUrl }) => (
-            <>
-              {faviconUrl && <img src={faviconUrl} alt="" width={16} height={16} />}
-              <span className="flex-1 truncate">{name}</span>
-              <span className="opacity-50">{getUrlHostname(websiteUrl ?? "")}</span>
-            </>
+          getHref={(tool) => tool.websiteUrl || "#"}
+          renderItemDisplay={(tool) => (
+            <div className="flex items-center gap-3 w-full relative">
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="font-medium truncate">{tool.name}</div>
+                {tool.tagline && <div className="text-xs text-muted-foreground truncate">{tool.tagline}</div>}
+              </div>
+
+              {tool.screenshots[0]?.imageUrl && (
+                <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 hidden group-hover:block z-50 pointer-events-none">
+                  <div className="bg-background border rounded-lg shadow-xl p-2">
+                    <img src={tool.screenshots[0].imageUrl} alt={tool.name} className="w-64 h-auto rounded" />
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         />
       </CommandList>
