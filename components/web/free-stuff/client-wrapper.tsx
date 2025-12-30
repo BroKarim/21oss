@@ -2,9 +2,9 @@
 
 import { useQueryState } from "nuqs";
 import { useMemo } from "react";
-import { StuffTable, type Perk } from "./stuff-table";
+import { StuffTable, type Perk } from "./table";
 import { submitUrl } from "@/config/site";
-import { StuffSearch } from "./stuff-search";
+import { StudentSearch } from "./search";
 import { Button } from "@/components/ui/button-shadcn";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -12,7 +12,7 @@ interface StuffClientWrapperProps {
   initialData: Perk[];
 }
 
-export function StuffClientWrapper({ initialData }: StuffClientWrapperProps) {
+export function StudentClientWrapper({ initialData }: StuffClientWrapperProps) {
   const [query] = useQueryState("q", {
     defaultValue: "",
     shallow: true,
@@ -36,7 +36,7 @@ export function StuffClientWrapper({ initialData }: StuffClientWrapperProps) {
       </div>
       <div className="flex items-center gap-2 w-full md:w-auto">
         <div className="flex-1 md:w-[280px]">
-          <StuffSearch />
+          <StudentSearch />
         </div>
 
         {/* Submit Button */}

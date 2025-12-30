@@ -4,7 +4,7 @@ import { useQueryState } from "nuqs";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input"; 
 
-export function StuffSearch() {
+export function StudentSearch() {
   const [search, setSearch] = useQueryState("q", {
     defaultValue: "",
     shallow: false, 

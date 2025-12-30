@@ -13,7 +13,6 @@ import { InfoDialog } from "@/components/web/ui/info-dialog";
 import { useAtom } from "jotai";
 import { Footer } from "@/components/web/footer";
 import { Button } from "@/components/ui/button-shadcn";
-// import { StuffSearch } from "@/components/web/free-stuff/stuff-search";
 import { useSearch } from "@/contexts/search-context";
 
 export function AppProviders({ children, adminSidebar }: { children: React.ReactNode; adminSidebar: React.ReactNode }) {
