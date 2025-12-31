@@ -1,5 +1,5 @@
 import { findFreeStuffPerks } from "@/server/web/free-stuff/queries";
-import { StudentClientWrapper } from "@/components/web/free-stuff/client-wrapper";
+import { StudentClientWrapper } from "@/components/web/student/client-wrapper";
 import { Suspense } from "react";
 
 export default async function CollagePage() {
