@@ -261,7 +261,7 @@ export const autoFillFromRepo = adminProcedure
     - name: The project/tool name (clean, without prefixes like "awesome-" or suffixes like "-js")
     - tagline: One short marketing sentence (max 8 words)
     - description: Brief explanation of what it does (max 40 words)
-    - - websiteUrl: Official website or documentation link (if none, return an empty string)
+    - websiteUrl: Official website or documentation link (if none, return an empty string)
     - stacks: Main technologies/frameworks used (be specific, e.g., "react", "typeScript", "aws-s3", "postgresql") lowercase only
 
     Formatting rules for "stacks":
