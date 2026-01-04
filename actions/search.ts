@@ -20,10 +20,7 @@ export const searchItems = createServerAction()
     const tools = await db.tool.findMany({
       where: {
         status: "Published",
-        OR: [
-          { name: { contains: searchQuery, mode: "insensitive" } },
-          { tagline: { contains: searchQuery, mode: "insensitive" } },
-        ],
+        OR: [{ name: { contains: searchQuery, mode: "insensitive" } }, { tagline: { contains: searchQuery, mode: "insensitive" } }],
       },
       take: 10,
       select: {
