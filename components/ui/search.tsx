@@ -4,17 +4,16 @@ import { useDebouncedState } from "@mantine/hooks";
 import { useRouter } from "next/navigation";
 import { posthog } from "posthog-js";
 import { type ReactNode, useEffect, useRef, useState } from "react";
-// import { toast } from "sonner";
+
 import type { inferServerActionReturnData } from "zsa";
 import { useServerAction } from "zsa-react";
-// import { fetchRepositoryData } from "@/actions/misc";
+
 import { searchItems, getRandomTools } from "@/actions/search";
-import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, Command } from "@/components/ui/command";
 import { useSearch } from "@/contexts/search-context";
 import { useSession } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 
-// Gunakan inferServerActionReturnData untuk type-safety
 type SearchResultData = inferServerActionReturnData<typeof searchItems>;
 type ToolSearchItem = SearchResultData["tools"][number];
 
@@ -32,7 +31,7 @@ const SearchResults = ({ name, items, onItemSelect, getHref, renderItemDisplay }
   return (
     <CommandGroup heading={name}>
       {items.map((item) => (
-        <CommandItem key={`${name}-${item.websiteUrl}`} value={`${name.toLowerCase()}:${item.slug}`} onSelect={() => onItemSelect(getHref(item))}>
+        <CommandItem key={`${name}-${item.websiteUrl}`} value={`${item.name} ${item.tagline || ""}`} onSelect={() => onItemSelect(getHref(item))}>
           {renderItemDisplay(item)}
         </CommandItem>
       ))}
@@ -145,38 +144,42 @@ export const Search = () => {
 
   return (
     <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange} showCloseButton={!isPending}>
-      <div className="relative">
-        <CommandInput placeholder="Type to search..." onValueChange={setQuery} className="pr-10" />
-        {isPending && <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />}
-      </div>
+      <Command shouldFilter={false}>
+        <div className="relative">
+          <CommandInput placeholder="Type to search..." onValueChange={setQuery} className="pr-10" />
+          {isPending && <Loader2 className="absolute right-3 top-3 h-4 w-4 animate-spin text-muted-foreground" />}
+        </div>
 
-      {hasQuery && !isPending && <CommandEmpty>No results found. Please try a different query.</CommandEmpty>}
+        {hasQuery && !isPending && <CommandEmpty>No results found. Please try a different query.</CommandEmpty>}
 
-      <CommandList ref={listRef}>
-        <SearchResults
-          name="Tools"
-          items={displayItems}
-          onItemSelect={navigateTo}
-          getHref={(tool) => tool.websiteUrl || "#"}
-          renderItemDisplay={(tool) => (
-            <div className="flex items-center gap-3 w-full relative">
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <div className="font-medium truncate">{tool.name}</div>
-                {tool.tagline && <div className="text-xs text-muted-foreground truncate">{tool.tagline}</div>}
-              </div>
-
-              {tool.screenshots[0]?.imageUrl && (
-                <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 hidden group-hover:block z-50 pointer-events-none">
-                  <div className="bg-background border rounded-lg shadow-xl p-2">
-                    <img src={tool.screenshots[0].imageUrl} alt={tool.name} className="w-64 h-auto rounded" />
+        <CommandList ref={listRef}>
+          <SearchResults
+            name="Tools"
+            items={displayItems}
+            onItemSelect={navigateTo}
+            getHref={(tool) => tool.websiteUrl || "#"}
+            renderItemDisplay={(tool) => (
+              <CommandItem key={tool.id} value={`${tool.name} ${tool.tagline || ""}`} onSelect={() => navigateTo(tool.websiteUrl || "#")}>
+                <div className="flex items-center gap-3 w-full relative">
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium truncate">{tool.name}</div>
+                    {tool.tagline && <div className="text-xs text-muted-foreground truncate">{tool.tagline}</div>}
                   </div>
+
+                  {tool.screenshots[0]?.imageUrl && (
+                    <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 hidden group-hover:block z-50 pointer-events-none">
+                      <div className="bg-background border rounded-lg shadow-xl p-2">
+                        <img src={tool.screenshots[0].imageUrl} alt={tool.name} className="w-64 h-auto rounded" />
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          )}
-        />
-      </CommandList>
+              </CommandItem>
+            )}
+          />
+        </CommandList>
+      </Command>
     </CommandDialog>
   );
 };

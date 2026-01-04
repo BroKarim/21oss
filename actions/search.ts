@@ -15,24 +15,14 @@ export const searchItems = createServerAction()
     if (!query || query.trim() === "") {
       return { tools: [] };
     }
-
     const searchQuery = query.trim();
 
-    // Single optimized query dengan OR untuk semua fields
     const tools = await db.tool.findMany({
       where: {
         status: "Published",
         OR: [
           { name: { contains: searchQuery, mode: "insensitive" } },
           { tagline: { contains: searchQuery, mode: "insensitive" } },
-          { description: { contains: searchQuery, mode: "insensitive" } },
-          {
-            stacks: {
-              some: {
-                name: { contains: searchQuery, mode: "insensitive" },
-              },
-            },
-          },
         ],
       },
       take: 10,
@@ -41,7 +31,6 @@ export const searchItems = createServerAction()
         name: true,
         tagline: true,
         websiteUrl: true,
-
         screenshots: {
           orderBy: { order: "asc" },
           take: 1,
@@ -53,18 +42,24 @@ export const searchItems = createServerAction()
     return { tools };
   });
 
-// Get random tools for default state
 export const getRandomTools = createServerAction().handler(async () => {
-  const tools = await db.tool.findMany({
+  const allIds = await db.tool.findMany({
     where: { status: "Published" },
-    take: 10,
-    orderBy: { createdAt: "desc" },
+    select: { id: true },
+  });
+
+  const randomIds = allIds
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 10)
+    .map((t) => t.id);
+
+  const tools = await db.tool.findMany({
+    where: { id: { in: randomIds } },
     select: {
       id: true,
       name: true,
       tagline: true,
       websiteUrl: true,
-      faviconUrl: true,
       screenshots: {
         orderBy: { order: "asc" },
         take: 1,
@@ -73,6 +68,5 @@ export const getRandomTools = createServerAction().handler(async () => {
     },
   });
 
-  // Shuffle for pseudo-random
-  return { tools: tools.sort(() => Math.random() - 0.5) };
+  return { tools };
 });
