@@ -4,6 +4,8 @@ import { db } from "@/services/db";
 import { ToolManyPayload, toolOnePayload, ToolListPayload } from "./payloads";
 import type { FilterSchema, ResourcesParams } from "../shared/schema";
 import { FEATURED_STACK } from "./config";
+
+
 export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhereInput) => {
   "use cache";
 
@@ -199,42 +201,117 @@ export const findStackFilters = async () => {
   });
 };
 
-
-export const findResources = async ({ type, sort, stack }: ResourcesParams) => { 
+// server/web/tools/queries.ts
+export const findPlatformFilters = async () => {
   "use cache";
+
+  cacheTag("platform-filters");
+  cacheLife("max");
+
+  return db.platform.findMany({
+    orderBy: { name: "asc" },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      iconUrl: true,
+    },
+  });
+};
+
+
+export const findResources = async ({ type, sort, stack, platform }: ResourcesParams) => {
+  "use cache";
+
   cacheTag("resources");
   cacheLife("max");
 
+  // =====================
+  // WHERE (HARD FILTER)
+  // =====================
   const where: Prisma.ToolWhereInput = {
     status: ToolStatus.Published,
+
     ...(type === "all"
-      ? { type: { in: [ToolType.Template, ToolType.Component, ToolType.Asset] } }
-      : { type }),
-    ...(stack
       ? {
-          stacks: {
+          type: {
+            in: [ToolType.Template, ToolType.Component, ToolType.Asset],
+          },
+        }
+      : { type }),
+
+    ...(platform
+      ? {
+          platforms: {
             some: {
-              slug: stack,
+              slug: platform,
             },
           },
         }
       : {}),
   };
 
-  
-  let orderBy: Prisma.ToolOrderByWithRelationInput = { stars: "desc" }; 
+  // =====================
+  // ORDER BY (DB LEVEL)
+  // =====================
+  let orderBy: Prisma.ToolOrderByWithRelationInput;
 
-  if (sort === "stars") {
-    orderBy = { stars: "desc" };
-  } else if (sort === "latest") {
-    orderBy = { lastCommitDate: "desc" };
-  } else if (sort === "oldest") {
-    orderBy = { firstCommitDate: "asc" };
+  switch (sort) {
+    case "latest":
+      orderBy = { lastCommitDate: "desc" };
+      break;
+    case "oldest":
+      orderBy = { firstCommitDate: "asc" };
+      break;
+    case "stars":
+    default:
+      orderBy = { stars: "desc" };
   }
 
-  return db.tool.findMany({
+  // =====================
+  // QUERY
+  // =====================
+  const tools = await db.tool.findMany({
     where,
-    select: ToolListPayload,
-    orderBy, 
+    orderBy,
+    select: {
+      ...ToolListPayload,
+
+      stacks: {
+        select: {
+          slug: true,
+        },
+      },
+
+      platforms: {
+        select: {
+          slug: true,
+        },
+      },
+    },
   });
+
+  // =====================
+  // SOFT RANKING (STACK)
+  // =====================
+  if (!stack?.length) return tools;
+
+  return tools
+    .map((tool) => {
+      const matchedStacks = tool.stacks.filter((s) => stack.includes(s.slug)).length;
+
+      return {
+        ...tool,
+        _score: matchedStacks,
+      };
+    })
+    .sort((a, b) => {
+      // stack relevance FIRST
+      if (b._score !== a._score) {
+        return b._score - a._score;
+      }
+
+      // fallback to stars
+      return (b.stars ?? 0) - (a.stars ?? 0);
+    });
 };

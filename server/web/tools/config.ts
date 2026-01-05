@@ -24,3 +24,18 @@ export const FEATURED_STACK = [
   "react-native",
   "expo",
 ];
+
+export const FEATURED_PLATFORM = [
+  "api--sdk",
+  "plugin--extension",
+  "mobile-app",
+  "desktop-app",
+  "website",
+  "library",
+  "package",
+  "cli",
+  "other",
+  "e-commerce",
+  "docs",
+  "blog",
+];

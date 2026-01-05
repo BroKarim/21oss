@@ -2,8 +2,11 @@
 
 import * as React from "react";
 import Image from "next/image";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { cn } from "@/lib/utils";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 type StackItem = {
   id: string;
@@ -17,53 +20,51 @@ interface StackFilterProps {
 }
 
 export function StackFilter({ stacks }: StackFilterProps) {
-  const [activeStack, setActiveStack] = useQueryState("stack", {
+  const [stackParam, setStackParam] = useQueryState("stack", {
     shallow: false,
   });
 
-  const handleSelect = (slug: string) => {
-    if (activeStack === slug) {
-      setActiveStack(null);
-    } else {
-      setActiveStack(slug);
-    }
+  const activeStacks = React.useMemo(() => stackParam?.split(",") ?? [], [stackParam]);
+
+  const toggleStack = (slug: string) => {
+    const next = activeStacks.includes(slug) ? activeStacks.filter((s) => s !== slug) : [...activeStacks, slug];
+
+    setStackParam(next.length ? next.join(",") : null);
   };
 
   return (
-    <div className="relative group w-full">
-      <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button size="sm" className="flex gap-2 justify-between min-w-[180px]">
+          <span>
+            Stack
+            {activeStacks.length > 0 && <span className="ml-1 text-muted-foreground">({activeStacks.length})</span>}
+          </span>
+          <ChevronsUpDown className="h-4 w-4 opacity-50" />
+        </Button>
+      </PopoverTrigger>
 
-      {/* Fade overlay kanan */}
-      <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-      <div
-        className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade"
-        style={{
-          scrollbarWidth: "none",
-          msOverflowStyle: "none",
-        }}
-      >
-        {stacks.map((stack) => {
-          const isActive = activeStack === stack.slug;
+      <PopoverContent align="start" className="w-64 p-2">
+        <div className="space-y-1 max-h-72 overflow-auto">
+          {stacks.map((stack) => {
+            const isActive = activeStacks.includes(stack.slug);
 
-          return (
-            <button
-              key={stack.id}
-              onClick={() => handleSelect(stack.slug)}
-              className={cn(
-                "flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full border transition-all whitespace-nowrap",
-                isActive ? "bg-primary text-primary-foreground border-primary shadow-sm" : "bg-background text-foreground border-input hover:bg-muted hover:border-foreground/50"
-              )}
-            >
-              {stack.faviconUrl && (
-                <div className="relative w-4 h-4 rounded-full overflow-hidden shrink-0 bg-white/10">
-                  <Image src={stack.faviconUrl} alt={stack.name} fill className="object-contain" />
-                </div>
-              )}
-              <span>{stack.name}</span>
-            </button>
-          );
-        })}
-      </div>
-    </div>
+            return (
+              <button key={stack.id} onClick={() => toggleStack(stack.slug)} className={cn("flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition", isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted")}>
+                {stack.faviconUrl && (
+                  <div className="relative w-4 h-4 shrink-0">
+                    <Image src={stack.faviconUrl} alt={stack.name} fill className="object-contain" />
+                  </div>
+                )}
+
+                <span className="flex-1 text-left">{stack.name}</span>
+
+                {isActive && <Check className="h-4 w-4" />}
+              </button>
+            );
+          })}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

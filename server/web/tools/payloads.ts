@@ -109,6 +109,12 @@ export const ToolListPayload = Prisma.validator<Prisma.ToolSelect>()({
     },
     take: 3,
   },
+  platforms: {
+    select: {
+      id: true,
+      name: true,
+    },
+  },
   screenshots: {
     select: {
       imageUrl: true,

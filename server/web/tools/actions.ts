@@ -1,6 +1,6 @@
 "use server";
 
-import { findRecentTools, filterToolsBySubcategory, findResources, findStackFilters } from "@/server/web/tools/queries";
+import { findRecentTools, filterToolsBySubcategory, findResources, findStackFilters, findPlatformFilters } from "@/server/web/tools/queries";
 import { ResourcesParams } from "../shared/schema";
 
 
@@ -38,4 +38,8 @@ export async function getResources(searchParams: ResourcesParams) {
 
 export async function getStackFilters() {
   return await findStackFilters();
+}
+// server/web/tools/actions.ts
+export async function getPlatformFilters() {
+  return await findPlatformFilters();
 }

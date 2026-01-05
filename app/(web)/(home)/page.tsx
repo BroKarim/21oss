@@ -3,17 +3,19 @@ import { ResourcesTabs } from "@/components/web/tools/resources/resources-tab";
 import { ResourcesList } from "@/components/web/tools/resources/resources-list";
 import { SortFilter } from "@/components/web/tools/resources/sort-filter";
 import { StackFilter } from "@/components/web/tools/resources/stack-filter";
+import { PlatformFilter } from "@/components/web/tools/resources/platforms-fiter";
 import type { SearchParams } from "nuqs";
 import { SubmitForm } from "@/components/web/tools/resources/submit-form";
 import { resourcesParamsCache } from "@/server/web/shared/schema";
-import { getStackFilters } from "@/server/web/tools/actions";
+import { getStackFilters, getPlatformFilters } from "@/server/web/tools/actions";
+
 type ResourcesPageProps = {
   searchParams: Promise<SearchParams>;
 };
 
 export default async function Page({ searchParams }: ResourcesPageProps) {
   const params = resourcesParamsCache.parse(await searchParams);
-  const stacks = await getStackFilters();
+  const [stacks, platforms] = await Promise.all([getStackFilters(), getPlatformFilters()]);
   return (
     <div className="min-h-screen  mx-auto bg-background/50 flex flex-1 flex-col items-center py-10 px-4 md:px-8">
       <div className="w-full max-w-3xl md:mt-8 space-y-10 text-center">
@@ -32,12 +34,13 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
 
           <div className="absolute right-0">
             <SortFilter />
+            <StackFilter stacks={stacks} />
           </div>
         </div>
 
         {/* Row 2 */}
         <div className="w-full flex items-center justify-center">
-          <StackFilter stacks={stacks} />
+          <PlatformFilter platforms={platforms} />
         </div>
 
         <Suspense
