@@ -3,8 +3,8 @@ import { env } from "@/env";
 export const siteConfig = {
   name: "21OSS",
   slug: "21oss",
-  tagline: "Opensource for the sake of daily life",
-  description: "open-source catalog designed to make discovering tools easier.",
+  tagline: "Open-source resources to ship projects faster",
+  description: "A curated open-source library of templates, icons, and UI components to help developers ship projects faster.",
   alphabet: "abcdefghijklmnopqrstuvwxyz",
   url: env.NEXT_PUBLIC_SITE_URL,
   email: env.NEXT_PUBLIC_SITE_EMAIL,
@@ -16,11 +16,10 @@ export const siteConfig = {
   },
 };
 
-
 export const submitUrl = "https://forms.gle/vXwhH5psEkZYMqsu9";
 
 export const META_THEME_COLORS = {
   light: "#ffffff",
-  
+
   dark: "#09090b",
 };

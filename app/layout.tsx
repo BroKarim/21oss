@@ -13,9 +13,14 @@ import { Toaster } from "@/components/ui/sonner";
 import { Bricolage_Grotesque } from "next/font/google";
 
 export const metadata: Metadata = {
-  title: siteConfig.name,
+  title: {
+    default: siteConfig.name,
+    template: `%s · ${siteConfig.name}`,
+  },
   description: siteConfig.description,
   metadataBase: new URL("https://21oss.com"),
+  keywords: ["open source templates", "ui components library", "frontend resources", "developer tools", "icons library", "ship faster", "nextjs ui components", "tailwind templates"],
+
   authors: [
     {
       name: "brokariim",
@@ -38,6 +43,16 @@ export const metadata: Metadata = {
         alt: siteConfig.name,
       },
     ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 
