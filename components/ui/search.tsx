@@ -50,16 +50,51 @@ export const Search = () => {
   const listRef = useRef<HTMLDivElement>(null);
 
   const [hoveredTool, setHoveredTool] = useState<ToolSearchItem | null>(null);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [smoothPosition, setSmoothPosition] = useState({ x: 0, y: 0 });
+  const animationRef = useRef<number | null>(null);
 
-  const [showPreview, setShowPreview] = useState(false);
+  useEffect(() => {
+    const lerp = (start: number, end: number, t: number) => start + (end - start) * t;
 
-  // ✅ Update onHover handler
+    const animate = () => {
+      setSmoothPosition((prev) => ({
+        x: lerp(prev.x, mousePosition.x, 0.15),
+        y: lerp(prev.y, mousePosition.y, 0.15),
+      }));
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, [mousePosition]);
+
+  const previewTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const handleHover = (item: ToolSearchItem | null) => {
-    setHoveredTool(item);
-    setShowPreview(!!item);
+    if (previewTimeoutRef.current) {
+      clearTimeout(previewTimeoutRef.current);
+    }
+
+    if (item) {
+      previewTimeoutRef.current = setTimeout(() => {
+        setHoveredTool(item);
+      }, 200);
+    } else {
+      setHoveredTool(null);
+    }
   };
+
+  useEffect(() => {
+    return () => {
+      if (previewTimeoutRef.current) {
+        clearTimeout(previewTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const hasQuery = !!query.length;
 
@@ -125,11 +160,16 @@ export const Search = () => {
   const displayItems = hasQuery ? results?.tools : defaultTools;
 
   return (
-    <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange} showCloseButton={!isPending}>
+    <CommandDialog open={search.isOpen} onOpenChange={handleOpenChange} showCloseButton={!isPending} >
       <div
         ref={containerRef}
         onMouseMove={(e) => {
-          setMouse({ x: e.clientX, y: e.clientY });
+          if (!containerRef.current) return;
+          const rect = containerRef.current.getBoundingClientRect();
+          setMousePosition({
+            x: e.clientX - rect.left, // relatif ke container
+            y: e.clientY - rect.top,
+          });
         }}
         className="relative"
       >
@@ -141,20 +181,35 @@ export const Search = () => {
 
           {hasQuery && !isPending && <CommandEmpty>No results found. Please try a different query.</CommandEmpty>}
 
-          <CommandList ref={listRef}>
+          <CommandList ref={listRef} className="no-scrollbar">
             <SearchResults name="Tools" items={displayItems} onItemSelect={navigateTo} getHref={(tool) => tool.websiteUrl || "#"} onHover={handleHover} />
           </CommandList>
         </Command>
+        {/* {hoveredTool && (
+          <div className="fixed top-4 left-4 z-50 bg-background/90 border rounded-lg p-4 text-xs max-w-md pointer-events-none">
+            <p className="font-bold">DEBUG Hovered Tool:</p>
+            <p>Name: {hoveredTool.name}</p>
+            <p>Tagline: {hoveredTool.tagline || "none"}</p>
+            <p>Has screenshots: {hoveredTool.screenshots ? "yes" : "no"}</p>
+            <p>Screenshots length: {hoveredTool.screenshots?.length ?? 0}</p>
+            <p>First imageUrl: {hoveredTool.screenshots?.[0]?.imageUrl || "TIDAK ADA GAMBAR"}</p>
+            {hoveredTool.screenshots?.[0]?.imageUrl && <img src={hoveredTool.screenshots[0].imageUrl} alt="debug" className="mt-2 w-48 h-32 object-cover rounded border" />}
+          </div>
+        )} */}
         {hoveredTool?.screenshots?.[0]?.imageUrl && (
           <div
-            className={`fixed z-50 pointer-events-none transition-opacity duration-200 ${showPreview ? "opacity-100" : "opacity-0"}`}
+            className="fixed z-50 pointer-events-none"
             style={{
-              left: mouse.x + 20,
-              top: mouse.y - 120,
+              left: 0,
+              top: 0,
+              transform: `translate(${smoothPosition.x + 20}px, ${smoothPosition.y - 140}px)`,
+              opacity: hoveredTool ? 1 : 0,
+              transition: "opacity 0.4s ease, transform 0.4s ease",
             }}
           >
-            <div className="w-64 rounded-xl border bg-background shadow-xl">
-              <img src={hoveredTool.screenshots[0].imageUrl} alt={hoveredTool.name} className="w-full h-auto object-cover" />
+            <div className="w-60 h-32 rounded-md border bg-background shadow-2xl overflow-hidden">
+              <img src={hoveredTool.screenshots[0].imageUrl} alt={hoveredTool.name} className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
             </div>
           </div>
         )}
