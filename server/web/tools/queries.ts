@@ -274,21 +274,7 @@ export const findResources = async ({ type, sort, stack, platform }: ResourcesPa
   const tools = await db.tool.findMany({
     where,
     orderBy,
-    select: {
-      ...ToolListPayload,
-
-      stacks: {
-        select: {
-          slug: true,
-        },
-      },
-
-      platforms: {
-        select: {
-          slug: true,
-        },
-      },
-    },
+    select: ToolListPayload,
   });
 
   // =====================
@@ -296,9 +282,11 @@ export const findResources = async ({ type, sort, stack, platform }: ResourcesPa
   // =====================
   if (!stack?.length) return tools;
 
+  const stackSlugs = stack.split(",").filter(Boolean);
+
   return tools
     .map((tool) => {
-      const matchedStacks = tool.stacks.filter((s) => stack.includes(s.slug)).length;
+      const matchedStacks = tool.stacks.filter((s) => stackSlugs.includes(s.slug)).length;
 
       return {
         ...tool,
