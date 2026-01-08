@@ -8,6 +8,7 @@ import { StackFilter } from "@/components/web/tools/resources/stack-filter";
 import { PlatformFilter } from "@/components/web/tools/resources/platforms-fiter";
 import { SubmitForm } from "@/components/web/tools/resources/submit-form";
 import { ActiveFilters } from "@/components/web/tools/resources/active-filters";
+import { PlatformAutoClear } from "@/components/web/tools/resources/auto-clear";
 import { resourcesParamsCache } from "@/server/web/shared/schema";
 import { getStackFilters, getPlatformFilters } from "@/server/web/tools/actions";
 
@@ -49,7 +50,9 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
           )}
         </div>
         <div className="w-full flex justify-center">
-          <ActiveFilters stacks={stacks} platforms={platforms} />
+          <PlatformAutoClear type={params.type}>
+            <ActiveFilters stacks={stacks} platforms={platforms} />
+          </PlatformAutoClear>
         </div>
 
         <Suspense

@@ -5,7 +5,6 @@ import { NavLogo } from "@/components/web/main-page/nav-logo";
 import { usePathname } from "next/navigation";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { useMounted } from "@mantine/hooks";
 import { Icons } from "@/components/web/icons";
 import { sidebarOpenAtom } from "@/components/web/main-page/main-layout";
@@ -47,9 +46,9 @@ function Header() {
       </div>
 
       <div className="hidden sm:flex items-center justify-center">
-        <Button variant="ghost" className="gap-2" onClick={search.open}>
-          <Search className="size-4" />
-          Search Tools
+        <Button variant="outline" className="text-foreground dark:bg-card hover:bg-muted/50 relative h-8 w-full justify-start pl-3 font-normal shadow-none sm:pr-12 md:w-48 lg:w-56 " onClick={search.open}>
+          <span className="hidden lg:inline-flex">Search tool...</span>
+          <span className="inline-flex lg:hidden">Search...</span>
         </Button>
         <Link href="/collage">
           <Button variant="ghost" className="hidden z-50 md:flex gap-1">
