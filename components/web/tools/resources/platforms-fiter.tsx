@@ -39,7 +39,7 @@ export function PlatformFilter({ platforms }: PlatformFilterProps) {
       {/* Fade kanan */}
       <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
 
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
+      <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-hide mask-fade" style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}>
         {platforms.map((platform) => {
           const isActive = activePlatform === platform.slug;
 

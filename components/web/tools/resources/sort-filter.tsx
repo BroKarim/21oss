@@ -1,8 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { ArrowUpDown, Check } from "lucide-react";
+import { Check } from "lucide-react";
 import { useQueryState, parseAsStringEnum } from "nuqs";
+import { Icons } from "@/components/web/icons";
 import { SORT_OPTIONS, type SortOption } from "@/server/web/shared/schema";
 import { Button } from "@/components/ui/button-shadcn";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -15,11 +16,7 @@ const LABELS: Record<SortOption, string> = {
 };
 
 export function SortFilter() {
-  const [sort, setSort] = useQueryState(
-    "sort",
-    parseAsStringEnum([...SORT_OPTIONS]) 
-      .withOptions({ shallow: false }) 
-  );
+  const [sort, setSort] = useQueryState("sort", parseAsStringEnum([...SORT_OPTIONS]).withOptions({ shallow: false }));
 
   const onSelect = (value: SortOption) => {
     setSort(sort === value ? null : value);
@@ -28,13 +25,13 @@ export function SortFilter() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm" variant="outline" className="h-9 gap-1 w-24 rounded-full">
-          <ArrowUpDown className="h-3.5 w-3.5" />
+        <Button size="sm" variant="outline" className=" gap-1 rounded-lg">
+          <Icons.filteSort className="h-4 w-4" />
           <span>Filter</span>
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent align="end" className="w-48 p-1">
+      <PopoverContent align="end" className="w-48 p-1 ">
         {SORT_OPTIONS.map((option) => {
           const active = sort === option;
 

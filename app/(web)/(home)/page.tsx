@@ -1,11 +1,13 @@
 import { Suspense } from "react";
+import type { SearchParams } from "nuqs";
+import { ToolType } from "@prisma/client";
 import { ResourcesTabs } from "@/components/web/tools/resources/resources-tab";
 import { ResourcesList } from "@/components/web/tools/resources/resources-list";
 import { SortFilter } from "@/components/web/tools/resources/sort-filter";
 import { StackFilter } from "@/components/web/tools/resources/stack-filter";
 import { PlatformFilter } from "@/components/web/tools/resources/platforms-fiter";
-import type { SearchParams } from "nuqs";
 import { SubmitForm } from "@/components/web/tools/resources/submit-form";
+import { ActiveFilters } from "@/components/web/tools/resources/active-filters";
 import { resourcesParamsCache } from "@/server/web/shared/schema";
 import { getStackFilters, getPlatformFilters } from "@/server/web/tools/actions";
 
@@ -32,7 +34,7 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
             <ResourcesTabs defaultValue={params.type} />
           </div>
 
-          <div className="absolute right-0">
+          <div className="absolute right-0 flex gap-3">
             <SortFilter />
             <StackFilter stacks={stacks} />
           </div>
@@ -40,7 +42,14 @@ export default async function Page({ searchParams }: ResourcesPageProps) {
 
         {/* Row 2 */}
         <div className="w-full flex items-center justify-center">
-          <PlatformFilter platforms={platforms} />
+          {params.type === ToolType.Template && (
+            <div className="w-full flex items-center justify-center">
+              <PlatformFilter platforms={platforms} />
+            </div>
+          )}
+        </div>
+        <div className="w-full flex justify-center">
+          <ActiveFilters stacks={stacks} platforms={platforms} />
         </div>
 
         <Suspense

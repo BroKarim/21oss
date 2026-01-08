@@ -2,12 +2,12 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-
+import { Button } from "@/components/ui/button-shadcn";
+import { Icons } from "@/components/web/icons";
 type StackItem = {
   id: string;
   name: string;
@@ -35,12 +35,8 @@ export function StackFilter({ stacks }: StackFilterProps) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button size="sm" className="flex gap-2 justify-between min-w-[180px]">
-          <span>
-            Stack
-            {activeStacks.length > 0 && <span className="ml-1 text-muted-foreground">({activeStacks.length})</span>}
-          </span>
-          <ChevronsUpDown className="h-4 w-4 opacity-50" />
+        <Button size="sm" variant="outline" className="bg-background rounded-lg">
+          <Icons.filteStack className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
 

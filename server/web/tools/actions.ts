@@ -3,7 +3,6 @@
 import { findRecentTools, filterToolsBySubcategory, findResources, findStackFilters, findPlatformFilters } from "@/server/web/tools/queries";
 import { ResourcesParams } from "../shared/schema";
 
-
 export async function getRecentTools() {
   return await findRecentTools({ take: 6 });
 }

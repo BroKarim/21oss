@@ -1,4 +1,4 @@
-// app/resources/_components/resources-tabs.tsx
+
 "use client";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs-6";
