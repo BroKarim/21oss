@@ -13,6 +13,7 @@ import ComponentPreviewImage from "../../card/card-image";
 import { Icons } from "../../icons";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Insights } from "@/components/ui/insights";
+import { ShareButton } from "./share-button";
 
 type ResourceCardProps = ComponentProps<typeof Card> & {
   tool: ToolList;
@@ -121,6 +122,8 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
               <p className="text-base font-medium text-foreground truncate">{tool.name}</p>
               <p className="text-neutral-500 text-sm  leading-relaxed">{tool.tagline}</p>
             </div>
+
+            <ShareButton tool={tool} />
           </div>
         )}
       </div>
