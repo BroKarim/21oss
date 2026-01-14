@@ -67,4 +67,4 @@ The project uses a modern stack:
 
 ## License
 
-21OSS is licensed under the [GPL-3.0 License](LICENSE).
+21OSS is licensed under the [GPL-3.0 License](LICENSE) .
