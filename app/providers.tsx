@@ -50,7 +50,7 @@ function Header() {
           <span className="hidden lg:inline-flex">Search tool...</span>
           <span className="inline-flex lg:hidden">Search...</span>
         </Button>
-        <Link href="/collage">
+        <Link href="/student">
           <Button variant="ghost" className="hidden z-50 md:flex gap-1">
             <Icons.fire />
             For Students
