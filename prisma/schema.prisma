@@ -149,6 +149,7 @@ model Tool {
     pageviews       Int?       @default(0)
     status          ToolStatus @default(Draft)
     publishedAt     DateTime?
+    isTweeted       Boolean    @default(false)
     createdAt       DateTime  @default(now())
     updatedAt       DateTime  @updatedAt
 
