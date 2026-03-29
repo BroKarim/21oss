@@ -88,7 +88,13 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
             }}
           >
             <div className="relative w-full aspect-video  overflow-hidden shadow-base">
-              <ComponentPreviewImage src={primaryImage} alt={`${tool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover " priority={false} />
+              {primaryImage ? (
+                <ComponentPreviewImage src={primaryImage} alt={`${tool.name} preview`} fallbackSrc="/placeholder.svg" className="w-full h-full object-cover " priority={false} />
+              ) : (
+                <div className="w-full h-full bg-white dark:bg-neutral-900 border flex items-center justify-center p-6 text-center">
+                  <span className="text-3xl font-bold dark:text-white text-black line-clamp-2 leading-tight tracking-tight px-4">{tool.name}</span>
+                </div>
+              )}
 
               <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 pointer-events-none">
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center flex-col justify-center p-4">
