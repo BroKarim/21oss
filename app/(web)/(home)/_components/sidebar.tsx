@@ -1,0 +1,159 @@
+"use client";
+
+import { useMemo } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Check } from "lucide-react";
+import { useQueryState } from "nuqs";
+
+// import { ModeToggle } from "@/components/mode-toggle";
+import { cn } from "@/lib/utils";
+import type { StackItem } from "../_lib/types";
+
+const NAV_ITEMS = [
+  {
+    label: "Home",
+    href: "/",
+    icon: "star",
+    param: "featured",
+  },
+  {
+    label: "Blogs",
+    href: "/home?filter=newest",
+    icon: "zap",
+    param: "newest",
+  },
+  { label: "Students", href: "/student", icon: "layout", param: null },
+];
+
+function NavIcon({ type }: { type: string }) {
+  const p = {
+    width: 16,
+    height: 16,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  switch (type) {
+    case "grid":
+      return (
+        <svg {...p}>
+          <rect x="3" y="3" width="7" height="7" />
+          <rect x="14" y="3" width="7" height="7" />
+          <rect x="14" y="14" width="7" height="7" />
+          <rect x="3" y="14" width="7" height="7" />
+        </svg>
+      );
+    case "star":
+      return (
+        <svg {...p}>
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+        </svg>
+      );
+    case "zap":
+      return (
+        <svg {...p}>
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+      );
+    case "layout":
+      return (
+        <svg {...p}>
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+          <line x1="3" y1="9" x2="21" y2="9" />
+          <line x1="9" y1="21" x2="9" y2="9" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
+export function Sidebar({ stacks }: { stacks: StackItem[] }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentFilter = searchParams.get("filter");
+  const [stackParam, setStackParam] = useQueryState("stack", {
+    shallow: false,
+  });
+  const activeStacks = useMemo(() => stackParam?.split(",").filter(Boolean) ?? [], [stackParam]);
+
+  const toggleStack = (slug: string) => {
+    const next = activeStacks.includes(slug) ? activeStacks.filter((stack) => stack !== slug) : [...activeStacks, slug];
+    setStackParam(next.length ? next.join(",") : null);
+  };
+
+  return (
+    <aside className="fixed left-0 top-0 z-30 flex h-screen w-[260px] flex-col border-r border-border bg-background">
+      {/* Logo */}
+      <div className="border-border flex h-14 items-center gap-2.5 border-b px-5">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white">dz</div>
+        <div>
+          <span className="text-sm font-bold tracking-tight">dzenn</span>
+          <span className="text-muted-foreground text-sm">.gallery</span>
+        </div>
+      </div>
+
+      {/* Main Nav */}
+      <nav className="px-3 py-4">
+        <p className="text-muted-foreground mb-2 px-2 text-[10px] font-semibold tracking-widest uppercase">Navigation</p>
+        <div className="space-y-0.5">
+          {NAV_ITEMS.map((item) => {
+            const isActive = item.href === "/builder" ? pathname === "/builder" : item.param === null ? pathname === "/home" && !currentFilter : currentFilter === item.param;
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm transition-colors ${isActive ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}
+              >
+                <NavIcon type={item.icon} />
+                {item.label}
+                {item.param === "newest" && <span className="ml-auto rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-500">NEW</span>}
+              </Link>
+            );
+          })}
+        </div>
+      </nav>
+
+      <div className="bg-border mx-4 h-px" />
+
+      {/* Components Block */}
+      <div className="flex-1 no-scrollbar overflow-y-auto px-3 py-4">
+        <p className="text-muted-foreground mb-2 px-2 text-[10px] font-semibold tracking-widest uppercase">
+          Stacks <span className="text-muted-foreground/60 font-normal">({stacks.length})</span>
+        </p>
+        <div className="space-y-0.5">
+          {stacks.map((stack) => {
+            const isActive = activeStacks.includes(stack.slug);
+            return (
+              <button
+                key={stack.id}
+                onClick={() => toggleStack(stack.slug)}
+                className={cn("group flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors", isActive ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground")}
+              >
+                {stack.faviconUrl ? (
+                  <span className="relative h-4 w-4 shrink-0">
+                    <Image src={stack.faviconUrl} alt={stack.name} fill className="object-contain" />
+                  </span>
+                ) : (
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/30 group-hover:bg-primary" />
+                )}
+                <span className="truncate">{stack.name}</span>
+                {isActive && <Check className="ml-auto h-4 w-4" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="border-border border-t px-5 py-3 flex items-center justify-between">
+        <p className="text-muted-foreground/60 text-[11px]">dzenn.gallery © {new Date().getFullYear()}</p>
+        {/* <ModeToggle /> */}
+      </div>
+    </aside>
+  );
+}

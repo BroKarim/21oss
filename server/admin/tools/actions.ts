@@ -4,7 +4,7 @@ import { slugify, getRandomString } from "@primoui/utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
-import { ToolType } from "@prisma/client";
+import { ToolStatus, ToolType } from "@prisma/client";
 import { removeS3Directories, uploadToS3Storage, optimizeImage } from "@/lib/media";
 import { getToolRepositoryData } from "@/lib/repositories";
 import { adminProcedure } from "@/lib/safe-actions";
@@ -345,10 +345,12 @@ export const autoFillFromRepo = adminProcedure
       }
 
       // Validate and clean response
+      // If AI doesn't return a websiteUrl, fall back to the repo URL so the tool can always be published.
+      const aiWebsiteUrl = typeof parsed.websiteUrl === "string" ? parsed.websiteUrl.trim() : "";
       const result: AutoFillResponse = {
         name: typeof parsed.name === "string" ? parsed.name.trim() : "Untitled Project",
         tagline: typeof parsed.tagline === "string" ? parsed.tagline.trim() : "A great tool",
-        websiteUrl: typeof parsed.websiteUrl === "string" ? parsed.websiteUrl.trim() : "",
+        websiteUrl: aiWebsiteUrl || repositoryUrl,
         description: typeof parsed.description === "string" ? parsed.description.trim() : "This is a useful tool.",
         stacks: Array.isArray(parsed.stacks)
           ? parsed.stacks
@@ -488,4 +490,231 @@ export const fetchAllToolRepositoryData = adminProcedure
       total: tools.length,
       duration: totalDuration,
     };
+  });
+
+// ---------------------------------------------------------------------------
+// Batch AI Auto-Fill + Auto-Publish — processes all Draft tools
+// ---------------------------------------------------------------------------
+
+interface BatchAutoFillResponse {
+  name: string;
+  tagline: string;
+  description: string;
+  websiteUrl: string;
+  stacks: string[];
+  platforms: string[];
+}
+
+const batchAutoFillSchema = z.object({
+  model: z.string().default("anthropic/claude-sonnet-4.5"),
+});
+
+export const batchAutoFillDraftTools = adminProcedure
+  .createServerAction()
+  .input(batchAutoFillSchema)
+  .handler(async ({ input }) => {
+    const { model } = input;
+    const startTime = Date.now();
+
+    // 1. Fetch all Draft tools
+    const tools = await db.tool.findMany({
+      where: { status: "Draft" },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        repositoryUrl: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    if (tools.length === 0) {
+      return { processed: 0, success: 0, errors: 0 };
+    }
+
+    // 2. Fetch all platform options from DB (to inject into AI prompt)
+    const allPlatforms = await db.platform.findMany({
+      select: { id: true, name: true, slug: true },
+    });
+    const platformNames = allPlatforms.map((p) => p.name);
+
+    console.log(`🤖 batchAutoFillDraftTools: ${tools.length} Draft tools`);
+    console.log(`📋 Available platforms: ${platformNames.join(", ")}`);
+    console.log(`🧠 Model: ${model}`);
+    console.log("─".repeat(50));
+
+    let success = 0;
+    let errors = 0;
+
+    for (let i = 0; i < tools.length; i++) {
+      const tool = tools[i];
+
+      if (!tool.repositoryUrl) {
+        console.warn(`  ⚠️  [${i + 1}/${tools.length}] Skip ${tool.name} — no repositoryUrl`);
+        errors++;
+        continue;
+      }
+
+      const repoMatch = tool.repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/\?#]+)/);
+      if (!repoMatch) {
+        console.warn(`  ⚠️  [${i + 1}/${tools.length}] Skip ${tool.name} — invalid GitHub URL`);
+        errors++;
+        continue;
+      }
+
+      const [, owner, repo] = repoMatch;
+      const cleanRepo = repo.replace(/\.git$/, "");
+
+      // Build prompt with platform options
+      const prompt = `You are a senior technical writer. Analyze this GitHub repository: ${owner}/${cleanRepo}
+
+Provide:
+- name: Clean project name (no prefixes like "awesome-" or suffixes like "-js")
+- tagline: One short marketing sentence (max 8 words)
+- description: Clear explanation of what it does (max 80 words)
+- websiteUrl: Official website/docs URL (empty string if none)
+- stacks: Main technologies used (lowercase, e.g. "react", "typescript")
+- platforms: Select ALL that apply from ONLY these options: ${JSON.stringify(platformNames)}. You MUST pick at least one. Match names exactly.
+
+Respond ONLY with valid JSON:
+{
+  "name": "...",
+  "tagline": "...",
+  "description": "...",
+  "websiteUrl": "",
+  "stacks": ["tech1", "tech2"],
+  "platforms": ["Website", "CLI"]
+}`;
+
+      // --- AI Request ---
+      const { data: res, error: fetchError } = await tryCatch(
+        fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://your-domain.com",
+            "X-Title": "BatchAutoFill",
+          },
+          body: JSON.stringify({
+            model,
+            messages: [{ role: "user", content: prompt }],
+            temperature: 0.3,
+            max_tokens: 400,
+          }),
+        }).then((r) => {
+          if (!r.ok) throw new Error(`OpenRouter error [${r.status}]`);
+          return r.json();
+        }),
+      );
+
+      if (fetchError || !res) {
+        console.error(`  ❌ [${i + 1}/${tools.length}] AI failed for ${tool.name}:`, { error: fetchError });
+        errors++;
+        // Longer delay after error (could be rate limit)
+        await new Promise((r) => setTimeout(r, 3000));
+        continue;
+      }
+
+      const content: string = res.choices?.[0]?.message?.content ?? "";
+      if (!content) {
+        errors++;
+        continue;
+      }
+
+      // --- Parse JSON ---
+      let parsed: BatchAutoFillResponse | null = null;
+      try {
+        let jsonStr = content.trim().replace(/```json\s*/g, "").replace(/```\s*/g, "");
+        const s = jsonStr.indexOf("{");
+        const e = jsonStr.lastIndexOf("}") + 1;
+        if (s !== -1 && e > 0) parsed = JSON.parse(jsonStr.slice(s, e));
+      } catch {
+        console.error(`  ❌ [${i + 1}/${tools.length}] JSON parse failed for ${tool.name}`);
+        errors++;
+        continue;
+      }
+
+      if (!parsed) {
+        errors++;
+        continue;
+      }
+
+      // --- Resolve stacks ---
+      const stackNames: string[] = Array.isArray(parsed.stacks)
+        ? parsed.stacks.filter(Boolean).map((s) => String(s).trim().toLowerCase()).filter(Boolean)
+        : [];
+
+      const stackIds = await Promise.all(
+        stackNames.map(async (name) => {
+          const stackSlug = slugify(name);
+          const existing = await db.stack.findUnique({ where: { slug: stackSlug } });
+          if (existing) return { id: existing.id };
+          const created = await db.stack.create({ data: { name, slug: stackSlug } });
+          return { id: created.id };
+        }),
+      );
+
+      // --- Resolve platforms (match AI response to DB records) ---
+      const aiPlatformNames: string[] = Array.isArray(parsed.platforms)
+        ? parsed.platforms.filter(Boolean).map((p) => String(p).trim())
+        : [];
+
+      const platformIds = aiPlatformNames
+        .map((name) => {
+          const match = allPlatforms.find(
+            (p) => p.name.toLowerCase() === name.toLowerCase(),
+          );
+          return match ? { id: match.id } : null;
+        })
+        .filter(Boolean) as { id: string }[];
+
+      // --- Update DB: fill data + publish ---
+      const aiWebsiteUrl = typeof parsed.websiteUrl === "string" ? parsed.websiteUrl.trim() : "";
+
+      const { error: updateError } = await tryCatch(
+        db.tool.update({
+          where: { id: tool.id },
+          data: {
+            name: parsed.name || tool.name,
+            tagline: parsed.tagline || null,
+            description: parsed.description || null,
+            websiteUrl: aiWebsiteUrl || tool.repositoryUrl,
+            stacks: { set: stackIds },
+            platforms: { set: platformIds },
+            status: ToolStatus.Published,
+            publishedAt: new Date(),
+          },
+        }),
+      );
+
+      if (updateError) {
+        console.error(`  ❌ [${i + 1}/${tools.length}] DB failed for ${tool.name}:`, { error: updateError });
+        errors++;
+        continue;
+      }
+
+      success++;
+      console.log(`  ✅ [${i + 1}/${tools.length}] ${tool.name} → Published (${stackNames.length} stacks, ${platformIds.length} platforms)`);
+
+      // Progress summary every 10 items
+      if ((i + 1) % 10 === 0) {
+        const elapsed = Math.round((Date.now() - startTime) / 1000);
+        const avgPerItem = Math.round(elapsed / (i + 1));
+        const remaining = (tools.length - i - 1) * avgPerItem;
+        console.log(`  📊 Progress: ${i + 1}/${tools.length} | ✅ ${success} | ❌ ${errors} | ⏱️ ${elapsed}s elapsed | ~${remaining}s remaining`);
+      }
+
+      // 2s delay between requests to respect rate limits
+      await new Promise((r) => setTimeout(r, 2000));
+    }
+
+    // Revalidate once at the end (not per-item)
+    revalidateTag("tools");
+
+    const totalDuration = Math.round((Date.now() - startTime) / 1000);
+    console.log("─".repeat(50));
+    console.log(`🎉 Batch AI fill done in ${totalDuration}s — success: ${success}, errors: ${errors}, total: ${tools.length}`);
+
+    return { processed: tools.length, success, errors };
   });

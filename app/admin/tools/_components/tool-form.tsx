@@ -86,7 +86,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
     },
   });
 
-  const [selectedModel, setSelectedModel] = useState("deepseek/deepseek-chat-v3.1:free");
+  const [selectedModel, setSelectedModel] = useState("anthropic/claude-sonnet-4.5");
 
   const autoFillAction = useServerAction(autoFillFromRepo, {
     onSuccess: ({ data }) => {
