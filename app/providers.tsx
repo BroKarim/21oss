@@ -56,12 +56,7 @@ function Header() {
             For Students
           </Button>
         </Link>
-        <Link href="/blogs">
-          <Button variant="ghost" className="hidden z-50 md:flex gap-1">
-            <Icons.blogs />
-            Blogs
-          </Button>
-        </Link>
+
         <InfoDialog />
       </div>
     </header>

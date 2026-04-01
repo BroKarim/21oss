@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { StudentClientWrapper } from "@/components/web/student/client-wrapper";
 import { Suspense } from "react";
+import { getStackFilters } from "@/server/web/tools/actions";
+import { WebShell } from "../_components/web-shell";
 
 export const metadata: Metadata = {
   title: "Free & Discounted Tools for Students",
@@ -31,14 +33,17 @@ export const metadata: Metadata = {
 
 export default async function CollagePage() {
   const perks = await findFreeStuffPerks({});
+  const stacks = await getStackFilters();
 
   return (
-    <div className="min-h-screen bg-background/50 py-10 px-4 md:px-8">
-      <div className="max-w-6xl mx-auto">
-        <Suspense fallback={<div className="h-64 animate-pulse bg-muted rounded-xl" />}>
-          <StudentClientWrapper initialData={perks} />
-        </Suspense>
+    <WebShell stacks={stacks}>
+      <div className="min-h-screen bg-background/50 px-4 py-10 md:px-8">
+        <div className="mx-auto max-w-6xl">
+          <Suspense fallback={<div className="h-64 animate-pulse rounded-xl bg-muted" />}>
+            <StudentClientWrapper initialData={perks} />
+          </Suspense>
+        </div>
       </div>
-    </div>
+    </WebShell>
   );
 }
