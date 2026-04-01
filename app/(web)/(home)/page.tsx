@@ -4,6 +4,8 @@ import { HomeClient } from "./_components/home-client";
 import { resourcesParamsCache } from "@/server/web/shared/schema";
 import { getResources, getStackFilters } from "@/server/web/tools/actions";
 
+export const dynamic = "force-dynamic";
+
 type HomePageProps = {
   searchParams: Promise<SearchParams>;
 };

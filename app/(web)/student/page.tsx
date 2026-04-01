@@ -6,6 +6,8 @@ import { Suspense } from "react";
 import { getStackFilters } from "@/server/web/tools/actions";
 import { WebShell } from "../_components/web-shell";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Free & Discounted Tools for Students",
   description: "A curated collection of tools, platforms, and services offering free access or special discounts for students.",
