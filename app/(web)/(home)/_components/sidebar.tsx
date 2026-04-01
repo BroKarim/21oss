@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { useQueryState } from "nuqs";
 
@@ -17,12 +17,6 @@ const NAV_ITEMS = [
     href: "/",
     icon: "star",
     param: "featured",
-  },
-  {
-    label: "Blogs",
-    href: "/home?filter=newest",
-    icon: "zap",
-    param: "newest",
   },
   { label: "Students", href: "/student", icon: "layout", param: null },
 ];
@@ -75,15 +69,26 @@ function NavIcon({ type }: { type: string }) {
 
 export function Sidebar({ stacks }: { stacks: StackItem[] }) {
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
   const currentFilter = searchParams.get("filter");
-  const [stackParam, setStackParam] = useQueryState("stack", {
+  const stackParam = searchParams.get("stack");
+  const [, setStackParam] = useQueryState("stack", {
     shallow: false,
   });
   const activeStacks = useMemo(() => stackParam?.split(",").filter(Boolean) ?? [], [stackParam]);
 
   const toggleStack = (slug: string) => {
     const next = activeStacks.includes(slug) ? activeStacks.filter((stack) => stack !== slug) : [...activeStacks, slug];
+    if (pathname.startsWith("/student")) {
+      const params = new URLSearchParams();
+      if (next.length) {
+        params.set("stack", next.join(","));
+      }
+      const query = params.toString();
+      router.push(query ? `/?${query}` : "/");
+      return;
+    }
     setStackParam(next.length ? next.join(",") : null);
   };
 
@@ -121,7 +126,6 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
 
       <div className="bg-border mx-4 h-px" />
 
-      {/* Components Block */}
       <div className="flex-1 no-scrollbar overflow-y-auto px-3 py-4">
         <p className="text-muted-foreground mb-2 px-2 text-[10px] font-semibold tracking-widest uppercase">
           Stacks <span className="text-muted-foreground/60 font-normal">({stacks.length})</span>
