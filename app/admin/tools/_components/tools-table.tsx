@@ -159,7 +159,7 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
   });
 
   return (
-    <DataTable table={table}>
+    <DataTable table={table} className="min-w-[1100px] table-fixed">
       <DataTableHeader
         title="Tools"
         total={toolsTotal}
@@ -182,4 +182,3 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
     </DataTable>
   );
 }
-

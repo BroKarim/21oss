@@ -48,20 +48,40 @@ export const getColumns = (): ColumnDef<Tool>[] => {
       cell: ({ row }) => {
         const { name, slug, faviconUrl } = row.original;
 
-        return <DataTableLink href={`/admin/tools/${slug}`} image={faviconUrl} title={name} />;
+        return (
+          <div className="w-[220px]">
+            <DataTableLink href={`/admin/tools/${slug}`} image={faviconUrl} title={name} />
+          </div>
+        );
       },
     },
     {
       accessorKey: "tagline",
       enableSorting: false,
       size: 320,
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Tagline" />,
-      cell: ({ row }) => <Note className="truncate">{row.getValue("tagline")}</Note>,
+      header: ({ column }) => (
+        <div className="w-[320px]">
+          <DataTableColumnHeader column={column} title="Tagline" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="w-[320px] max-w-[320px] overflow-x-auto">
+          <Note className="whitespace-nowrap">{row.getValue("tagline")}</Note>
+        </div>
+      ),
     },
     {
       accessorKey: "submitterEmail",
-      header: ({ column }) => <DataTableColumnHeader column={column} title="Submitter" />,
-      cell: ({ row }) => <Note className="text-sm">{row.getValue("submitterEmail")}</Note>,
+      header: ({ column }) => (
+        <div className="w-[200px]">
+          <DataTableColumnHeader column={column} title="Submitter" />
+        </div>
+      ),
+      cell: ({ row }) => (
+        <div className="w-[200px]">
+          <Note className="text-sm truncate">{row.getValue("submitterEmail")}</Note>
+        </div>
+      ),
     },
     {
       accessorKey: "status",
