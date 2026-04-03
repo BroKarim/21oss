@@ -55,6 +55,8 @@ const PER_PAGE = 50;
  * - Untuk daily cron: 1-2 sudah lebih dari cukup (sebagian besar akan di-skip/update)
  */
 const MAX_PAGES_PER_QUERY = Number(process.env.FETCH_MAX_PAGES ?? 1);
+const REQUEST_DELAY_MS = Number(process.env.GH_REQUEST_DELAY_MS ?? 1500);
+const MAX_RETRIES = Number(process.env.GH_MAX_RETRIES ?? 3);
 
 // ---------------------------------------------------------------------------
 // Queries
@@ -67,30 +69,95 @@ const MAX_PAGES_PER_QUERY = Number(process.env.FETCH_MAX_PAGES ?? 1);
  */
 const SEARCH_QUERIES = [
   // Template & Starter
-  "topic:template",
-  "topic:starter-template",
-  "topic:boilerplate",
-  "topic:starter",
-  "topic:starter-kit",
-  "topic:project-template",
   "topic:nextjs-template",
   "topic:react-template",
   "topic:typescript-template",
   "topic:vite-template",
   "topic:nuxt-template",
   "topic:vue-template",
+  "topic:angular-template",
+  "topic:svelte-template",
+  "topic:preact-template",
+  "topic:remix-template",
+  "topic:solidjs-template",
+  "topic:astro-template",
+  "topic:qwik-template",
   "topic:express-template",
   "topic:fastapi-template",
   "topic:django-template",
   "topic:laravel-template",
   "topic:tailwindcss-template",
   "topic:shadcn-template",
+  "topic:react-native-template",
+  "topic:rn-template",
+  "topic:mobile-template",
+  "topic:css-template",
+  "topic:ui-template",
+  "topic:database-template",
+  "topic:auth-template",
+  "topic:firebase-template",
+  "topic:supabase-template",
+  "topic:postgres-template",
+  "topic:mysql-template",
+  "topic:sqlite-template",
+  "topic:mongodb-template",
+  "topic:prisma-template",
+  "topic:drizzle-template",
+  "topic:orm-template",
   // Keyword fallback (jika repo tidak ada topic tapi namanya jelas)
   "template in:name,description stars:>50",
   "boilerplate in:name,description stars:>50",
   "starter in:name,description stars:>50",
   "starter-kit in:name,description stars:>50",
   "scaffold in:name,description stars:>50",
+  // Framework JS/TS
+  "react template in:name,description stars:>50",
+  "next.js template in:name,description stars:>50",
+  "vue template in:name,description stars:>50",
+  "nuxt template in:name,description stars:>50",
+  "angular template in:name,description stars:>50",
+  "svelte template in:name,description stars:>50",
+  "preact template in:name,description stars:>50",
+  "remix template in:name,description stars:>50",
+  "solidjs template in:name,description stars:>50",
+  "astro template in:name,description stars:>50",
+  "qwik template in:name,description stars:>50",
+  "react native template in:name,description stars:>50",
+  // CSS / UI
+  "tailwind template in:name,description stars:>50",
+  "radix ui template in:name,description stars:>50",
+  "chakra ui template in:name,description stars:>50",
+  "css modules template in:name,description stars:>50",
+  "css-in-js template in:name,description stars:>50",
+  "material ui template in:name,description stars:>50",
+  "vanilla css template in:name,description stars:>50",
+  "pinceau template in:name,description stars:>50",
+  // Database / ORM
+  "postgres template in:name,description stars:>50",
+  "mysql template in:name,description stars:>50",
+  "sqlite template in:name,description stars:>50",
+  "mongodb template in:name,description stars:>50",
+  "supabase template in:name,description stars:>50",
+  "firebase template in:name,description stars:>50",
+  "planetscale template in:name,description stars:>50",
+  "neon database template in:name,description stars:>50",
+  "turso template in:name,description stars:>50",
+  "prisma template in:name,description stars:>50",
+  "drizzle orm template in:name,description stars:>50",
+  // Auth
+  "auth0 template in:name,description stars:>50",
+  "clerk template in:name,description stars:>50",
+  "nextauth template in:name,description stars:>50",
+  "firebase auth template in:name,description stars:>50",
+  "supabase auth template in:name,description stars:>50",
+  "keycloak template in:name,description stars:>50",
+  "passport.js template in:name,description stars:>50",
+  "lucia auth template in:name,description stars:>50",
+  "stytch template in:name,description stars:>50",
+  "magic.link template in:name,description stars:>50",
+  "ory kratos template in:name,description stars:>50",
+  "aws cognito template in:name,description stars:>50",
+  "better-auth template in:name,description stars:>50",
 ];
 
 // ---------------------------------------------------------------------------
@@ -175,25 +242,50 @@ async function fetchPage(query: string, page: number): Promise<GitHubSearchItem[
     page: String(page),
   });
 
-  const { data, error } = await tryCatch(
-    fetch(`https://api.github.com/search/repositories?${params}`, {
-      headers: {
-        Authorization: `Bearer ${GITHUB_TOKEN}`,
-        Accept: "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    }).then((res) => {
-      if (!res.ok) throw new Error(`GitHub API error [${res.status}]`);
-      return res.json() as Promise<GitHubSearchResponse>;
-    }),
-  );
+  const url = `https://api.github.com/search/repositories?${params}`;
 
-  if (error) {
-    console.error(`Failed to fetch page ${page} for query "${query}":`, { error });
-    return [];
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const { data, error } = await tryCatch(
+      fetch(url, {
+        headers: {
+          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+          "X-GitHub-Api-Version": "2022-11-28",
+        },
+      }).then(async (res) => {
+        if (!res.ok) {
+          const status = res.status;
+          const retryAfter = res.headers.get("retry-after");
+          const remaining = res.headers.get("x-ratelimit-remaining");
+          const reset = res.headers.get("x-ratelimit-reset");
+
+          let waitMs = 0;
+          if (retryAfter) {
+            waitMs = Number(retryAfter) * 1000;
+          } else if (remaining === "0" && reset) {
+            const resetMs = Number(reset) * 1000;
+            waitMs = Math.max(resetMs - Date.now(), 0) + 2000;
+          } else if (status === 403) {
+            waitMs = 2000 * attempt;
+          }
+
+          if (waitMs > 0 && attempt < MAX_RETRIES) {
+            console.warn(`⚠️ GitHub API ${status} for query "${query}" page ${page}. Retrying in ${Math.ceil(waitMs / 1000)}s...`);
+            await new Promise((r) => setTimeout(r, waitMs));
+            throw new Error("retry");
+          }
+
+          throw new Error(`GitHub API error [${status}]`);
+        }
+        return res.json() as Promise<GitHubSearchResponse>;
+      }),
+    );
+
+    if (!error) return data.items;
   }
 
-  return data.items;
+  console.error(`Failed to fetch page ${page} for query "${query}" after ${MAX_RETRIES} attempts.`);
+  return [];
 }
 
 // ---------------------------------------------------------------------------
@@ -249,7 +341,7 @@ export async function fetchAndSaveTemplates(): Promise<{
       }
 
       // Hormati GitHub rate limit: 30 req/menit untuk Search API
-      await new Promise((r) => setTimeout(r, 1200));
+      await new Promise((r) => setTimeout(r, REQUEST_DELAY_MS));
     }
   }
 

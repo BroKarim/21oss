@@ -4,10 +4,11 @@ import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Check } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { useQueryState } from "nuqs";
 
 // import { ModeToggle } from "@/components/mode-toggle";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import type { StackItem } from "../_lib/types";
 
@@ -67,6 +68,59 @@ function NavIcon({ type }: { type: string }) {
   }
 }
 
+const STACK_GROUPS = [
+  {
+    key: "framework",
+    label: "Framework",
+    defaultOpen: true,
+    keywords: [
+      "react",
+      "nextjs",
+      "next",
+      "vue",
+      "nuxt",
+      "reactnative",
+    ],
+  },
+  {
+    key: "css",
+    label: "CSS & UI",
+    defaultOpen: true,
+    keywords: [
+      "css",
+      "css3",
+      "tailwind",
+      "tailwindcss",
+      "postcss",
+      "sass",
+      "scss",
+      "unocss",
+      "radixui",
+      "radix",
+    ],
+  },
+  {
+    key: "database",
+    label: "Database",
+    defaultOpen: false,
+    keywords: ["prisma", "drizzle", "postgres", "postgresql", "supabase"],
+  },
+  {
+    key: "auth",
+    label: "Auth",
+    defaultOpen: false,
+    keywords: ["auth", "authentication", "firebase", "supabase", "clerk", "auth0", "nextauth", "jwt"],
+  },
+  {
+    key: "other",
+    label: "Other",
+    defaultOpen: false,
+    keywords: [],
+  },
+];
+
+const normalizeStackKey = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
 export function Sidebar({ stacks }: { stacks: StackItem[] }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -77,6 +131,36 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
     shallow: false,
   });
   const activeStacks = useMemo(() => stackParam?.split(",").filter(Boolean) ?? [], [stackParam]);
+
+  const groupedStacks = useMemo(() => {
+    const groups = STACK_GROUPS.map((group) => ({
+      ...group,
+      normalizedKeywords: group.keywords.map(normalizeStackKey),
+      items: [] as StackItem[],
+    }));
+
+    const otherGroup = groups.find((group) => group.key === "other");
+
+    for (const stack of stacks) {
+      const key = normalizeStackKey(stack.slug || stack.name);
+      let placed = false;
+
+      for (const group of groups) {
+        if (!group.normalizedKeywords.length) continue;
+        if (group.normalizedKeywords.some((keyword) => key === keyword || key.includes(keyword))) {
+          group.items.push(stack);
+          placed = true;
+          break;
+        }
+      }
+
+      if (!placed && otherGroup) {
+        otherGroup.items.push(stack);
+      }
+    }
+
+    return groups;
+  }, [stacks]);
 
   const toggleStack = (slug: string) => {
     const next = activeStacks.includes(slug) ? activeStacks.filter((stack) => stack !== slug) : [...activeStacks, slug];
@@ -130,27 +214,47 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
         <p className="text-muted-foreground mb-2 px-2 text-[10px] font-semibold tracking-widest uppercase">
           Stacks <span className="text-muted-foreground/60 font-normal">({stacks.length})</span>
         </p>
-        <div className="space-y-0.5">
-          {stacks.map((stack) => {
-            const isActive = activeStacks.includes(stack.slug);
-            return (
-              <button
-                key={stack.id}
-                onClick={() => toggleStack(stack.slug)}
-                className={cn("group flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors", isActive ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground")}
-              >
-                {stack.faviconUrl ? (
-                  <span className="relative h-4 w-4 shrink-0">
-                    <Image src={stack.faviconUrl} alt={stack.name} fill className="object-contain" />
-                  </span>
+        <div className="space-y-3">
+          {groupedStacks.map((group) => (
+            <Collapsible key={group.key} defaultOpen={group.defaultOpen}>
+              <CollapsibleTrigger asChild>
+                <button className="group flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+                  <span className="truncate">{group.label}</span>
+                  <span className="ml-auto text-xs font-semibold text-muted-foreground/70">{group.items.length}</span>
+                  <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+                </button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-1 space-y-0.5">
+                {group.items.length ? (
+                  group.items.map((stack) => {
+                    const isActive = activeStacks.includes(stack.slug);
+                    return (
+                      <button
+                        key={stack.id}
+                        onClick={() => toggleStack(stack.slug)}
+                        className={cn(
+                          "group flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors",
+                          isActive ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                        )}
+                      >
+                        {stack.faviconUrl ? (
+                          <span className="relative h-4 w-4 shrink-0">
+                            <Image src={stack.faviconUrl} alt={stack.name} fill className="object-contain" />
+                          </span>
+                        ) : (
+                          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/30 group-hover:bg-primary" />
+                        )}
+                        <span className="truncate">{stack.name}</span>
+                        {isActive && <Check className="ml-auto h-4 w-4" />}
+                      </button>
+                    );
+                  })
                 ) : (
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/30 group-hover:bg-primary" />
+                  <p className="px-2.5 py-1.5 text-xs text-muted-foreground/70">Belum ada stack di kategori ini.</p>
                 )}
-                <span className="truncate">{stack.name}</span>
-                {isActive && <Check className="ml-auto h-4 w-4" />}
-              </button>
-            );
-          })}
+              </CollapsibleContent>
+            </Collapsible>
+          ))}
         </div>
       </div>
 
