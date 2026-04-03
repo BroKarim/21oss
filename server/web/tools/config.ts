@@ -1,28 +1,53 @@
 export const FEATURED_STACK = [
   // Core Web
-  "nextjs",
-  "react",
-  "vue",
+  "React",
+  "Next.js",
+  "Vue",
+  "Nuxt",
+  "Preact",
 
   // Styling / UI
-  "tailwindcss",
-  "shadcn-ui",
-  "mui",
-  "chakra-ui",
-  "radixui",
+  "Tailwind CSS",
+  "Tailwind",
+  "Shadcn/UI",
+  "Radix UI",
+  "MUI",
+  "Chakra UI",
+  "PrimeVue",
+  "Vuetify",
+  "UnoCSS",
+  "Sass",
+  "SCSS",
 
-  "prisma",
-  "drizzle",
-  "firebase",
-  "postgresql",
+  // State / Data / Routing
+  "Redux",
+  "TanStack Query",
+  "React Router",
+  "Vue Router",
+  "Vuex",
+  "Zod",
+
+  // Backend / Data
+  "Prisma",
+  "Drizzle",
+  "Supabase",
+  "Firebase",
+  "PostgreSQL",
 
   // Languages
-  "typescript",
-  "javascript",
+  "TypeScript",
+  "JavaScript",
 
   // Mobile
-  "react-native",
-  "expo",
+  "React Native",
+  "Expo",
+  "React Navigation",
+
+  // Motion / 3D / Email
+  "Framer Motion",
+  "React Three Fiber",
+  "React Email",
+  "PostCSS",
 ];
 
 export const FEATURED_PLATFORM = [

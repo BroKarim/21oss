@@ -185,20 +185,31 @@ export const findStackFilters = async () => {
   cacheTag("stack-filters"); 
   cacheLife("max"); 
 
-  return db.stack.findMany({
-    where: {
-      slug: {
-        in: FEATURED_STACK, 
-      },
-    },
+  const normalize = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const featuredKeys = FEATURED_STACK.map(normalize);
+
+  const stacks = await db.stack.findMany({
+    orderBy: { name: "asc" },
     select: {
       id: true,
       name: true,
       faviconUrl: true, 
       slug: true,
     },
-    
   });
+
+  const stackByKey = new Map<string, (typeof stacks)[number]>();
+  for (const stack of stacks) {
+    const key = normalize(stack.slug || stack.name);
+    if (!stackByKey.has(key)) {
+      stackByKey.set(key, stack);
+    }
+  }
+
+  const featuredStacks = featuredKeys
+    .map((key) => stackByKey.get(key))
+    .filter((stack): stack is (typeof stacks)[number] => Boolean(stack));
+  return featuredStacks;
 };
 
 // server/web/tools/queries.ts
