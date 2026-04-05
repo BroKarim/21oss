@@ -12,7 +12,7 @@ type DataTableHeaderProps = ComponentProps<"div"> & {
 
 export function DataTableHeader({ title, total, callToAction, children, className, ...props }: DataTableHeaderProps) {
   return (
-    <div className={cx("sticky bg-black top-0 z-20 flex flex-col gap-4 py-4 -my-4 w-full", className)} {...props}>
+    <div className={cx("sticky bg-background top-0 z-20 flex flex-col gap-4 py-4 -my-4 w-full", className)} {...props}>
       <div className="flex items-center justify-between gap-4">
         <H3 as="h1">
           {title}

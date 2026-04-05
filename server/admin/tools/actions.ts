@@ -625,7 +625,7 @@ Respond ONLY with valid JSON:
       // --- Parse JSON ---
       let parsed: BatchAutoFillResponse | null = null;
       try {
-        let jsonStr = content.trim().replace(/```json\s*/g, "").replace(/```\s*/g, "");
+        const jsonStr = content.trim().replace(/```json\s*/g, "").replace(/```\s*/g, "");
         const s = jsonStr.indexOf("{");
         const e = jsonStr.lastIndexOf("}") + 1;
         if (s !== -1 && e > 0) parsed = JSON.parse(jsonStr.slice(s, e));

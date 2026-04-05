@@ -77,7 +77,7 @@ export function ResourceGrid({ resources, title, description }: ResourceGridProp
             <p className="mt-3 text-sm font-medium">No templates found</p>
           </div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 ">
             {filtered.map((tool) => (
               <ResourceCard key={tool.id} tool={tool} />
             ))}

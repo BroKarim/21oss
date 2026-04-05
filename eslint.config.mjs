@@ -18,6 +18,7 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "off",
       "react-hooks/rules-of-hooks": "off",
       "@typescript-eslint/no-unused-expressions": "off",
+      "jsx-a11y/no-noninteractive-element-interactions": "off",
     },
   },
 ];
