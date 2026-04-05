@@ -17,15 +17,20 @@ export function AppProviders({ children, adminSidebar }: { children: React.React
 
   return (
     <SidebarProvider defaultOpen={false} open={isMounted ? open : false} onOpenChange={setOpen}>
-      {isAdmin && <Suspense fallback={null}>{adminSidebar}</Suspense>}
-
-      <div className="flex flex-col w-full min-h-screen">
-        {/* {!isAdmin && <Header />} */}
-
-        <main className="flex-1 w-full">{children}</main>
-
-        {!isAdmin && <Footer />}
-      </div>
+      {isAdmin ? (
+        <div className="flex min-h-screen w-full">
+          <Suspense fallback={null}>{adminSidebar}</Suspense>
+          <div className="flex min-h-screen w-full flex-col">
+            <main className="flex-1 w-full min-w-0">{children}</main>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col w-full min-h-screen">
+          {/* {!isAdmin && <Header />} */}
+          <main className="flex-1 w-full">{children}</main>
+          {!isAdmin && <Footer />}
+        </div>
+      )}
     </SidebarProvider>
   );
 }

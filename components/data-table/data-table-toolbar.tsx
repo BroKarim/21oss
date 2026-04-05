@@ -32,7 +32,7 @@ export function DataTableToolbar<TData>({ table, filterFields = [], children, cl
   }, [filterFields]);
 
   return (
-    <Stack size="sm" wrap={false} className={cx("justify-between w-full py-1 -my-1 overflow-auto", className)} {...props}>
+    <Stack size="sm" wrap={false} className={cx("justify-between w-full py-1 -my-1 ", className)} {...props}>
       <Stack size="sm" wrap={false}>
         {searchableColumns.map(
           (column) =>

@@ -15,12 +15,5 @@ export default async function Page({ searchParams }: HomePageProps) {
   const resourcesPromise = getResources({ ...params, type: ToolType.Template });
   const [stacks, resources] = await Promise.all([getStackFilters(), resourcesPromise]);
 
-  return (
-    <HomeClient
-      stacks={stacks}
-      resources={resources}
-      title="Templates"
-      description="Open-source templates curated to help you ship faster."
-    />
-  );
+  return <HomeClient stacks={stacks} resources={resources} title="Opensource Starter Templates" description="Discover Open-source templates, starters, or boilerplate to jumpstart your application or website build." />;
 }

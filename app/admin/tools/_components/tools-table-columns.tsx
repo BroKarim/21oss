@@ -54,9 +54,9 @@ export const getColumns = (): ColumnDef<Tool>[] => {
     {
       accessorKey: "tagline",
       enableSorting: false,
-      size: 320,
+      size: 200,
       header: ({ column }) => <DataTableColumnHeader column={column} title="Tagline" />,
-      cell: ({ row }) => <Note className="truncate">{row.getValue("tagline")}</Note>,
+      cell: ({ row }) => <Note className="line-clamp-1 max-w-[200px]">{row.getValue("tagline")}</Note>,
     },
     {
       accessorKey: "submitterEmail",
