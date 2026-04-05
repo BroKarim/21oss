@@ -163,10 +163,12 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
     <aside className="fixed left-0 top-0 z-30 flex h-screen w-[260px] flex-col border-r border-border bg-background">
       {/* Logo */}
       <div className="border-border flex h-14 items-center gap-2.5 border-b px-5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 text-sm font-bold text-white">dz</div>
+        <div className="relative h-8 w-8 overflow-hidden rounded-lg">
+          <Image src="/assets/21-dark.webp" alt="21oss logo" fill className="object-contain" />
+        </div>
         <div>
-          <span className="text-sm font-bold tracking-tight">dzenn</span>
-          <span className="text-muted-foreground text-sm">.gallery</span>
+          <span className="md:text-3xl font-bold tracking-tight">21OSS</span>
+          {/* <span className="text-muted-foreground text-sm"> OSS</span> */}
         </div>
       </div>
 
