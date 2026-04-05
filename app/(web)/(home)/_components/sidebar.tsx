@@ -11,6 +11,7 @@ import { useQueryState } from "nuqs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import type { StackItem } from "../_lib/types";
+import { ModeSwitfher } from "./mode-switfher";
 
 const NAV_ITEMS = [
   {
@@ -73,31 +74,13 @@ const STACK_GROUPS = [
     key: "framework",
     label: "Framework",
     defaultOpen: true,
-    keywords: [
-      "react",
-      "nextjs",
-      "next",
-      "vue",
-      "nuxt",
-      "reactnative",
-    ],
+    keywords: ["react", "nextjs", "next", "vue", "nuxt", "reactnative"],
   },
   {
     key: "css",
     label: "CSS & UI",
     defaultOpen: true,
-    keywords: [
-      "css",
-      "css3",
-      "tailwind",
-      "tailwindcss",
-      "postcss",
-      "sass",
-      "scss",
-      "unocss",
-      "radixui",
-      "radix",
-    ],
+    keywords: ["css", "css3", "tailwind", "tailwindcss", "postcss", "sass", "scss", "unocss", "radixui", "radix"],
   },
   {
     key: "database",
@@ -234,7 +217,7 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
                         onClick={() => toggleStack(stack.slug)}
                         className={cn(
                           "group flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm transition-colors",
-                          isActive ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                          isActive ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground hover:bg-accent hover:text-foreground",
                         )}
                       >
                         {stack.faviconUrl ? (
@@ -260,7 +243,7 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
 
       <div className="border-border border-t px-5 py-3 flex items-center justify-between">
         <p className="text-muted-foreground/60 text-[11px]">dzenn.gallery © {new Date().getFullYear()}</p>
-        {/* <ModeToggle /> */}
+        <ModeSwitfher />
       </div>
     </aside>
   );

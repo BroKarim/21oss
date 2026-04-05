@@ -1,265 +1,290 @@
-# Design System: ElevenLabs
+# Design System: Cal.com
 
 ## 1. Visual Theme & Atmosphere
 
-ElevenLabs' website is a study in restrained elegance — a near-white canvas (`#ffffff`, `#f5f5f5`) where typography and subtle shadows do all the heavy lifting. The design feels like a premium audio product brochure: clean, spacious, and confident enough to let the content speak (literally, given ElevenLabs makes voice AI). There's an almost Apple-like quality to the whitespace strategy, but warmer — the occasional warm stone tint (`#f5f2ef`, `#777169`) prevents the purity from feeling clinical.
+Cal.com's website is a masterclass in monochromatic restraint — a grayscale world where boldness comes not from color but from the sheer confidence of black text on white space. Inspired by Uber's minimal aesthetic, the palette is deliberately stripped of hue: near-black headings (`#242424`), mid-gray secondary text (`#898989`), and pure white surfaces. Color is treated as a foreign substance — when it appears (a rare blue link, a green trust badge), it feels like a controlled accent in an otherwise black-and-white photograph.
 
-The typography system is built on a fascinating duality: Waldenburg at weight 300 (light) for display headings creates ethereal, whisper-thin titles that feel like sound waves rendered in type — delicate, precise, and surprisingly impactful at large sizes. This light-weight display approach is the design's signature — where most sites use bold headings to grab attention, ElevenLabs uses lightness to create intrigue. Inter handles all body and UI text with workmanlike reliability, using slight positive letter-spacing (0.14px–0.18px) that gives body text an airy, well-spaced quality. WaldenburgFH appears as a bold uppercase variant for specific button labels.
+Cal Sans, the brand's custom geometric display typeface designed by Mark Davis, is the visual centerpiece. Letters are intentionally spaced extremely close at large sizes, creating dense, architectural headlines that feel like they're carved into the page. At 64px and 48px, Cal Sans headings sit at weight 600 with a tight 1.10 line-height — confident, compressed, and immediately recognizable. For body text, the system switches to Inter, providing "rock-solid" readability that complements Cal Sans's display personality. The typography pairing creates a clear division: Cal Sans speaks, Inter explains.
 
-What makes ElevenLabs distinctive is its multi-layered shadow system. Rather than simple box-shadows, elements use complex stacks: inset border-shadows (`rgba(0,0,0,0.075) 0px 0px 0px 0.5px inset`), outline shadows (`rgba(0,0,0,0.06) 0px 0px 0px 1px`), and soft elevation shadows (`rgba(0,0,0,0.04) 0px 4px 4px`) — all at remarkably low opacities. The result is a design where surfaces seem to barely exist, floating just above the page with the lightest possible touch. Pill-shaped buttons (9999px) with warm-tinted backgrounds (`rgba(245,242,239,0.8)`) and warm shadows (`rgba(78,50,23,0.04)`) add a tactile, physical quality.
+The elevation system is notably sophisticated for a minimal site — 11 shadow definitions create a nuanced depth hierarchy using multi-layered shadows that combine ring borders (`0px 0px 0px 1px`), soft diffused shadows, and inset highlights. This shadow-first approach to depth (rather than border-first) gives surfaces a subtle three-dimensionality that feels modern and polished. Built on Framer with a border-radius scale from 2px to 9999px (pill), Cal.com balances geometric precision with soft, rounded interactive elements.
 
 **Key Characteristics:**
-- Near-white canvas with warm undertones (`#f5f5f5`, `#f5f2ef`)
-- Waldenburg weight 300 (light) for display — ethereal, whisper-thin headings
-- Inter with positive letter-spacing (0.14–0.18px) for body — airy readability
-- Multi-layered shadow stacks at sub-0.1 opacity — surfaces barely exist
-- Pill buttons (9999px) with warm stone-tinted backgrounds
-- WaldenburgFH bold uppercase for specific CTA labels
-- Warm shadow tints: `rgba(78, 50, 23, 0.04)` — shadows have color, not just darkness
-- Geist Mono / ui-monospace for code snippets
+
+- Purely grayscale brand palette — no brand colors, boldness through monochrome
+- Cal Sans custom geometric display font with extremely tight default letter-spacing
+- Multi-layered shadow system (11 definitions) with ring borders + diffused shadows + inset highlights
+- Cal Sans for headings, Inter for body — clean typographic division
+- Wide border-radius scale from 2px to 9999px (pill) — versatile rounding
+- White canvas with near-black (#242424) text — maximum contrast, zero decoration
+- Product screenshots as primary visual content — the scheduling UI sells itself
+- Built on Framer platform
 
 ## 2. Color Palette & Roles
 
 ### Primary
-- **Pure White** (`#ffffff`): Primary background, card surfaces, button backgrounds
-- **Light Gray** (`#f5f5f5`): Secondary surface, subtle section differentiation
-- **Warm Stone** (`#f5f2ef`): Button background (at 80% opacity) — the warm signature
-- **Black** (`#000000`): Primary text, headings, dark buttons
 
-### Neutral Scale
-- **Dark Gray** (`#4e4e4e`): Secondary text, descriptions
-- **Warm Gray** (`#777169`): Tertiary text, muted links, decorative underlines
-- **Near White** (`#f6f6f6`): Alternate light surface
+- **Charcoal** (`#242424`): Primary heading and button text — Cal.com's signature near-black, warmer than pure black
+- **Midnight** (`#111111`): Deepest text/overlay color — used at 50% opacity for subtle overlays
+- **White** (`#ffffff`): Primary background and surface — the dominant canvas
 
-### Interactive
-- **Grid Cyan** (`#7fffff`): `--grid-column-bg`, at 25% opacity — decorative grid overlay
-- **Ring Blue** (`rgb(147 197 253 / 0.5)`): `--tw-ring-color`, focus ring
-- **Border Light** (`#e5e5e5`): Explicit borders
-- **Border Subtle** (`rgba(0, 0, 0, 0.05)`): Ultra-subtle bottom borders
+### Secondary & Accent
 
-### Shadows
-- **Inset Border** (`rgba(0,0,0,0.075) 0px 0px 0px 0.5px inset`): Internal edge definition
-- **Inset Dark** (`rgba(0,0,0,0.1) 0px 0px 0px 0.5px inset`): Stronger inset variant
-- **Outline Ring** (`rgba(0,0,0,0.06) 0px 0px 0px 1px`): Shadow-as-border
-- **Soft Elevation** (`rgba(0,0,0,0.04) 0px 4px 4px`): Gentle lift
-- **Card Shadow** (`rgba(0,0,0,0.4) 0px 0px 1px, rgba(0,0,0,0.04) 0px 4px 4px`): Button/card elevation
-- **Warm Shadow** (`rgba(78,50,23,0.04) 0px 6px 16px`): Warm-tinted button shadow
-- **Edge Shadow** (`rgba(0,0,0,0.08) 0px 0px 0px 0.5px`): Subtle edge definition
-- **Inset Ring** (`rgba(0,0,0,0.1) 0px 0px 0px 1px inset`): Strong inset border
+- **Link Blue** (`#0099ff`): In-text links with underline decoration — the only blue in the system, reserved strictly for hyperlinks
+- **Focus Ring** (`#3b82f6` at 50% opacity): Keyboard focus indicator — accessibility-only, invisible in normal interaction
+- **Default Link** (`#0000ee`): Browser-default link color on some elements — unmodified, signaling openness
+
+### Surface & Background
+
+- **Pure White** (`#ffffff`): Primary page background and card surfaces
+- **Light Gray** (approx `#f5f5f5`): Subtle section differentiation — barely visible tint
+- **Mid Gray** (`#898989`): Secondary text, descriptions, and muted labels
+
+### Neutrals & Text
+
+- **Charcoal** (`#242424`): Headlines, buttons, primary UI text
+- **Midnight** (`#111111`): Deep black for high-contrast links and nav text
+- **Mid Gray** (`#898989`): Descriptions, secondary labels, muted content
+- **Pure Black** (`#000000`): Certain link text elements
+- **Border Gray** (approx `rgba(34, 42, 53, 0.08–0.10)`): Shadow-based borders using ring shadows instead of CSS borders
+
+### Semantic & Accent
+
+- Cal.com is deliberately colorless for brand elements — "a grayscale brand to emphasise on boldness and professionalism"
+- Product UI screenshots show color (blues, greens in the scheduling interface), but the marketing site itself stays monochrome
+- The philosophy mirrors Uber's approach: let the content carry color, the frame stays neutral
+
+### Gradient System
+
+- No gradients on the marketing site — the design is fully flat and monochrome
+- Depth is achieved entirely through shadows, not color transitions
 
 ## 3. Typography Rules
 
-### Font Families
-- **Display**: `Waldenburg`, fallback: `Waldenburg Fallback`
-- **Display Bold**: `WaldenburgFH`, fallback: `WaldenburgFH Fallback`
-- **Body / UI**: `Inter`, fallback: `Inter Fallback`
-- **Monospace**: `Geist Mono` or `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas`
+### Font Family
+
+- **Display**: `Cal Sans` — custom geometric sans-serif by Mark Davis. Open-source, available on Google Fonts and GitHub. Extremely tight default letter-spacing designed for large headlines. Has 6 character variants (Cc, j, t, u, 0, 1)
+- **Body**: `Inter` — "rock-solid" standard body font. Fallback: `Inter Placeholder`
+- **UI Light**: `Cal Sans UI Variable Light` — light-weight variant (300) for softer UI text with -0.2px letter-spacing
+- **UI Medium**: `Cal Sans UI Medium` — medium-weight variant (500) for emphasized captions
+- **Mono**: `Roboto Mono` — for code blocks and technical content
+- **Tertiary**: `Matter Regular` / `Matter SemiBold` / `Matter Medium` — additional body fonts for specific contexts
 
 ### Hierarchy
 
-| Role | Font | Size | Weight | Line Height | Letter Spacing | Notes |
-|------|------|------|--------|-------------|----------------|-------|
-| Display Hero | Waldenburg | 48px (3.00rem) | 300 | 1.08 (tight) | -0.96px | Whisper-thin, ethereal |
-| Section Heading | Waldenburg | 36px (2.25rem) | 300 | 1.17 (tight) | normal | Light display |
-| Card Heading | Waldenburg | 32px (2.00rem) | 300 | 1.13 (tight) | normal | Light card titles |
-| Body Large | Inter | 20px (1.25rem) | 400 | 1.35 | normal | Introductions |
-| Body | Inter | 18px (1.13rem) | 400 | 1.44–1.60 | 0.18px | Standard reading text |
-| Body Standard | Inter | 16px (1.00rem) | 400 | 1.50 | 0.16px | UI text |
-| Body Medium | Inter | 16px (1.00rem) | 500 | 1.50 | 0.16px | Emphasized body |
-| Nav / UI | Inter | 15px (0.94rem) | 500 | 1.33–1.47 | 0.15px | Navigation links |
-| Button | Inter | 15px (0.94rem) | 500 | 1.47 | normal | Button labels |
-| Button Uppercase | WaldenburgFH | 14px (0.88rem) | 700 | 1.10 (tight) | 0.7px | `text-transform: uppercase` |
-| Caption | Inter | 14px (0.88rem) | 400–500 | 1.43–1.50 | 0.14px | Metadata |
-| Small | Inter | 13px (0.81rem) | 500 | 1.38 | normal | Tags, badges |
-| Code | Geist Mono | 13px (0.81rem) | 400 | 1.85 (relaxed) | normal | Code blocks |
-| Micro | Inter | 12px (0.75rem) | 500 | 1.33 | normal | Tiny labels |
-| Tiny | Inter | 10px (0.63rem) | 400 | 1.60 (relaxed) | normal | Fine print |
+| Role                | Font              | Size | Weight | Line Height | Letter Spacing  | Notes                                            |
+| ------------------- | ----------------- | ---- | ------ | ----------- | --------------- | ------------------------------------------------ |
+| Display Hero        | Cal Sans          | 64px | 600    | 1.10        | 0px             | Maximum impact, tight default spacing            |
+| Section Heading     | Cal Sans          | 48px | 600    | 1.10        | 0px             | Large section titles                             |
+| Feature Heading     | Cal Sans          | 24px | 600    | 1.30        | 0px             | Feature block headlines                          |
+| Sub-heading         | Cal Sans          | 20px | 600    | 1.20        | +0.2px          | Positive spacing for readability at smaller size |
+| Sub-heading Alt     | Cal Sans          | 20px | 600    | 1.50        | 0px             | Relaxed line-height variant                      |
+| Card Title          | Cal Sans          | 16px | 600    | 1.10        | 0px             | Smallest Cal Sans usage                          |
+| Caption Label       | Cal Sans          | 12px | 600    | 1.50        | 0px             | Small labels in Cal Sans                         |
+| Body Light          | Cal Sans UI Light | 18px | 300    | 1.30        | -0.2px          | Light-weight body intro text                     |
+| Body Light Standard | Cal Sans UI Light | 16px | 300    | 1.50        | -0.2px          | Light-weight body text                           |
+| Caption Light       | Cal Sans UI Light | 14px | 300    | 1.40–1.50   | -0.2 to -0.28px | Light captions and descriptions                  |
+| UI Label            | Inter             | 16px | 600    | 1.00        | 0px             | UI buttons and nav labels                        |
+| Caption Inter       | Inter             | 14px | 500    | 1.14        | 0px             | Small UI text                                    |
+| Micro               | Inter             | 12px | 500    | 1.00        | 0px             | Smallest Inter text                              |
+| Code                | Roboto Mono       | 14px | 600    | 1.00        | 0px             | Code snippets, technical text                    |
+| Body Matter         | Matter Regular    | 14px | 400    | 1.14        | 0px             | Alternate body text (product UI)                 |
 
 ### Principles
-- **Light as the hero weight**: Waldenburg at 300 is the defining typographic choice. Where other design systems use bold for impact, ElevenLabs uses lightness — thin strokes that feel like audio waveforms, creating intrigue through restraint.
-- **Positive letter-spacing on body**: Inter uses +0.14px to +0.18px tracking across body text, creating an airy, well-spaced reading rhythm that contrasts with the tight display tracking (-0.96px).
-- **WaldenburgFH for emphasis**: A bold (700) uppercase variant of Waldenburg appears only in specific CTA button labels with 0.7px letter-spacing — the one place where the type system gets loud.
-- **Monospace as ambient**: Geist Mono at relaxed line-height (1.85) for code blocks feels unhurried and readable.
+
+- **Cal Sans at large, Inter at small**: Cal Sans is exclusively for headings and display — never for body text. The system enforces this division strictly
+- **Tight by default, space when small**: Cal Sans letters are "intentionally spaced to be extremely close" at large sizes. At 20px and below, positive letter-spacing (+0.2px) must be applied to prevent cramming
+- **Weight 300 body variant**: Cal Sans UI Variable Light at 300 weight creates an elegant, airy body text that contrasts with the dense 600-weight headlines
+- **Weight 600 dominance**: Nearly all Cal Sans usage is at weight 600 (semi-bold) — the font was designed to perform at this weight
+- **Negative tracking on light text**: Cal Sans UI Light uses -0.2px to -0.28px letter-spacing, subtly tightening the already-compact letterforms
 
 ## 4. Component Stylings
 
 ### Buttons
 
-**Primary Black Pill**
-- Background: `#000000`
-- Text: `#ffffff`
-- Padding: 0px 14px
-- Radius: 9999px (full pill)
-- Use: Primary CTA
-
-**White Pill (Shadow-bordered)**
-- Background: `#ffffff`
-- Text: `#000000`
-- Radius: 9999px
-- Shadow: `rgba(0,0,0,0.4) 0px 0px 1px, rgba(0,0,0,0.04) 0px 4px 4px`
-- Use: Secondary CTA on white
-
-**Warm Stone Pill**
-- Background: `rgba(245, 242, 239, 0.8)` (warm translucent)
-- Text: `#000000`
-- Padding: 12px 20px 12px 14px (asymmetric)
-- Radius: 30px
-- Shadow: `rgba(78, 50, 23, 0.04) 0px 6px 16px` (warm-tinted)
-- Use: Featured CTA, hero action — the signature warm button
-
-**Uppercase Waldenburg Button**
-- Font: WaldenburgFH 14px weight 700
-- Text-transform: uppercase
-- Letter-spacing: 0.7px
-- Use: Specific bold CTA labels
+- **Dark Primary**: `#242424` (or `#1e1f23`) background, white text, 6–8px radius. Hover: opacity reduction to 0.7. The signature CTA — maximally dark on white
+- **White/Ghost**: White background with shadow-ring border, dark text. Uses the multi-layered shadow system for subtle elevation
+- **Pill**: 9999px radius for rounded pill-shaped actions and badges
+- **Compact**: 4px padding, small text — utility actions within product UI
+- **Inset highlight**: Some buttons feature `rgba(255, 255, 255, 0.15) 0px 2px 0px inset` — a subtle inner-top highlight creating a 3D pressed effect
 
 ### Cards & Containers
-- Background: `#ffffff`
-- Border: `1px solid #e5e5e5` or shadow-as-border
-- Radius: 16px–24px
-- Shadow: multi-layer stack (inset + outline + elevation)
-- Content: product screenshots, code examples, audio waveform previews
+
+- **Shadow Card**: White background, multi-layered shadow — `rgba(19, 19, 22, 0.7) 0px 1px 5px -4px, rgba(34, 42, 53, 0.08) 0px 0px 0px 1px, rgba(34, 42, 53, 0.05) 0px 4px 8px 0px`. The ring shadow (0px 0px 0px 1px) acts as a shadow-border
+- **Product UI Cards**: Screenshots of the scheduling interface displayed in card containers with shadow elevation
+- **Radius**: 8px for standard cards, 12px for larger containers, 16px for prominent sections
+- **Hover**: Likely subtle shadow deepening or scale transform
 
 ### Inputs & Forms
-- Textarea: padding 12px 20px, transparent text at default
-- Select: white background, standard styling
-- Radio: standard with tw-ring focus
-- Focus: `var(--tw-ring-offset-shadow)` ring system
+
+- **Select dropdown**: White background, `#000000` text, 1px solid `rgb(118, 118, 118)` border
+- **Focus**: Uses Framer's focus outline system (`--framer-focus-outline`)
+- **Text input**: 8px radius, standard border treatment
+- **Minimal form presence**: The marketing site prioritizes CTA buttons over complex forms
 
 ### Navigation
-- Clean white sticky header
-- Inter 15px weight 500 for nav links
-- Pill CTAs right-aligned (black primary, white secondary)
-- Mobile: hamburger collapse at 1024px
+
+- **Top nav**: White/transparent background, Cal Sans links at near-black
+- **Nav text**: `#111111` (Midnight) for primary links, `#000000` for emphasis
+- **CTA button**: Dark Primary in the nav — high contrast call-to-action
+- **Mobile**: Collapses to hamburger with simplified navigation
+- **Sticky**: Fixed on scroll
 
 ### Image Treatment
-- Product screenshots and audio waveform visualizations
-- Warm gradient backgrounds in feature sections
-- 20px–24px radius on image containers
-- Full-width sections alternating white and light gray
 
-### Distinctive Components
-
-**Audio Waveform Sections**
-- Colorful gradient backgrounds showcasing voice AI capabilities
-- Warm amber, blue, and green gradients behind product demos
-- Screenshots of the ElevenLabs product interface
-
-**Warm Stone CTA Block**
-- `rgba(245,242,239,0.8)` background with warm shadow
-- Asymmetric padding (more right padding)
-- Creates a physical, tactile quality unique to ElevenLabs
+- **Product screenshots**: Large scheduling UI screenshots — the product is the primary visual
+- **Trust logos**: Grayscale company logos in a horizontal trust bar
+- **Aspect ratios**: Wide landscape for product UI screenshots
+- **No decorative imagery**: No illustrations, photos, or abstract graphics — pure product + typography
 
 ## 5. Layout Principles
 
 ### Spacing System
-- Base unit: 8px
-- Scale: 1px, 3px, 4px, 8px, 9px, 10px, 11px, 12px, 16px, 18px, 20px, 24px, 28px, 32px, 40px
+
+- **Base unit**: 8px
+- **Scale**: 1px, 2px, 3px, 4px, 6px, 8px, 12px, 16px, 20px, 24px, 28px, 80px, 96px
+- **Section padding**: 80px–96px vertical between major sections (generous)
+- **Card padding**: 12px–24px internal
+- **Component gaps**: 4px–8px between related elements
+- **Notable jump**: From 28px to 80px — a deliberate gap emphasizing the section-level spacing tier
 
 ### Grid & Container
-- Centered content with generous max-width
-- Single-column hero, expanding to feature grids
-- Full-width gradient sections for product showcases
-- White card grids on light gray backgrounds
+
+- **Max width**: ~1200px content container, centered
+- **Column patterns**: Full-width hero, centered text blocks, 2-3 column feature grids
+- **Feature showcase**: Product screenshots flanked by description text
+- **Breakpoints**: 98px, 640px, 768px, 810px, 1024px, 1199px — Framer-generated
 
 ### Whitespace Philosophy
-- **Apple-like generosity**: Massive vertical spacing between sections creates a premium, unhurried pace. Each section is an exhibit.
-- **Warm emptiness**: The whitespace isn't cold — the warm stone undertones and warm shadows give empty space a tactile, physical quality.
-- **Typography-led rhythm**: The light-weight Waldenburg headings create visual "whispers" that draw the eye through vast white space.
+
+- **Lavish section spacing**: 80px–96px between sections creates a breathable, premium feel
+- **Product-first content**: Screenshots dominate the visual space — minimal surrounding decoration
+- **Centered headlines**: Cal Sans headings centered with generous margins above and below
 
 ### Border Radius Scale
-- Minimal (2px): Small links, inline elements
-- Subtle (4px): Nav items, tab panels, tags
-- Standard (8px): Small containers
-- Comfortable (10px–12px): Medium cards, dropdowns
-- Card (16px): Standard cards, articles
-- Large (18px–20px): Featured cards, code panels
-- Section (24px): Large panels, section containers
-- Warm Button (30px): Warm stone CTA
-- Pill (9999px): Primary buttons, navigation pills
+
+- **2px**: Subtle rounding on inline elements
+- **4px**: Small UI components
+- **6px–7px**: Buttons, small cards, images
+- **8px**: Standard interactive elements — buttons, inputs, images
+- **12px**: Medium containers — links, larger cards, images
+- **16px**: Large section containers
+- **29px**: Special rounded elements
+- **100px**: Large rounding — nearly circular on small elements
+- **1000px**: Very large rounding
+- **9999px**: Full pill shape — badges, links
 
 ## 6. Depth & Elevation
 
-| Level | Treatment | Use |
-|-------|-----------|-----|
-| Flat (Level 0) | No shadow | Page background, text blocks |
-| Inset Edge (Level 0.5) | `rgba(0,0,0,0.075) 0px 0px 0px 0.5px inset, #fff 0px 0px 0px 0px inset` | Internal border definition |
-| Outline Ring (Level 1) | `rgba(0,0,0,0.06) 0px 0px 0px 1px` + `rgba(0,0,0,0.04) 0px 1px 2px` + `rgba(0,0,0,0.04) 0px 2px 4px` | Shadow-as-border for cards |
-| Card (Level 2) | `rgba(0,0,0,0.4) 0px 0px 1px, rgba(0,0,0,0.04) 0px 4px 4px` | Button elevation, prominent cards |
-| Warm Lift (Level 3) | `rgba(78,50,23,0.04) 0px 6px 16px` | Featured CTAs — warm-tinted |
-| Focus (Accessibility) | `var(--tw-ring-offset-shadow)` blue ring | Keyboard focus |
+| Level                     | Treatment                                                                                                   | Use                                        |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| Level 0 (Flat)            | No shadow                                                                                                   | Page canvas, basic text containers         |
+| Level 1 (Inset)           | `rgba(0,0,0,0.16) 0px 1px 1.9px 0px inset`                                                                  | Pressed/recessed elements, input wells     |
+| Level 2 (Ring + Soft)     | `rgba(19,19,22,0.7) 0px 1px 5px -4px, rgba(34,42,53,0.08) 0px 0px 0px 1px, rgba(34,42,53,0.05) 0px 4px 8px` | Cards, containers — the workhorse shadow   |
+| Level 3 (Ring + Soft Alt) | `rgba(36,36,36,0.7) 0px 1px 5px -4px, rgba(36,36,36,0.05) 0px 4px 8px`                                      | Alt card elevation without ring border     |
+| Level 4 (Inset Highlight) | `rgba(255,255,255,0.15) 0px 2px 0px inset` or `rgb(255,255,255) 0px 2px 0px inset`                          | Button inner highlight — 3D pressed effect |
+| Level 5 (Soft Only)       | `rgba(34,42,53,0.05) 0px 4px 8px`                                                                           | Subtle ambient shadow                      |
 
-**Shadow Philosophy**: ElevenLabs uses the most refined shadow system of any design system analyzed. Every shadow is at sub-0.1 opacity, many include both outward cast AND inward inset components, and the warm CTA shadows use an actual warm color (`rgba(78,50,23,...)`) rather than neutral black. The inset half-pixel borders (`0px 0px 0px 0.5px inset`) create edges so subtle they're felt rather than seen — surfaces define themselves through the lightest possible touch.
+### Shadow Philosophy
+
+Cal.com's shadow system is the most sophisticated element of the design — 11 shadow definitions using a multi-layered compositing technique:
+
+- **Ring borders**: `0px 0px 0px 1px` shadows act as borders, avoiding CSS `border` entirely. This creates hairline containment without affecting layout
+- **Diffused soft shadows**: `0px 4px 8px` at 5% opacity add gentle ambient depth
+- **Sharp contact shadows**: `0px 1px 5px -4px` at 70% opacity create tight bottom-edge shadows for grounding
+- **Inset highlights**: White inset shadows at the top of buttons create a subtle 3D bevel
+- Shadows are composed in comma-separated stacks — each surface gets 2-3 layered shadow definitions working together
+
+### Decorative Depth
+
+- No gradients or glow effects
+- All depth comes from the sophisticated shadow compositing system
+- The overall effect is subtle but precise — surfaces feel like physical cards sitting on a table
 
 ## 7. Do's and Don'ts
 
 ### Do
-- Use Waldenburg weight 300 for all display headings — the lightness IS the brand
-- Apply multi-layer shadows (inset + outline + elevation) at sub-0.1 opacity
-- Use warm stone tints (`#f5f2ef`, `rgba(245,242,239,0.8)`) for featured elements
-- Apply positive letter-spacing (+0.14px to +0.18px) on Inter body text
-- Use 9999px radius for primary buttons — pill shape is standard
-- Use warm-tinted shadows (`rgba(78,50,23,0.04)`) on featured CTAs
-- Keep the page predominantly white with subtle gray section differentiation
-- Use WaldenburgFH bold uppercase ONLY for specific CTA button labels
+
+- Use Cal Sans exclusively for headings (24px+) and never for body text — it's a display font with tight default spacing
+- Apply positive letter-spacing (+0.2px) when using Cal Sans below 24px — the font cramps at small sizes without it
+- Maintain the grayscale palette — boldness comes from contrast, not color
+- Use the multi-layered shadow system for card elevation — ring shadow + diffused shadow + contact shadow
+- Keep backgrounds pure white — the monochrome philosophy requires a clean canvas
+- Use Inter for all body text at weight 300–600 — it's the reliable counterpart to Cal Sans's display personality
+- Let product screenshots be the visual content — no illustrations, no decorative graphics
+- Apply generous section spacing (80px–96px) — the breathing room is essential to the premium feel
 
 ### Don't
-- Don't use bold (700) Waldenburg for headings — weight 300 is non-negotiable
-- Don't use heavy shadows (>0.1 opacity) — the ethereal quality requires whisper-level depth
-- Don't use cool gray borders — the system is warm-tinted throughout
-- Don't skip the inset shadow component — half-pixel inset borders define edges
-- Don't apply negative letter-spacing to body text — Inter uses positive tracking
-- Don't use sharp corners (<8px) on cards — the generous radius is structural
-- Don't introduce brand colors — the palette is intentionally achromatic with warm undertones
-- Don't make buttons opaque and heavy — the warm translucent stone treatment is the signature
+
+- Use Cal Sans for body text or text below 16px — it wasn't designed for extended reading
+- Add brand colors — Cal.com is intentionally grayscale, color is reserved for links and UI states only
+- Use CSS borders when shadows can achieve the same containment — the ring-shadow technique is the system's approach
+- Apply negative letter-spacing to Cal Sans at small sizes — it needs positive spacing (+0.2px) below 24px
+- Create heavy, dark shadows — Cal.com's shadows are subtle (5% opacity diffused) with sharp contact edges
+- Use illustrations, abstract graphics, or decorative elements — the visual language is typography + product UI only
+- Mix Cal Sans weights — the font is designed for weight 600, other weights break the intended character
+- Reduce section spacing below 48px — the generous whitespace is core to the premium monochrome aesthetic
 
 ## 8. Responsive Behavior
 
 ### Breakpoints
-| Name | Width | Key Changes |
-|------|-------|-------------|
-| Mobile | <1024px | Single column, hamburger nav, stacked sections |
-| Desktop | >1024px | Full layout, horizontal nav, multi-column grids |
+
+| Name          | Width         | Key Changes                                                     |
+| ------------- | ------------- | --------------------------------------------------------------- |
+| Mobile        | <640px        | Single column, hero text ~36px, stacked features, hamburger nav |
+| Tablet Small  | 640px–768px   | 2-column begins for some elements                               |
+| Tablet        | 768px–810px   | Layout adjustments, fuller grid                                 |
+| Tablet Large  | 810px–1024px  | Multi-column feature grids                                      |
+| Desktop       | 1024px–1199px | Full layout, expanded navigation                                |
+| Large Desktop | >1199px       | Max-width container, centered content                           |
 
 ### Touch Targets
-- Pill buttons with generous padding (12px–20px)
-- Navigation links at 15px with adequate spacing
-- Select dropdowns maintain comfortable sizing
+
+- Buttons: 8px radius with comfortable padding (10px+ vertical)
+- Nav links: Dark text with adequate spacing
+- Mobile CTAs: Full-width dark buttons for easy thumb access
+- Pill badges: 9999px radius creates large, tappable targets
 
 ### Collapsing Strategy
-- Navigation: horizontal → hamburger at 1024px
-- Feature grids: multi-column → stacked
-- Hero: maintains centered layout, font scales proportionally
-- Gradient sections: full-width maintained, content stacks
-- Spacing compresses proportionally
+
+- **Navigation**: Full horizontal nav → hamburger on mobile
+- **Hero**: 64px Cal Sans display → ~36px on mobile
+- **Feature grids**: Multi-column → 2-column → single stacked column
+- **Product screenshots**: Scale within containers, maintaining aspect ratios
+- **Section spacing**: Reduces from 80px–96px to ~48px on mobile
 
 ### Image Behavior
+
 - Product screenshots scale responsively
-- Gradient backgrounds simplify on mobile
-- Audio waveform previews maintain aspect ratio
-- Rounded corners maintained across breakpoints
+- Trust logos reflow to multi-row grid on mobile
+- No art direction changes — same compositions at all sizes
+- Images use 7px–12px border-radius for consistent rounded corners
 
 ## 9. Agent Prompt Guide
 
 ### Quick Color Reference
-- Background: Pure White (`#ffffff`) or Light Gray (`#f5f5f5`)
-- Text: Black (`#000000`)
-- Secondary text: Dark Gray (`#4e4e4e`)
-- Muted text: Warm Gray (`#777169`)
-- Warm surface: Warm Stone (`rgba(245, 242, 239, 0.8)`)
-- Border: `#e5e5e5` or `rgba(0,0,0,0.05)`
+
+- Primary Text: Charcoal (`#242424`)
+- Deep Text: Midnight (`#111111`)
+- Secondary Text: Mid Gray (`#898989`)
+- Background: Pure White (`#ffffff`)
+- Link: Link Blue (`#0099ff`)
+- CTA Button: Charcoal (`#242424`) bg, white text
+- Shadow Border: `rgba(34, 42, 53, 0.08)` ring
 
 ### Example Component Prompts
-- "Create a hero on white background. Headline at 48px Waldenburg weight 300, line-height 1.08, letter-spacing -0.96px, black text. Subtitle at 18px Inter weight 400, line-height 1.60, letter-spacing 0.18px, #4e4e4e text. Two pill buttons: black (9999px, 0px 14px padding) and warm stone (rgba(245,242,239,0.8), 30px radius, 12px 20px padding, warm shadow rgba(78,50,23,0.04) 0px 6px 16px)."
-- "Design a card: white background, 20px radius. Shadow: rgba(0,0,0,0.06) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 1px 2px, rgba(0,0,0,0.04) 0px 2px 4px. Title at 32px Waldenburg weight 300, body at 16px Inter weight 400 letter-spacing 0.16px, #4e4e4e."
-- "Build a white pill button: white bg, 9999px radius. Shadow: rgba(0,0,0,0.4) 0px 0px 1px, rgba(0,0,0,0.04) 0px 4px 4px. Text at 15px Inter weight 500."
-- "Create an uppercase CTA label: 14px WaldenburgFH weight 700, text-transform uppercase, letter-spacing 0.7px."
-- "Design navigation: white sticky header. Inter 15px weight 500. Black pill CTA right-aligned. Border-bottom: rgba(0,0,0,0.05)."
+
+- "Create a hero section with white background, 64px Cal Sans heading at weight 600, line-height 1.10, #242424 text, centered layout with a dark CTA button (#242424, 8px radius, white text)"
+- "Design a scheduling card with white background, multi-layered shadow (0px 1px 5px -4px rgba(19,19,22,0.7), 0px 0px 0px 1px rgba(34,42,53,0.08), 0px 4px 8px rgba(34,42,53,0.05)), 12px radius"
+- "Build a navigation bar with white background, Inter links at 14px weight 500 in #111111, a dark CTA button (#242424), sticky positioning"
+- "Create a trust bar with grayscale company logos, horizontally centered, 16px gap between logos, on white background"
+- "Design a feature section with 48px Cal Sans heading (weight 600, #242424), 16px Inter body text (weight 300, #898989, line-height 1.50), and a product screenshot with 12px radius and the card shadow"
 
 ### Iteration Guide
-1. Start with white — the warm undertone comes from shadows and stone surfaces, not backgrounds
-2. Waldenburg 300 for headings — never bold, the lightness is the identity
-3. Multi-layer shadows: always include inset + outline + elevation at sub-0.1 opacity
-4. Positive letter-spacing on Inter body (+0.14px to +0.18px) — the airy reading quality
-5. Warm stone CTA is the signature — `rgba(245,242,239,0.8)` with `rgba(78,50,23,0.04)` shadow
-6. Pill (9999px) for buttons, generous radius (16px–24px) for cards
+
+When refining existing screens generated with this design system:
+
+1. Verify headings use Cal Sans at weight 600, body uses Inter — never mix them
+2. Check that the palette is purely grayscale — if you see brand colors, remove them
+3. Ensure card elevation uses the multi-layered shadow stack, not CSS borders
+4. Confirm section spacing is generous (80px+) — if sections feel cramped, add more space
+5. The overall tone should feel like a clean, professional scheduling tool — monochrome confidence without any decorative flourishes
