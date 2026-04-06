@@ -7,13 +7,36 @@ import { GitFork, Star, Timer } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import type { ToolList } from "@/server/web/tools/payloads";
 import ComponentPreviewImage from "../../card/card-image";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Insights } from "@/components/ui/insights";
 
+type ResourceToolStack = {
+  name: string;
+  slug: string;
+};
+
+type ResourceToolScreenshot = {
+  imageUrl: string;
+  order: number;
+};
+
+export type ResourceTool = {
+  id: string;
+  name: string;
+  slug: string;
+  repositoryUrl?: string | null;
+  tagline?: string | null;
+  stars?: number | null;
+  forks?: number | null;
+  faviconUrl?: string | null;
+  lastCommitDate?: Date | null;
+  screenshots?: ResourceToolScreenshot[];
+  stacks?: ResourceToolStack[];
+};
+
 type ResourceCardProps = ComponentProps<typeof Card> & {
-  tool: ToolList;
+  tool: ResourceTool;
 };
 
 const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
@@ -48,12 +71,12 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
   const insights = [
     {
       label: "Stars",
-      value: formatNumber(tool.stars, "standard"),
+      value: formatNumber(tool.stars ?? 0, "standard"),
       icon: <Star />,
     },
     {
       label: "Forks",
-      value: formatNumber(tool.forks, "standard"),
+      value: formatNumber(tool.forks ?? 0, "standard"),
       icon: <GitFork />,
     },
     { label: "Last commit", value: lastCommitDate, icon: <Timer /> },

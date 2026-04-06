@@ -1,10 +1,10 @@
 import { Fragment } from "react";
 import { ToolCard, ToolCardSkeleton } from "./tool-card";
-import type { ToolMany } from "@/server/web/tools/payloads";
+import type { ResourceTool } from "./resources/resources-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type ToolListProps = {
-  tools: ToolMany[];
+  tools: ResourceTool[];
   //   adType?: AdType;
   //   enableAds?: boolean;
 };
