@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     minimumCacheTTL: 31536000,
     deviceSizes: [640, 768, 1024, 1280],
     remotePatterns: [

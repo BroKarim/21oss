@@ -8,6 +8,7 @@ import { ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useServerAction } from "zsa-react"; // atau safe-actions kalau kamu pakai itu
 import { createStack } from "@/server/admin/stacks/action";
+import { normalizeStackInput } from "@/lib/stack-utils";
 type StackOption = {
   id: string;
   name: string;
@@ -39,13 +40,14 @@ export function StackCombobox({ options, onSelect }: StackComboboxProps) {
   });
 
   const handleSelect = (value: string) => {
-    const existing = options.find((opt) => opt.slug === value);
+    const normalized = normalizeStackInput(value);
+    const existing = options.find((opt) => opt.slug === normalized.slug);
     if (existing) {
       onSelect(existing);
       setOpen(false);
       setInputValue("");
     } else {
-      createStackAction.execute({ name: value });
+      createStackAction.execute({ name: normalized.name });
     }
   };
 

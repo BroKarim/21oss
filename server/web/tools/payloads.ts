@@ -107,7 +107,7 @@ export const ToolListPayload = Prisma.validator<Prisma.ToolSelect>()({
       name: true,
       slug: true,
     },
-    take: 3,
+    orderBy: { name: "asc" },
   },
   platforms: {
     select: {

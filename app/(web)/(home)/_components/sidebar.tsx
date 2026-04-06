@@ -244,7 +244,7 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
       </div>
 
       <div className="border-border border-t px-5 py-3 flex items-center justify-between">
-        <p className="text-muted-foreground/60 text-[11px]">dzenn.gallery © {new Date().getFullYear()}</p>
+        <p className="text-muted-foreground/60 text-[11px]">21OSS © {new Date().getFullYear()}</p>
         <ModeSwitfher />
       </div>
     </aside>

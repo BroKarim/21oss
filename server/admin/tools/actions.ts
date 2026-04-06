@@ -12,6 +12,7 @@ import { toolSchema } from "@/server/admin/tools/schema";
 import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
 import { env } from "@/env";
+import { normalizeStackInput } from "@/lib/stack-utils";
 
 interface AutoFillResponse {
   name: string;
@@ -46,7 +47,8 @@ export const upsertTool = adminProcedure
               return { id: stack.id };
             }
 
-            const stackSlug = slugify(stack.name);
+            const normalized = normalizeStackInput(stack.name);
+            const stackSlug = normalized.slug;
             const existingStack = await db.stack.findUnique({
               where: { slug: stackSlug },
             });
@@ -57,7 +59,7 @@ export const upsertTool = adminProcedure
 
             const newStack = await db.stack.create({
               data: {
-                name: stack.name,
+                name: normalized.name,
                 slug: stackSlug,
               },
             });
@@ -647,10 +649,11 @@ Respond ONLY with valid JSON:
 
       const stackIds = await Promise.all(
         stackNames.map(async (name) => {
-          const stackSlug = slugify(name);
+          const normalized = normalizeStackInput(name);
+          const stackSlug = normalized.slug;
           const existing = await db.stack.findUnique({ where: { slug: stackSlug } });
           if (existing) return { id: existing.id };
-          const created = await db.stack.create({ data: { name, slug: stackSlug } });
+          const created = await db.stack.create({ data: { name: normalized.name, slug: stackSlug } });
           return { id: created.id };
         }),
       );
