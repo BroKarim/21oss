@@ -61,29 +61,24 @@ jobs:
           script: |
             IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}:latest"
 
-            # Login GHCR di Server
-            if [ -z "${{ secrets.GHCR_USERNAME }}" ] || [ -z "${{ secrets.GHCR_TOKEN }}" ]; then
-              echo "❌ GHCR_USERNAME / GHCR_TOKEN belum di-set di GitHub Secrets"
-              exit 1
-            fi
-            echo "${{ secrets.GHCR_TOKEN }}" | sudo docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+            # Login GHCR
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
-            # Pull image terbaru
-            sudo docker pull $IMAGE_TAG || { echo "❌ Pull failed"; exit 1; }
+            # Pull dulu — kalau gagal STOP, jangan sentuh container lama
+            docker pull $IMAGE_TAG || { echo "❌ Pull failed, aborting deploy"; exit 1; }
 
-            # Stop & Hapus container lama
-            sudo docker stop 21oss-app || true
-            sudo docker rm 21oss-app || true
+            # Baru stop dan replace container lama
+            docker stop dzenn-app || true
+            docker rm dzenn-app || true
 
-            # Jalankan Container Baru
-            # Note: Pastikan kamu sudah buat file .env di /var/www/21oss/.env jika ada
-            sudo docker run -d \
-              --name 21oss-app \
+            docker run -d \
+              --name dzenn-app \
               --restart unless-stopped \
-              --network 21oss_network \
+              --network dzenn_default \
               -p 3000:3000 \
+              --env-file /home/ubuntu/dzenn/.env \
               $IMAGE_TAG
 
             # Bersihkan image lama yang tidak terpakai (biar SSD 60GB gak penuh)
-            sudo docker image prune -af
+            docker image prune -af
             echo "✅ Deploy sukses: $IMAGE_TAG"
