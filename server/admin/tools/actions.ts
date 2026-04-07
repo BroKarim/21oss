@@ -4,7 +4,7 @@ import { slugify, getRandomString } from "@primoui/utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
-import { ToolStatus, ToolType } from "@prisma/client";
+import { ToolStatus, ToolType, type Prisma } from "@prisma/client";
 import { removeS3Directories, uploadToS3Storage, optimizeImage } from "@/lib/media";
 import { getToolRepositoryData } from "@/lib/repositories";
 import { adminProcedure } from "@/lib/safe-actions";
@@ -28,6 +28,36 @@ const autoFillSchema = z.object({
 
 const VALID_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const VALID_VIDEO_TYPES = ["video/mp4"];
+
+const resolveLicenseUpdate = async (data: Prisma.ToolUpdateInput) => {
+  const licenseRel = data.license as Prisma.ToolUpdateInput["license"] & {
+    connectOrCreate?: {
+      create: { name: string; slug: string };
+    };
+  };
+
+  if (!licenseRel?.connectOrCreate) {
+    return data;
+  }
+
+  const { name, slug } = licenseRel.connectOrCreate.create;
+  const existing = await db.license.findFirst({
+    where: {
+      OR: [{ slug }, { name }],
+    },
+  });
+
+  if (!existing) {
+    return data;
+  }
+
+  return {
+    ...data,
+    license: {
+      connect: { id: existing.id },
+    },
+  } satisfies Prisma.ToolUpdateInput;
+};
 
 export const upsertTool = adminProcedure
   .createServerAction()
@@ -390,9 +420,11 @@ export const fetchToolRepositoryData = adminProcedure
       return null;
     }
 
+    const updateData = await resolveLicenseUpdate(result.data);
+
     await db.tool.update({
       where: { id: tool.id },
-      data: result.data,
+      data: updateData,
     });
 
     revalidateTag("tools");
@@ -444,9 +476,11 @@ export const fetchAllToolRepositoryData = adminProcedure
         continue;
       }
 
+      const updateData = await resolveLicenseUpdate(result.data);
+
       await db.tool.update({
         where: { id: tool.id },
-        data: result.data,
+        data: updateData,
       });
 
       successCount++;
