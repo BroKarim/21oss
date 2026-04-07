@@ -21,10 +21,15 @@ import { tryCatch } from "@/utils/helpers";
 
 // Ambil token langsung dari process.env agar script bisa dijalankan
 // via `npx tsx --env-file=.env` tanpa perlu Next.js runtime context
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-if (!GITHUB_TOKEN) {
-  console.error("❌ GITHUB_TOKEN tidak ditemukan di .env");
-  process.exit(1);
+let cachedGithubToken: string | null = null;
+function requireGithubToken(): string {
+  if (cachedGithubToken) return cachedGithubToken;
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) {
+    throw new Error("❌ GITHUB_TOKEN tidak ditemukan di .env");
+  }
+  cachedGithubToken = token;
+  return token;
 }
 
 
@@ -248,7 +253,7 @@ async function fetchPage(query: string, page: number): Promise<GitHubSearchItem[
     const { data, error } = await tryCatch(
       fetch(url, {
         headers: {
-          Authorization: `Bearer ${GITHUB_TOKEN}`,
+          Authorization: `Bearer ${requireGithubToken()}`,
           Accept: "application/vnd.github+json",
           "X-GitHub-Api-Version": "2022-11-28",
         },
@@ -316,6 +321,9 @@ export async function fetchAndSaveTemplates(): Promise<{
   inserted: number;
   skipped: number;
 }> {
+  // Fail fast if token missing (runtime/cron/CLI), but avoid crashing at import time.
+  requireGithubToken();
+
   let inserted = 0;
   let skipped = 0;
   let total = 0;

@@ -19,6 +19,8 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+# Skip env validation during image build (runtime will use real envs)
+ENV SKIP_ENV_VALIDATION=1
 # Batasi RAM saat build agar tidak crash di GitHub runner
 ENV NODE_OPTIONS="--max-old-space-size=1024"
 # Prisma butuh env URL saat generate (dummy untuk build)
