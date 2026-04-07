@@ -62,16 +62,16 @@ jobs:
             IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}:latest"
 
             # Login GHCR
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u "${{ github.actor }}" --password-stdin
 
             # Pull dulu — kalau gagal STOP, jangan sentuh container lama
-            docker pull $IMAGE_TAG || { echo "❌ Pull failed, aborting deploy"; exit 1; }
+            sudo docker pull $IMAGE_TAG || { echo "❌ Pull failed, aborting deploy"; exit 1; }
 
             # Baru stop dan replace container lama
-            docker stop dzenn-app || true
-            docker rm dzenn-app || true
+            sudo docker stop dzenn-app || true
+            sudo docker rm dzenn-app || true
 
-            docker run -d \
+            sudo docker run -d \
               --name dzenn-app \
               --restart unless-stopped \
               --network dzenn_default \
@@ -80,5 +80,5 @@ jobs:
               $IMAGE_TAG
 
             # Bersihkan image lama yang tidak terpakai (biar SSD 60GB gak penuh)
-            docker image prune -af
+            sudo docker image prune -af
             echo "✅ Deploy sukses: $IMAGE_TAG"
