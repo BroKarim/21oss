@@ -7,6 +7,9 @@ FROM base AS deps
 WORKDIR /app
 # Pastikan pnpm-lock.yaml ada di root project kamu
 COPY package.json pnpm-lock.yaml* ./
+
+COPY prisma ./prisma/
+
 RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
