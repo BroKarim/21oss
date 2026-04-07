@@ -21,15 +21,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 # Batasi RAM saat build agar tidak crash di GitHub runner
 ENV NODE_OPTIONS="--max-old-space-size=1024"
-# prisma.config.ts pakai DIRECT_URL, bukan DATABASE_URL
-ENV DIRECT_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+# Prisma butuh env URL saat generate (dummy untuk build)
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ENV DATABASE_URL_UNPOOLED="postgresql://dummy:dummy@localhost:5432/dummy"
 # better-auth dummy values untuk build (runtime akan pakai .env di VPS)
 ENV BETTER_AUTH_SECRET="dummy-secret-for-build-only-will-be-replaced-at-runtime"
 ENV BETTER_AUTH_URL="http://localhost:3000"
 
-# generate pakai prisma-client (bukan prisma-client-js)
-RUN pnpm prisma generate --config prisma.config.ts
+# Generate Prisma Client (config default)
+RUN pnpm run db:generate
 RUN pnpm build
 
 # --- BAGIAN PRISMA (Hapus jika tidak pakai Prisma) ---
