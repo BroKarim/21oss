@@ -62,7 +62,7 @@ jobs:
             IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}:latest"
 
             # Login GHCR di Server
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
             # Pull image terbaru
             docker pull $IMAGE_TAG || { echo "❌ Pull failed"; exit 1; }
