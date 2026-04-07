@@ -62,18 +62,22 @@ jobs:
             IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}:latest"
 
             # Login GHCR di Server
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+            if [ -z "${{ secrets.GHCR_USERNAME }}" ] || [ -z "${{ secrets.GHCR_TOKEN }}" ]; then
+              echo "❌ GHCR_USERNAME / GHCR_TOKEN belum di-set di GitHub Secrets"
+              exit 1
+            fi
+            echo "${{ secrets.GHCR_TOKEN }}" | sudo docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
             # Pull image terbaru
-            docker pull $IMAGE_TAG || { echo "❌ Pull failed"; exit 1; }
+            sudo docker pull $IMAGE_TAG || { echo "❌ Pull failed"; exit 1; }
 
             # Stop & Hapus container lama
-            docker stop 21oss-app || true
-            docker rm 21oss-app || true
+            sudo docker stop 21oss-app || true
+            sudo docker rm 21oss-app || true
 
             # Jalankan Container Baru
             # Note: Pastikan kamu sudah buat file .env di /var/www/21oss/.env jika ada
-            docker run -d \
+            sudo docker run -d \
               --name 21oss-app \
               --restart unless-stopped \
               --network 21oss_network \
@@ -81,5 +85,5 @@ jobs:
               $IMAGE_TAG
 
             # Bersihkan image lama yang tidak terpakai (biar SSD 60GB gak penuh)
-            docker image prune -af
+            sudo docker image prune -af
             echo "✅ Deploy sukses: $IMAGE_TAG"
