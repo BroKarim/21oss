@@ -48,10 +48,10 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
           build-args: |
-            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL }}
-            NEXT_PUBLIC_SITE_EMAIL=${{ vars.NEXT_PUBLIC_SITE_EMAIL }}
-            NEXT_PUBLIC_POSTHOG_HOST=${{ vars.NEXT_PUBLIC_POSTHOG_HOST }}
-            NEXT_PUBLIC_POSTHOG_API_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_API_KEY }}
+            NEXT_PUBLIC_SITE_URL=https://www.21oss.com
+            NEXT_PUBLIC_SITE_EMAIL=brokariim@gmail.com
+            NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
+            NEXT_PUBLIC_POSTHOG_API_KEY=phc_82lC
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
