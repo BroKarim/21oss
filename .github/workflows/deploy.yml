@@ -47,7 +47,11 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
-
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL }}
+            NEXT_PUBLIC_SITE_EMAIL=${{ vars.NEXT_PUBLIC_SITE_EMAIL }}
+            NEXT_PUBLIC_POSTHOG_HOST=${{ vars.NEXT_PUBLIC_POSTHOG_HOST }}
+            NEXT_PUBLIC_POSTHOG_API_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_API_KEY }}
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
