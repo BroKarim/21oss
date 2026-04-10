@@ -3,20 +3,33 @@ import type { ToolList } from "@/server/web/tools/payloads";
 import type { StackItem } from "../_lib/types";
 import { WebShell } from "../../_components/web-shell";
 import { AdRotator } from "./ad-rotator";
+import type { ResourcesParams } from "@/server/web/shared/schema";
 
 type HomeContentProps = {
   stacks: StackItem[];
-  resources: ToolList[];
+  initialResources: ToolList[];
+  initialNextCursor: string | undefined;
+  initialHasMore: boolean;
+  totalCount: number;
+  searchParams: ResourcesParams;
   ads: any[];
   title: string;
   description: string;
 };
 
-export function HomeContent({ stacks, resources, ads, title, description }: HomeContentProps) {
+export function HomeContent({ stacks, initialResources, initialNextCursor, initialHasMore, totalCount, searchParams, ads, title, description }: HomeContentProps) {
   return (
     <WebShell stacks={stacks}>
       <div className="min-h-screen">
-        <ResourceGrid resources={resources} title={title} description={description} />
+        <ResourceGrid
+          initialResources={initialResources}
+          initialNextCursor={initialNextCursor}
+          initialHasMore={initialHasMore}
+          totalCount={totalCount}
+          searchParams={searchParams}
+          title={title}
+          description={description}
+        />
         <AdRotator ads={ads} />
       </div>
     </WebShell>

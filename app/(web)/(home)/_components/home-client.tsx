@@ -2,16 +2,31 @@ import { Suspense } from "react";
 import { HomeContent } from "./home-content";
 import type { ToolList } from "@/server/web/tools/payloads";
 import type { StackItem } from "../_lib/types";
+import type { ResourcesParams } from "@/server/web/shared/schema";
 
 type HomeClientProps = {
   stacks: StackItem[];
-  resources: ToolList[];
-  ads: any[]; // Bisa diisi tipe eksplisit dari prisma
+  initialResources: ToolList[];
+  initialNextCursor: string | undefined;
+  initialHasMore: boolean;
+  totalCount: number;
+  searchParams: ResourcesParams;
+  ads: any[];
   title: string;
   description: string;
 };
 
-export function HomeClient({ stacks, resources, ads, title, description }: HomeClientProps) {
+export function HomeClient({
+  stacks,
+  initialResources,
+  initialNextCursor,
+  initialHasMore,
+  totalCount,
+  searchParams,
+  ads,
+  title,
+  description,
+}: HomeClientProps) {
   return (
     <Suspense
       fallback={
@@ -20,7 +35,17 @@ export function HomeClient({ stacks, resources, ads, title, description }: HomeC
         </div>
       }
     >
-      <HomeContent stacks={stacks} resources={resources} ads={ads} title={title} description={description} />
+      <HomeContent
+        stacks={stacks}
+        initialResources={initialResources}
+        initialNextCursor={initialNextCursor}
+        initialHasMore={initialHasMore}
+        totalCount={totalCount}
+        searchParams={searchParams}
+        ads={ads}
+        title={title}
+        description={description}
+      />
     </Suspense>
   );
 }

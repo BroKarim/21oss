@@ -231,7 +231,25 @@ export const findPlatformFilters = async () => {
 };
 
 
-export const findResources = async ({ type, sort, stack, platform }: ResourcesParams) => {
+export const countResources = async (type: ResourcesParams["type"]): Promise<number> => {
+  "use cache";
+  cacheTag("resources");
+  cacheLife("max");
+
+  return db.tool.count({
+    where: {
+      status: ToolStatus.Published,
+      ...(type === "all"
+        ? { type: { in: [ToolType.Template, ToolType.Component, ToolType.Asset] } }
+        : { type }),
+    },
+  });
+};
+
+export const RESOURCES_PER_PAGE = 24;
+
+
+export const findResources = async ({ type, sort, stack, platform }: ResourcesParams, { take = RESOURCES_PER_PAGE, cursor }: { take?: number; cursor?: string } = {}) => {
   "use cache";
 
   cacheTag("resources");
@@ -280,37 +298,36 @@ export const findResources = async ({ type, sort, stack, platform }: ResourcesPa
   }
 
   // =====================
-  // QUERY
+  // QUERY dengan pagination
   // =====================
   const tools = await db.tool.findMany({
     where,
     orderBy,
     select: ToolListPayload,
+    take: take + 1, // ambil 1 extra untuk cek apakah masih ada data
+    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
   });
+
+  const hasMore = tools.length > take;
+  const items = hasMore ? tools.slice(0, take) : tools;
+  const nextCursor = hasMore ? items[items.length - 1]?.id : undefined;
 
   // =====================
   // SOFT RANKING (STACK)
   // =====================
-  if (!stack?.length) return tools;
+  if (!stack?.length) return { items, nextCursor, hasMore };
 
   const stackSlugs = stack.split(",").filter(Boolean);
 
-  return tools
+  const ranked = items
     .map((tool) => {
       const matchedStacks = tool.stacks.filter((s) => stackSlugs.includes(s.slug)).length;
-
-      return {
-        ...tool,
-        _score: matchedStacks,
-      };
+      return { ...tool, _score: matchedStacks };
     })
     .sort((a, b) => {
-      // stack relevance FIRST
-      if (b._score !== a._score) {
-        return b._score - a._score;
-      }
-
-      // fallback to stars
+      if (b._score !== a._score) return b._score - a._score;
       return (b.stars ?? 0) - (a.stars ?? 0);
     });
+
+  return { items: ranked, nextCursor, hasMore };
 };

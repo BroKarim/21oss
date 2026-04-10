@@ -1,40 +1,95 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, useRef, useCallback, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import type { ToolList } from "@/server/web/tools/payloads";
-import { ResourceCard } from "@/components/web/tools/resources/resources-card";
+import type { ResourcesParams } from "@/server/web/shared/schema";
+import { ResourceCard, ResourceCardSkeleton } from "@/components/web/tools/resources/resources-card";
+import { loadMoreResources } from "@/server/web/tools/actions";
 
 type ResourceGridProps = {
-  resources: ToolList[];
+  initialResources: ToolList[];
+  initialNextCursor: string | undefined;
+  initialHasMore: boolean;
+  totalCount: number;
+  searchParams: ResourcesParams;
   title: string;
   description: string;
 };
 
-export function ResourceGrid({ resources, title, description }: ResourceGridProps) {
-  const searchParams = useSearchParams();
+const SKELETON_COUNT = 6;
+
+export function ResourceGrid({ initialResources, initialNextCursor, initialHasMore, totalCount, searchParams, title, description }: ResourceGridProps) {
+  const urlSearchParams = useSearchParams();
   const [search, setSearch] = useState("");
 
+  // Infinite scroll state
+  const [resources, setResources] = useState<ToolList[]>(initialResources);
+  const [nextCursor, setNextCursor] = useState<string | undefined>(initialNextCursor);
+  const [hasMore, setHasMore] = useState(initialHasMore);
+  const [isPending, startTransition] = useTransition();
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef(false);
+
+  // Reset ketika searchParams berubah (misal filter stack berganti di URL)
+  useEffect(() => {
+    setResources(initialResources);
+    setNextCursor(initialNextCursor);
+    setHasMore(initialHasMore);
+  }, [initialResources, initialNextCursor, initialHasMore]);
+
   const activeStackSlugs = useMemo(() => {
-    const stackParam = searchParams.get("stack");
+    const stackParam = urlSearchParams.get("stack");
     return stackParam?.split(",").filter(Boolean) ?? [];
-  }, [searchParams]);
+  }, [urlSearchParams]);
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-
     return resources.filter((tool) => {
-      const matchSearch =
-        !query ||
-        tool.name.toLowerCase().includes(query) ||
-        tool.slug.toLowerCase().includes(query) ||
-        (tool.tagline ?? "").toLowerCase().includes(query);
+      const matchSearch = !query || tool.name.toLowerCase().includes(query) || tool.slug.toLowerCase().includes(query) || (tool.tagline ?? "").toLowerCase().includes(query);
 
       const matchStack = !activeStackSlugs.length || tool.stacks.some((stack) => activeStackSlugs.includes(stack.slug));
 
       return matchSearch && matchStack;
     });
   }, [resources, search, activeStackSlugs]);
+
+  // Load more handler
+  const loadMore = useCallback(async () => {
+    if (!nextCursor || !hasMore || loadingRef.current) return;
+    loadingRef.current = true;
+
+    startTransition(async () => {
+      try {
+        const result = await loadMoreResources(searchParams, nextCursor);
+        setResources((prev) => [...prev, ...result.items]);
+        setNextCursor(result.nextCursor);
+        setHasMore(result.hasMore);
+      } finally {
+        loadingRef.current = false;
+      }
+    });
+  }, [nextCursor, hasMore, searchParams]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          void loadMore();
+        }
+      },
+      {
+        rootMargin: "400px",
+        threshold: 0,
+      },
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   return (
     <div className="flex-1">
@@ -61,7 +116,10 @@ export function ResourceGrid({ resources, title, description }: ResourceGridProp
                   className="border-border bg-background placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-primary/20 h-9 w-64 rounded-lg border pr-3 pl-9 text-sm outline-none focus:ring-1"
                 />
               </div>
-              <span className="text-muted-foreground text-xs tabular-nums">{filtered.length} templates</span>
+              {/* Saat search aktif tampilkan jumlah dari hasil filter, sisanya tampilkan totalCount dari server */}
+              <span className="text-muted-foreground text-xs tabular-nums">
+                {search ? `${filtered.length} results` : `${totalCount} templates`}
+              </span>
             </div>
           </div>
           <div className="mt-3">
@@ -70,18 +128,30 @@ export function ResourceGrid({ resources, title, description }: ResourceGridProp
         </div>
       </header>
 
+      {/* Grid */}
       <div className="p-8">
-        {filtered.length === 0 ? (
+        {filtered.length === 0 && !isPending ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <span className="text-4xl">🔍</span>
             <p className="mt-3 text-sm font-medium">No templates found</p>
           </div>
         ) : (
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 ">
-            {filtered.map((tool) => (
-              <ResourceCard key={tool.id} tool={tool} />
-            ))}
-          </div>
+          <>
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((tool) => (
+                <ResourceCard key={tool.id} tool={tool} />
+              ))}
+
+              {/* Skeleton saat loading more */}
+              {isPending && Array.from({ length: SKELETON_COUNT }).map((_, i) => <ResourceCardSkeleton key={`skeleton-${i}`} />)}
+            </div>
+
+            {/* Sentinel — invisible trigger untuk infinite scroll */}
+            {hasMore && !search && <div ref={sentinelRef} className="h-1 w-full" aria-hidden="true" />}
+
+            {/* End state */}
+            {!hasMore && resources.length > 0 && !search && <p className="text-muted-foreground mt-12 text-center text-sm">All {resources.length} templates loaded</p>}
+          </>
         )}
       </div>
     </div>

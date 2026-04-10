@@ -1,6 +1,6 @@
 "use server";
 
-import { findRecentTools, filterToolsBySubcategory, findResources, findStackFilters, findPlatformFilters } from "@/server/web/tools/queries";
+import { findRecentTools, filterToolsBySubcategory, findResources, findStackFilters, findPlatformFilters, countResources } from "@/server/web/tools/queries";
 import { ResourcesParams } from "../shared/schema";
 
 export async function getRecentTools() {
@@ -33,6 +33,14 @@ export async function getToolsBySubcategory(
 
 export async function getResources(searchParams: ResourcesParams) {
   return await findResources(searchParams);
+}
+
+export async function getResourcesCount(type: Parameters<typeof countResources>[0]) {
+  return await countResources(type);
+}
+
+export async function loadMoreResources(searchParams: ResourcesParams, cursor: string) {
+  return await findResources(searchParams, { cursor });
 }
 
 export async function getStackFilters() {

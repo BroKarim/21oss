@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { trackEvent } from "@/server/web/analytics/actions";
-import { cn } from "@/lib/utils";
 
 type AdProp = {
   id: string;
@@ -16,8 +15,8 @@ type AdProp = {
 };
 
 const TOAST_ID = "ad-rotator-toast";
-const VISIBLE_DURATION = 8000; // 8 detik muncul
-const INTERVAL_DURATION = 8500; // 8.5 detik (termasuk jeda 0.5 detik)
+const VISIBLE_DURATION = 8000;
+const INTERVAL_DURATION = 8500;
 
 const AdToastCard = ({ ad }: { ad: AdProp }) => {
   return (
@@ -37,8 +36,6 @@ const AdToastCard = ({ ad }: { ad: AdProp }) => {
     >
       <div className="absolute text-white  top-0 right-4 -translate-y-1/2 translate-x-1/3 py-0.5 px-2.5 text-[10px] font-bold uppercase tracking-wider bg-zinc-800 border border-zinc-700/80 rounded-full select-none z-10 shadow-sm">Ad</div>
 
-      {/* Favicon / Logo */}
-      {/* Flex container diubah menjadi items-start agar proporsional saat tinggi bertambah */}
       <div className="flex-shrink-0 flex items-start justify-center mt-1">
         {ad.faviconUrl ? (
           <img src={ad.faviconUrl} alt={ad.name} className="size-10 rounded-lg object-cover border border-zinc-700 shadow-inner" />
@@ -49,7 +46,6 @@ const AdToastCard = ({ ad }: { ad: AdProp }) => {
         )}
       </div>
 
-      {/* Content Section dengan line-clamp diperbesar */}
       <div className="flex flex-col gap-1 flex-1 min-w-0">
         <h4 className="font-bold text-sm leading-tight truncate">{ad.name}</h4>
         {ad.description && <p className="text-xs leading-relaxed line-clamp-3 font-normal text-muted-foreground">{ad.description}</p>}
