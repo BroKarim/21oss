@@ -6,6 +6,7 @@ export const adManyPayload: Prisma.AdSelect = {
   name: true,
   description: true,
   websiteUrl: true,
+  affiliateUrl: true,
   buttonLabel: true,
   faviconUrl: true,
   type: true,
