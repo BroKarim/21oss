@@ -38,6 +38,11 @@ enum AdType {
   All
 }
 
+enum AnalyticsEventType {
+  TOOL_CLICK
+  AD_CLICK
+}
+
 enum CuratedListType {
   gallery
   favicon
@@ -116,6 +121,9 @@ model Ad {
   subscriptionId String?  @unique
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+
+  // Relations
+  analyticsEvents AnalyticsEvent[]
 }
 
 enum ToolType {
@@ -167,11 +175,41 @@ model Tool {
     type        ToolType @default(Tool)
     likes      Like[]
     reports    Report[]
+    analyticsEvents AnalyticsEvent[]
 
   // Indexes
   @@index([slug])
   @@index([licenseId])
   @@index([inspiredById])
+}
+
+model AnalyticsEvent {
+  id        String             @id @default(cuid())
+  type      AnalyticsEventType
+  url       String
+
+  // Optional references
+  toolId    String?
+  adId      String?
+
+  // User origin metadata
+  referrer  String?
+  country   String?
+  userAgent String?
+
+  // Timestamp
+  createdAt DateTime           @default(now())
+
+  // Relations
+  tool      Tool?              @relation(fields: [toolId], references: [id], onDelete: SetNull)
+  ad        Ad?                @relation(fields: [adId], references: [id], onDelete: SetNull)
+
+  // Indexes
+  @@index([type])
+  @@index([toolId])
+  @@index([adId])
+  @@index([createdAt])
+  @@index([country])
 }
 
 model CuratedList {
