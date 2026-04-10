@@ -60,6 +60,9 @@ RUN apk add --no-cache libc6-compat openssl curl
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Install Prisma CLI agar bisa dipakai saat startup (db push)
+RUN npm install -g prisma@6.10.1
+
 RUN addgroup --system --gid 1001 nodejs && \
     adduser --system --uid 1001 nextjs
 
@@ -68,8 +71,12 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Jika pakai Prisma, salin generated client-nya (sesuaikan path jika berbeda)
-# COPY --from=builder --chown=nextjs:nodejs /app/lib/generated/prisma ./lib/generated/prisma
+# Copy Prisma schema agar prisma CLI bisa jalan di runtime
+COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
+
+# Copy entrypoint (sebelum switch user)
+COPY entrypoint.sh ./entrypoint.sh
+RUN chmod +x entrypoint.sh
 
 USER nextjs
 EXPOSE 3000
@@ -80,4 +87,4 @@ ENV HOSTNAME="0.0.0.0"
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:3000/api/health || exit 1
 
-CMD ["node", "server.js"]
+CMD ["./entrypoint.sh"]
