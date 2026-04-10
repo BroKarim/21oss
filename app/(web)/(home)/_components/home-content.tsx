@@ -2,19 +2,22 @@ import { ResourceGrid } from "./resource-grid";
 import type { ToolList } from "@/server/web/tools/payloads";
 import type { StackItem } from "../_lib/types";
 import { WebShell } from "../../_components/web-shell";
+import { AdRotator } from "./ad-rotator";
 
 type HomeContentProps = {
   stacks: StackItem[];
   resources: ToolList[];
+  ads: any[];
   title: string;
   description: string;
 };
 
-export function HomeContent({ stacks, resources, title, description }: HomeContentProps) {
+export function HomeContent({ stacks, resources, ads, title, description }: HomeContentProps) {
   return (
     <WebShell stacks={stacks}>
       <div className="min-h-screen">
         <ResourceGrid resources={resources} title={title} description={description} />
+        <AdRotator ads={ads} />
       </div>
     </WebShell>
   );

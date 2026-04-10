@@ -6,11 +6,12 @@ import type { StackItem } from "../_lib/types";
 type HomeClientProps = {
   stacks: StackItem[];
   resources: ToolList[];
+  ads: any[]; // Bisa diisi tipe eksplisit dari prisma
   title: string;
   description: string;
 };
 
-export function HomeClient({ stacks, resources, title, description }: HomeClientProps) {
+export function HomeClient({ stacks, resources, ads, title, description }: HomeClientProps) {
   return (
     <Suspense
       fallback={
@@ -19,7 +20,7 @@ export function HomeClient({ stacks, resources, title, description }: HomeClient
         </div>
       }
     >
-      <HomeContent stacks={stacks} resources={resources} title={title} description={description} />
+      <HomeContent stacks={stacks} resources={resources} ads={ads} title={title} description={description} />
     </Suspense>
   );
 }
