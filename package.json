@@ -69,6 +69,7 @@
     "react-dom": "^19.1.0",
     "react-email": "^4.0.17",
     "react-hook-form": "^7.60.0",
+    "recharts": "3.8.0",
     "schema-dts": "^1.1.5",
     "sharp": "^0.34.5",
     "sonner": "^2.0.5",

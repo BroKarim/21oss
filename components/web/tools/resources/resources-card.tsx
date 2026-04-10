@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import ComponentPreviewImage from "../../card/card-image";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Insights } from "@/components/ui/insights";
+import { trackEvent } from "@/server/web/analytics/actions";
 
 type ResourceToolStack = {
   name: string;
@@ -89,6 +90,13 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
 
   const handleCardClick = () => {
     if (href) {
+      // Fire-and-forget — tidak await agar tidak memperlambat navigasi
+      void trackEvent({
+        type: "TOOL_CLICK",
+        url: window.location.pathname,
+        toolId: tool.id,
+        country: undefined,
+      });
       window.open(href, "_blank", "noopener,noreferrer");
     }
   };
