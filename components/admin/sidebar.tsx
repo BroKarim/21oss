@@ -43,8 +43,8 @@ export const AdminSidebar = () => {
         },
 
         {
-          title: "Categories",
-          href: "/admin/categories",
+          title: "Tweets",
+          href: "/admin/tweet",
           prefix: <Icon name="lucide/tags" />,
         },
         {

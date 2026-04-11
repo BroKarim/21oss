@@ -192,7 +192,6 @@
 
   /* End Animation Variables */
 
-
   @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -431,6 +430,25 @@
     100% {
       transform: scale(2);
       opacity: 0;
+    }
+  }
+  @keyframes moveDot {
+  0%,
+  100% {
+    top: 10%;
+    right: 10%;
+    }
+  25% {
+    top: 10%;
+    right: calc(100% - 35px);
+    }
+  50% {
+    top: calc(100% - 30px);
+    right: calc(100% - 35px);
+    }
+  75% {
+    top: calc(100% - 30px);
+    right: 10%;
     }
   }
 }
