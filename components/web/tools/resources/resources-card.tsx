@@ -1,5 +1,4 @@
 "use client";
-
 import type { ComponentProps } from "react";
 import { formatNumber } from "@primoui/utils";
 import { useEffect, useState, useRef } from "react";
@@ -11,17 +10,14 @@ import ComponentPreviewImage from "../../card/card-image";
 import { formatDistanceToNowStrict } from "date-fns";
 import { Insights } from "@/components/ui/insights";
 import { trackEvent } from "@/server/web/analytics/actions";
-
 type ResourceToolStack = {
   name: string;
   slug: string;
 };
-
 type ResourceToolScreenshot = {
   imageUrl: string;
   order: number;
 };
-
 export type ResourceTool = {
   id: string;
   name: string;
@@ -35,11 +31,9 @@ export type ResourceTool = {
   screenshots?: ResourceToolScreenshot[];
   stacks?: ResourceToolStack[];
 };
-
 type ResourceCardProps = ComponentProps<typeof Card> & {
   tool: ResourceTool;
 };
-
 const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
@@ -47,7 +41,6 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
   const lastCommitLabel = lastCommitDate ? `last update ${lastCommitDate}` : "last update —";
   const starsLabel = formatNumber(tool.stars ?? 0, "standard");
   const forksLabel = formatNumber(tool.forks ?? 0, "standard");
-
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -61,14 +54,11 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
         rootMargin: "200px",
       },
     );
-
     if (cardRef.current) {
       observer.observe(cardRef.current);
     }
-
     return () => observer.disconnect();
   }, []);
-
   const insights = [
     {
       label: "Stars",
@@ -82,15 +72,12 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
     },
     { label: "Last commit", value: lastCommitDate, icon: <Timer /> },
   ];
-
   const primaryImage = tool.screenshots?.find((s) => s.order === 0)?.imageUrl;
   const stacks = tool.stacks?.slice(0, 3) ?? [];
   const stacksLabel = stacks.length ? stacks.map((stack) => stack.name).join(" · ") : "misc";
   const href = tool.repositoryUrl;
-
   const handleCardClick = () => {
     if (href) {
-      // Fire-and-forget — tidak await agar tidak memperlambat navigasi
       void trackEvent({
         type: "TOOL_CLICK",
         url: window.location.pathname,
@@ -100,12 +87,10 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
       window.open(href, "_blank", "noopener,noreferrer");
     }
   };
-
   return (
     <Card ref={cardRef} {...props} className="p-0 border-none bg-transparent shadow-none  group">
       <div className="relative w-full space-y-2">
         {!isVisible ? (
-          // Skeleton sebelum visible
           <ResourceCardSkeleton />
         ) : (
           <div
@@ -139,7 +124,6 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
                   </div>
                 </div>
               )}
-
               {primaryImage && (
                 <div className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 pointer-events-none">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center flex-col justify-center p-4">
@@ -157,11 +141,9 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
             </div>
           </div>
         )}
-
         {isVisible && (
           <div className="flex items-center space-x-2 ">
             {tool.faviconUrl && <img src={tool.faviconUrl} alt={`${tool.name} favicon`} className="w-6 h-6 rounded flex-shrink-0" loading="lazy" />}
-
             <div className="flex-1 flex flex-col min-w-0">
               <p className="text-base font-medium text-foreground truncate">{tool.name}</p>
               <p className="text-neutral-500 text-sm  leading-relaxed">{tool.tagline}</p>
@@ -172,7 +154,6 @@ const ResourceCard = ({ tool, ...props }: ResourceCardProps) => {
     </Card>
   );
 };
-
 const ResourceCardSkeleton = () => {
   return (
     <div className="flex flex-col gap-3">
@@ -187,5 +168,4 @@ const ResourceCardSkeleton = () => {
     </div>
   );
 };
-
 export { ResourceCard, ResourceCardSkeleton };

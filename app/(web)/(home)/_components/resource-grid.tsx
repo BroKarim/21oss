@@ -1,5 +1,4 @@
 "use client";
-
 import { useMemo, useState, useEffect, useRef, useCallback, useTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import type { ToolList } from "@/server/web/tools/payloads";
@@ -7,7 +6,6 @@ import type { ResourcesParams } from "@/server/web/shared/schema";
 import { ResourceCard, ResourceCardSkeleton } from "@/components/web/tools/resources/resources-card";
 import { AdCard } from "@/components/web/tools/resources/ad-card";
 import { loadMoreResources } from "@/server/web/tools/actions";
-
 type AdItem = {
   id: string;
   name: string;
@@ -17,35 +15,41 @@ type AdItem = {
   buttonLabel: string | null;
   faviconUrl: string | null;
 };
-
 type GridItem = { kind: "resource"; data: ToolList } | { kind: "ad"; data: AdItem };
-
-const FIRST_AD_AFTER = 3;
-const AD_INTERVAL = 15; // ad berikutnya setiap 15 resource
-
-/** Interleave resources dengan ad cards */
+const COLS = 3;
+const AD_INTERVAL = 15;
 function buildGridItems(resources: ToolList[], ads: AdItem[]): GridItem[] {
   if (ads.length === 0) return resources.map((data) => ({ kind: "resource", data }));
-
   const result: GridItem[] = [];
   let adIndex = 0;
-  let resourceCount = 0;
-  let nextAdAfter = FIRST_AD_AFTER;
-
-  for (const resource of resources) {
-    result.push({ kind: "resource", data: resource });
-    resourceCount++;
-
-    if (resourceCount === nextAdAfter) {
-      result.push({ kind: "ad", data: ads[adIndex % ads.length] });
-      adIndex++;
-      nextAdAfter = resourceCount + AD_INTERVAL;
+  let resourceIdx = 0;
+  let nextAdAtResource = AD_INTERVAL;
+  while (resourceIdx < resources.length) {
+    result.push({ kind: "resource", data: resources[resourceIdx]! });
+    resourceIdx++;
+    if (resourceIdx >= nextAdAtResource) {
+      const currentPos = result.length;
+      const remainder = currentPos % COLS;
+      if (remainder === COLS - 1) {
+        result.push({ kind: "ad", data: ads[adIndex % ads.length]! });
+        adIndex++;
+        nextAdAtResource = resourceIdx + AD_INTERVAL;
+      } else {
+        const padding = (COLS - 1 - remainder + COLS) % COLS;
+        for (let p = 0; p < padding && resourceIdx < resources.length; p++) {
+          result.push({ kind: "resource", data: resources[resourceIdx]! });
+          resourceIdx++;
+        }
+        if (result.length % COLS === COLS - 1) {
+          result.push({ kind: "ad", data: ads[adIndex % ads.length]! });
+          adIndex++;
+        }
+        nextAdAtResource = resourceIdx + AD_INTERVAL;
+      }
     }
   }
-
   return result;
 }
-
 type ResourceGridProps = {
   initialResources: ToolList[];
   initialNextCursor: string | undefined;
@@ -56,49 +60,36 @@ type ResourceGridProps = {
   title: string;
   description: string;
 };
-
 const SKELETON_COUNT = 6;
-
 export function ResourceGrid({ initialResources, initialNextCursor, initialHasMore, totalCount, toolPageAds, searchParams, title, description }: ResourceGridProps) {
   const urlSearchParams = useSearchParams();
   const [search, setSearch] = useState("");
-
-  // Infinite scroll state
   const [resources, setResources] = useState<ToolList[]>(initialResources);
   const [nextCursor, setNextCursor] = useState<string | undefined>(initialNextCursor);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [isPending, startTransition] = useTransition();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(false);
-
-  // Reset ketika searchParams berubah (misal filter stack berganti di URL)
   useEffect(() => {
     setResources(initialResources);
     setNextCursor(initialNextCursor);
     setHasMore(initialHasMore);
   }, [initialResources, initialNextCursor, initialHasMore]);
-
   const activeStackSlugs = useMemo(() => {
     const stackParam = urlSearchParams.get("stack");
     return stackParam?.split(",").filter(Boolean) ?? [];
   }, [urlSearchParams]);
-
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return resources.filter((tool) => {
       const matchSearch = !query || tool.name.toLowerCase().includes(query) || tool.slug.toLowerCase().includes(query) || (tool.tagline ?? "").toLowerCase().includes(query);
-
       const matchStack = !activeStackSlugs.length || tool.stacks.some((stack) => activeStackSlugs.includes(stack.slug));
-
       return matchSearch && matchStack;
     });
   }, [resources, search, activeStackSlugs]);
-
-  // Load more handler
   const loadMore = useCallback(async () => {
     if (!nextCursor || !hasMore || loadingRef.current) return;
     loadingRef.current = true;
-
     startTransition(async () => {
       try {
         const result = await loadMoreResources(searchParams, nextCursor);
@@ -110,11 +101,9 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
       }
     });
   }, [nextCursor, hasMore, searchParams]);
-
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
@@ -126,11 +115,9 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
         threshold: 0,
       },
     );
-
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, [loadMore]);
-
   return (
     <div className="flex-1">
       <header className="border-border bg-background/80 sticky top-0 z-20 border-b backdrop-blur-xl">
@@ -156,7 +143,7 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
                   className="border-border bg-background placeholder:text-muted-foreground/50 focus:border-primary/40 focus:ring-primary/20 h-9 w-64 rounded-lg border pr-3 pl-9 text-sm outline-none focus:ring-1"
                 />
               </div>
-              {/* Saat search aktif tampilkan jumlah dari hasil filter, sisanya tampilkan totalCount dari server */}
+              {}
               <span className="text-muted-foreground text-xs tabular-nums">{search ? `${filtered.length} results` : `${totalCount} templates`}</span>
             </div>
           </div>
@@ -165,8 +152,7 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
           </div>
         </div>
       </header>
-
-      {/* Grid */}
+      {}
       <div className="p-8">
         {filtered.length === 0 && !isPending ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -177,15 +163,12 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
           <>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {buildGridItems(filtered, toolPageAds).map((item, i) => (item.kind === "ad" ? <AdCard key={`ad-${item.data.id}-${i}`} ad={item.data} /> : <ResourceCard key={item.data.id} tool={item.data} />))}
-
-              {/* Skeleton saat loading more */}
+              {}
               {isPending && Array.from({ length: SKELETON_COUNT }).map((_, i) => <ResourceCardSkeleton key={`skeleton-${i}`} />)}
             </div>
-
-            {/* Sentinel — invisible trigger untuk infinite scroll */}
+            {}
             {hasMore && !search && <div ref={sentinelRef} className="h-1 w-full" aria-hidden="true" />}
-
-            {/* End state */}
+            {}
             {!hasMore && resources.length > 0 && !search && <p className="text-muted-foreground mt-12 text-center text-sm">All {resources.length} templates loaded</p>}
           </>
         )}
