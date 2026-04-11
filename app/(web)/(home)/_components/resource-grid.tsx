@@ -5,13 +5,53 @@ import { useSearchParams } from "next/navigation";
 import type { ToolList } from "@/server/web/tools/payloads";
 import type { ResourcesParams } from "@/server/web/shared/schema";
 import { ResourceCard, ResourceCardSkeleton } from "@/components/web/tools/resources/resources-card";
+import { AdCard } from "@/components/web/tools/resources/ad-card";
 import { loadMoreResources } from "@/server/web/tools/actions";
+
+type AdItem = {
+  id: string;
+  name: string;
+  description: string | null;
+  affiliateUrl: string | null;
+  websiteUrl: string;
+  buttonLabel: string | null;
+  faviconUrl: string | null;
+};
+
+type GridItem = { kind: "resource"; data: ToolList } | { kind: "ad"; data: AdItem };
+
+const FIRST_AD_AFTER = 3;
+const AD_INTERVAL = 15; // ad berikutnya setiap 15 resource
+
+/** Interleave resources dengan ad cards */
+function buildGridItems(resources: ToolList[], ads: AdItem[]): GridItem[] {
+  if (ads.length === 0) return resources.map((data) => ({ kind: "resource", data }));
+
+  const result: GridItem[] = [];
+  let adIndex = 0;
+  let resourceCount = 0;
+  let nextAdAfter = FIRST_AD_AFTER;
+
+  for (const resource of resources) {
+    result.push({ kind: "resource", data: resource });
+    resourceCount++;
+
+    if (resourceCount === nextAdAfter) {
+      result.push({ kind: "ad", data: ads[adIndex % ads.length] });
+      adIndex++;
+      nextAdAfter = resourceCount + AD_INTERVAL;
+    }
+  }
+
+  return result;
+}
 
 type ResourceGridProps = {
   initialResources: ToolList[];
   initialNextCursor: string | undefined;
   initialHasMore: boolean;
   totalCount: number;
+  toolPageAds: AdItem[];
   searchParams: ResourcesParams;
   title: string;
   description: string;
@@ -19,7 +59,7 @@ type ResourceGridProps = {
 
 const SKELETON_COUNT = 6;
 
-export function ResourceGrid({ initialResources, initialNextCursor, initialHasMore, totalCount, searchParams, title, description }: ResourceGridProps) {
+export function ResourceGrid({ initialResources, initialNextCursor, initialHasMore, totalCount, toolPageAds, searchParams, title, description }: ResourceGridProps) {
   const urlSearchParams = useSearchParams();
   const [search, setSearch] = useState("");
 
@@ -117,9 +157,7 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
                 />
               </div>
               {/* Saat search aktif tampilkan jumlah dari hasil filter, sisanya tampilkan totalCount dari server */}
-              <span className="text-muted-foreground text-xs tabular-nums">
-                {search ? `${filtered.length} results` : `${totalCount} templates`}
-              </span>
+              <span className="text-muted-foreground text-xs tabular-nums">{search ? `${filtered.length} results` : `${totalCount} templates`}</span>
             </div>
           </div>
           <div className="mt-3">
@@ -138,9 +176,7 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
         ) : (
           <>
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((tool) => (
-                <ResourceCard key={tool.id} tool={tool} />
-              ))}
+              {buildGridItems(filtered, toolPageAds).map((item, i) => (item.kind === "ad" ? <AdCard key={`ad-${item.data.id}-${i}`} ad={item.data} /> : <ResourceCard key={item.data.id} tool={item.data} />))}
 
               {/* Skeleton saat loading more */}
               {isPending && Array.from({ length: SKELETON_COUNT }).map((_, i) => <ResourceCardSkeleton key={`skeleton-${i}`} />)}

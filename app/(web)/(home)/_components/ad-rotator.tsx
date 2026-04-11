@@ -38,7 +38,7 @@ const AdToastCard = ({ ad }: { ad: AdProp }) => {
 
       <div className="flex-shrink-0 flex items-start justify-center mt-1">
         {ad.faviconUrl ? (
-          <img src={ad.faviconUrl} alt={ad.name} className="size-10 rounded-lg object-cover border border-zinc-700 shadow-inner" />
+          <img src={ad.faviconUrl} alt={ad.name} className="size-10 rounded-lg object-cover  shadow-inner" />
         ) : (
           <div className="size-10 rounded-lg bg-zinc-800 flex items-center justify-center border border-zinc-700">
             <span className="text-zinc-500 font-bold">{ad.name[0]}</span>

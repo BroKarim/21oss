@@ -10,6 +10,7 @@ type HomeClientProps = {
   initialNextCursor: string | undefined;
   initialHasMore: boolean;
   totalCount: number;
+  toolPageAds: any[];
   searchParams: ResourcesParams;
   ads: any[];
   title: string;
@@ -22,6 +23,7 @@ export function HomeClient({
   initialNextCursor,
   initialHasMore,
   totalCount,
+  toolPageAds,
   searchParams,
   ads,
   title,
@@ -41,6 +43,7 @@ export function HomeClient({
         initialNextCursor={initialNextCursor}
         initialHasMore={initialHasMore}
         totalCount={totalCount}
+        toolPageAds={toolPageAds}
         searchParams={searchParams}
         ads={ads}
         title={title}

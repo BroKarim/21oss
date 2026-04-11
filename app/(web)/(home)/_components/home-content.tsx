@@ -11,13 +11,14 @@ type HomeContentProps = {
   initialNextCursor: string | undefined;
   initialHasMore: boolean;
   totalCount: number;
+  toolPageAds: any[];
   searchParams: ResourcesParams;
   ads: any[];
   title: string;
   description: string;
 };
 
-export function HomeContent({ stacks, initialResources, initialNextCursor, initialHasMore, totalCount, searchParams, ads, title, description }: HomeContentProps) {
+export function HomeContent({ stacks, initialResources, initialNextCursor, initialHasMore, totalCount, toolPageAds, searchParams, ads, title, description }: HomeContentProps) {
   return (
     <WebShell stacks={stacks}>
       <div className="min-h-screen">
@@ -26,6 +27,7 @@ export function HomeContent({ stacks, initialResources, initialNextCursor, initi
           initialNextCursor={initialNextCursor}
           initialHasMore={initialHasMore}
           totalCount={totalCount}
+          toolPageAds={toolPageAds}
           searchParams={searchParams}
           title={title}
           description={description}
