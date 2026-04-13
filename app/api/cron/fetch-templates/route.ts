@@ -1,18 +1,18 @@
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
 import { fetchAndSaveTemplates } from "@/lib/github/fetch-templates";
 
 /**
  * POST /api/cron/fetch-templates
  *
- * Endpoint ini dipanggil oleh Vercel Cron (atau trigger manual)
- * untuk menjalankan GitHub template fetcher.
- *
- * Lindungi dengan CRON_SECRET agar tidak bisa dipanggil sembarangan.
+ * Endpoint ini dipakai trigger manual dari Admin.
+ * Hanya user dengan role admin yang boleh menjalankan fetcher.
  */
-export async function POST(req: Request) {
-  const authHeader = req.headers.get("authorization");
+export async function POST() {
+  const session = await auth.api.getSession({ headers: await headers() });
 
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (session?.user.role !== "admin") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     const result = await fetchAndSaveTemplates();
     return NextResponse.json({ success: true, ...result });
   } catch (err) {
-    console.error("[cron/fetch-templates] Error:", err);
+    console.error("[manual/fetch-templates] Error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

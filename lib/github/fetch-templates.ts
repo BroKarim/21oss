@@ -1,26 +1,9 @@
-/**
- * fetch-templates.ts
- *
- * Script untuk mencari template/boilerplate/starter populer dari GitHub Search REST API
- * dan menyimpannya ke database sebagai Tool dengan status Draft.
- *
- * Run manual (local):
- *   npx tsx lib/github/fetch-templates.ts
- *
- * Bulk initial import:
- *   FETCH_MAX_PAGES=3 npx tsx lib/github/fetch-templates.ts
- *
- * Atau lewat API route (cron):
- *   POST /api/cron/fetch-templates
- */
-import "dotenv/config"; // ← Harus import PERTAMA agar DATABASE_URL terbaca sebelum Prisma init
+import "dotenv/config";
 
 import { ToolStatus, ToolType } from "@prisma/client";
 import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
 
-// Ambil token langsung dari process.env agar script bisa dijalankan
-// via `npx tsx --env-file=.env` tanpa perlu Next.js runtime context
 let cachedGithubToken: string | null = null;
 function requireGithubToken(): string {
   if (cachedGithubToken) return cachedGithubToken;
@@ -32,33 +15,16 @@ function requireGithubToken(): string {
   return token;
 }
 
-
 // ---------------------------------------------------------------------------
 // Konfigurasi
 // ---------------------------------------------------------------------------
 
-/**
- * Jumlah minimal bintang repo agar masuk. 100 dipilih sebagai sweet-spot:
- * - Terlalu rendah (< 50) → terlalu banyak repo murahan / tidak terawat
- * - Terlalu tinggi (> 500) → terlalu sedikit hasil, melewatkan banyak template bagus
- */
 const MIN_STARS = 100;
 
-/**
- * Repo wajib diperbarui dalam 2 tahun terakhir.
- * Memastikan stack yang dipakai tidak terlalu jadul.
- */
 const MAX_YEARS_SINCE_UPDATE = 2;
 
-/** Berapa repo per-query yang diambil dari API GitHub (max 100) */
 const PER_PAGE = 50;
 
-/**
- * Berapa halaman per-query yang di-fetch dalam sekali jalan.
- * - Untuk testing / first run: 1 (default) → max ~1.150 kandidat total
- * - Untuk initial bulk import: atur env var FETCH_MAX_PAGES=3
- * - Untuk daily cron: 1-2 sudah lebih dari cukup (sebagian besar akan di-skip/update)
- */
 const MAX_PAGES_PER_QUERY = Number(process.env.FETCH_MAX_PAGES ?? 1);
 const REQUEST_DELAY_MS = Number(process.env.GH_REQUEST_DELAY_MS ?? 1500);
 const MAX_RETRIES = Number(process.env.GH_MAX_RETRIES ?? 3);
@@ -67,102 +33,44 @@ const MAX_RETRIES = Number(process.env.GH_MAX_RETRIES ?? 3);
 // Queries
 // ---------------------------------------------------------------------------
 
-/**
- * Berbagai kombinasi query untuk memaksimalkan coverage.
- * GitHub Search membatasi rate, jadi jangan terlalu banyak.
- * Urutan penting: yang paling spesifik duluan.
- */
+const pushedAfter = new Date();
+pushedAfter.setFullYear(pushedAfter.getFullYear() - 1);
+const PUSHED_AFTER = pushedAfter.toISOString().slice(0, 10); // YYYY-MM-DD
+// GitHub search supports `stars:>N`, so use `>99` for ">=100".
+const STARS_QUERY = `stars:>${Math.max(0, MIN_STARS - 1)}`;
+
 const SEARCH_QUERIES = [
-  // Template & Starter
-  "topic:nextjs-template",
-  "topic:react-template",
-  "topic:typescript-template",
-  "topic:vite-template",
-  "topic:nuxt-template",
-  "topic:vue-template",
-  "topic:angular-template",
-  "topic:svelte-template",
-  "topic:preact-template",
-  "topic:remix-template",
-  "topic:solidjs-template",
-  "topic:astro-template",
-  "topic:qwik-template",
-  "topic:express-template",
-  "topic:fastapi-template",
-  "topic:django-template",
-  "topic:laravel-template",
-  "topic:tailwindcss-template",
-  "topic:shadcn-template",
-  "topic:react-native-template",
-  "topic:rn-template",
-  "topic:mobile-template",
-  "topic:css-template",
-  "topic:ui-template",
-  "topic:database-template",
-  "topic:auth-template",
-  "topic:firebase-template",
-  "topic:supabase-template",
-  "topic:postgres-template",
-  "topic:mysql-template",
-  "topic:sqlite-template",
-  "topic:mongodb-template",
-  "topic:prisma-template",
-  "topic:drizzle-template",
-  "topic:orm-template",
-  // Keyword fallback (jika repo tidak ada topic tapi namanya jelas)
-  "template in:name,description stars:>50",
-  "boilerplate in:name,description stars:>50",
-  "starter in:name,description stars:>50",
-  "starter-kit in:name,description stars:>50",
-  "scaffold in:name,description stars:>50",
-  // Framework JS/TS
-  "react template in:name,description stars:>50",
-  "next.js template in:name,description stars:>50",
-  "vue template in:name,description stars:>50",
-  "nuxt template in:name,description stars:>50",
-  "angular template in:name,description stars:>50",
-  "svelte template in:name,description stars:>50",
-  "preact template in:name,description stars:>50",
-  "remix template in:name,description stars:>50",
-  "solidjs template in:name,description stars:>50",
-  "astro template in:name,description stars:>50",
-  "qwik template in:name,description stars:>50",
-  "react native template in:name,description stars:>50",
-  // CSS / UI
-  "tailwind template in:name,description stars:>50",
-  "radix ui template in:name,description stars:>50",
-  "chakra ui template in:name,description stars:>50",
-  "css modules template in:name,description stars:>50",
-  "css-in-js template in:name,description stars:>50",
-  "material ui template in:name,description stars:>50",
-  "vanilla css template in:name,description stars:>50",
-  "pinceau template in:name,description stars:>50",
-  // Database / ORM
-  "postgres template in:name,description stars:>50",
-  "mysql template in:name,description stars:>50",
-  "sqlite template in:name,description stars:>50",
-  "mongodb template in:name,description stars:>50",
-  "supabase template in:name,description stars:>50",
-  "firebase template in:name,description stars:>50",
-  "planetscale template in:name,description stars:>50",
-  "neon database template in:name,description stars:>50",
-  "turso template in:name,description stars:>50",
-  "prisma template in:name,description stars:>50",
-  "drizzle orm template in:name,description stars:>50",
-  // Auth
-  "auth0 template in:name,description stars:>50",
-  "clerk template in:name,description stars:>50",
-  "nextauth template in:name,description stars:>50",
-  "firebase auth template in:name,description stars:>50",
-  "supabase auth template in:name,description stars:>50",
-  "keycloak template in:name,description stars:>50",
-  "passport.js template in:name,description stars:>50",
-  "lucia auth template in:name,description stars:>50",
-  "stytch template in:name,description stars:>50",
-  "magic.link template in:name,description stars:>50",
-  "ory kratos template in:name,description stars:>50",
-  "aws cognito template in:name,description stars:>50",
-  "better-auth template in:name,description stars:>50",
+  // Next.js / React (TS-first)
+  `topic:nextjs ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript`,
+  `topic:nextjs-template ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript`,
+  `nextjs (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `react (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+
+  // Vite / Remix / Astro / SvelteKit / Solid / Qwik
+  `vite (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `remix (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `topic:astro ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript`,
+  `astro (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `topic:svelte ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript`,
+  `sveltekit (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `solidjs (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `qwik (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+
+  // Vue / Nuxt
+  `topic:vue ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript`,
+  `vue (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `nuxt (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+
+  // Node backends (TS)
+  `hono (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `nitro (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `fastify (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `nestjs (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+  `express (starter OR template OR boilerplate) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:TypeScript in:name,description,readme`,
+
+  // JS fallback (some good repos still JS-only)
+  `nextjs (starter OR template) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:JavaScript in:name,description,readme`,
+  `vite (starter OR template) ${STARS_QUERY} pushed:>${PUSHED_AFTER} language:JavaScript in:name,description,readme`,
 ];
 
 // ---------------------------------------------------------------------------
@@ -188,7 +96,7 @@ type GitHubSearchItem = {
     login: string;
     avatar_url: string;
   };
-  // GitHub Search API juga memberi info lisensi
+
   license: {
     key: string;
     name: string;
@@ -213,10 +121,6 @@ function yearsAgo(n: number): string {
   return d.toISOString().split("T")[0];
 }
 
-/**
- * Konversi string ke slug URL-safe.
- * Tidak pakai @primoui/utils karena ESM-only dan tidak kompatibel dengan tsx script.
- */
 function toSlug(str: string): string {
   return str
     .toLowerCase()
@@ -224,7 +128,6 @@ function toSlug(str: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Buat slug unik dengan menambahkan angka suffix jika perlu */
 async function buildUniqueSlug(base: string): Promise<string> {
   let candidate = toSlug(base);
   let i = 1;

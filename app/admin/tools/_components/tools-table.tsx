@@ -20,6 +20,7 @@ import { Circle, CircleDashed, Plus } from "lucide-react";
 import { FetchButton } from "@/components/admin/fetch-button";
 import { fetchAllToolRepositoryData } from "@/server/admin/tools/actions";
 import { AIDraftFillButton } from "./ai-draft-fill-button";
+import { ManualFetchTemplatesButton } from "./manual-fetch-templates-button";
 
 // ---------------------------------------------------------------------------
 // Main Table
@@ -97,6 +98,7 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
         <DataTableToolbar table={table} filterFields={filterFields}>
           <ToolsTableToolbarActions table={table} />
           <AIDraftFillButton draftCount={draftCount} />
+          <ManualFetchTemplatesButton />
           <FetchButton action={fetchAllToolRepositoryData} buttonText="Fetch Tool Repository Data" successMessage="✅ All tool repositories data fetched successfully." className="w-fit" />
           <DateRangePicker align="end" />
           <DataTableViewOptions table={table} />
