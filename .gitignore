@@ -44,3 +44,5 @@ next-env.d.ts
 
 TODO.md*.sql
 TODO.md
+
+.agent/

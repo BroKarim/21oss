@@ -11,6 +11,8 @@ import { AdminSidebar } from "@/components/admin/sidebar";
 import { Search } from "@/components/ui/search";
 import { Toaster } from "@/components/ui/sonner";
 import { Bricolage_Grotesque } from "next/font/google";
+import Script from "next/script";
+import { env } from "@/env";
 
 export const metadata: Metadata = {
   title: {
@@ -91,6 +93,14 @@ export default function RootLayout({
         </div>
         <Analytics />
         <SpeedInsights />
+        {env.NEXT_PUBLIC_UMAMI_WEBSITE_ID && (
+          <Script 
+            defer 
+            src="https://cloud.umami.is/script.js" 
+            data-website-id={env.NEXT_PUBLIC_UMAMI_WEBSITE_ID} 
+            strategy="afterInteractive"
+          />
+        )}
       </body>
     </html>
   );
