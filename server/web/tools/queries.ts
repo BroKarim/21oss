@@ -255,6 +255,8 @@ export const findResources = async ({ type, sort, stack, platform }: ResourcesPa
   cacheTag("resources");
   cacheLife("max");
 
+  const stackSlugs = stack?.split(",").filter(Boolean) ?? [];
+
   // =====================
   // WHERE (HARD FILTER)
   // =====================
@@ -274,6 +276,18 @@ export const findResources = async ({ type, sort, stack, platform }: ResourcesPa
           platforms: {
             some: {
               slug: platform,
+            },
+          },
+        }
+      : {}),
+
+    ...(stackSlugs.length
+      ? {
+          stacks: {
+            some: {
+              slug: {
+                in: stackSlugs,
+              },
             },
           },
         }
@@ -315,9 +329,7 @@ export const findResources = async ({ type, sort, stack, platform }: ResourcesPa
   // =====================
   // SOFT RANKING (STACK)
   // =====================
-  if (!stack?.length) return { items, nextCursor, hasMore };
-
-  const stackSlugs = stack.split(",").filter(Boolean);
+  if (!stackSlugs.length) return { items, nextCursor, hasMore };
 
   const ranked = items
     .map((tool) => {

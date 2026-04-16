@@ -74,7 +74,7 @@ const STACK_GROUPS = [
     key: "framework",
     label: "Framework",
     defaultOpen: true,
-    keywords: ["react", "nextjs", "next", "vue", "nuxt", "reactnative"],
+    keywords: ["react", "nextjs", "next", "vue", "nuxt", "reactnative", "astro", "vite", "express", "hono", "svelte", "remix" ],
   },
   {
     key: "css",
@@ -86,19 +86,19 @@ const STACK_GROUPS = [
     key: "database",
     label: "Database",
     defaultOpen: false,
-    keywords: ["prisma", "drizzle", "postgres", "postgresql", "supabase"],
+    keywords: ["postgres", "postgresql", "supabase", "firebase", "mongodb", "mysql"],
   },
-  {
-    key: "auth",
-    label: "Auth",
-    defaultOpen: false,
-    keywords: ["auth", "authentication", "firebase", "supabase", "clerk", "auth0", "nextauth", "jwt"],
-  },
+  // {
+  //   key: "auth",
+  //   label: "Auth",
+  //   defaultOpen: false,
+  //   keywords: ["clerk", "auth0", "nextauth", "jwt"],
+  // },
   {
     key: "other",
     label: "Other",
     defaultOpen: false,
-    keywords: [],
+    keywords: ["prisma", "drizzle"],
   },
 ];
 
