@@ -307,8 +307,10 @@ export const findResources = async ({ type, sort, stack, platform }: ResourcesPa
       orderBy = { firstCommitDate: "asc" };
       break;
     case "stars":
-    default:
       orderBy = { stars: "desc" };
+      break;
+    default:
+      orderBy = { createdAt: "desc" };
   }
 
   // =====================
