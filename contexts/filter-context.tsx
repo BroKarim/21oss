@@ -2,14 +2,14 @@
 
 import { type Values, useQueryStates } from "nuqs";
 import { type PropsWithChildren, createContext, use, useTransition } from "react";
-import { filterParamsSchema } from "@/server/web/shared/schema";
+import { resourcesFilterParamsSchema } from "@/server/web/shared/schema";
 
 export type FiltersContextType = {
-  filters: Values<typeof filterParamsSchema>;
+  filters: Values<typeof resourcesFilterParamsSchema>;
   isLoading: boolean;
   enableSort: boolean;
   enableFilters: boolean;
-  updateFilters: (values: Partial<Values<typeof filterParamsSchema>>) => void;
+  updateFilters: (values: Partial<Values<typeof resourcesFilterParamsSchema>>) => void;
 };
 
 const FiltersContext = createContext<FiltersContextType>(null!);
@@ -22,14 +22,14 @@ export type FiltersProviderProps = {
 const FiltersProvider = ({ children, enableSort = true, enableFilters = false }: PropsWithChildren<FiltersProviderProps>) => {
   const [isLoading, startTransition] = useTransition();
 
-  const [filters, setFilters] = useQueryStates(filterParamsSchema, {
+  const [filters, setFilters] = useQueryStates(resourcesFilterParamsSchema, {
     shallow: false,
     throttleMs: 300,
     startTransition,
   });
 
-  const updateFilters = (values: Partial<Values<typeof filterParamsSchema>>) => {
-    setFilters((prev) => ({ ...prev, ...values, page: null }));
+  const updateFilters = (values: Partial<Values<typeof resourcesFilterParamsSchema>>) => {
+    setFilters((prev) => ({ ...prev, ...values }));
   };
 
   return <FiltersContext.Provider value={{ filters, isLoading, updateFilters, enableSort, enableFilters }}>{children}</FiltersContext.Provider>;

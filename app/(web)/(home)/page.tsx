@@ -29,7 +29,6 @@ export default async function Page({ searchParams }: HomePageProps) {
       initialHasMore={result.hasMore}
       totalCount={totalCount}
       toolPageAds={toolPageAds}
-      searchParams={params}
       ads={ads}
       title="Opensource Starter Templates"
       description="Discover Open-source templates, starters, or boilerplate to jumpstart your application or website build."

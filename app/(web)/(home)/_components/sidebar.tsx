@@ -5,11 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown } from "lucide-react";
-import { useQueryState } from "nuqs";
 
 // import { ModeToggle } from "@/components/mode-toggle";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { useFilters } from "@/contexts/filter-context";
 import type { StackItem } from "../_lib/types";
 import { ModeSwitfher } from "./mode-switfher";
 
@@ -108,12 +108,9 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { filters, updateFilters } = useFilters();
   const currentFilter = searchParams.get("filter");
-  const stackParam = searchParams.get("stack");
-  const [, setStackParam] = useQueryState("stack", {
-    shallow: false,
-  });
-  const activeStacks = useMemo(() => stackParam?.split(",").filter(Boolean) ?? [], [stackParam]);
+  const activeStacks = useMemo(() => filters.stack?.split(",").filter(Boolean) ?? [], [filters.stack]);
 
   const groupedStacks = useMemo(() => {
     const groups = STACK_GROUPS.map((group) => ({
@@ -156,7 +153,7 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
       router.push(query ? `/?${query}` : "/");
       return;
     }
-    setStackParam(next.length ? next.join(",") : null);
+    updateFilters({ stack: next.join(",") });
   };
 
   return (

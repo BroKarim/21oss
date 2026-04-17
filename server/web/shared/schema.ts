@@ -61,15 +61,18 @@ export const adDetailsSchema = z.object({
   buttonLabel: z.string().optional(),
 });
 
-export const SORT_OPTIONS = ["stars", "latest", "oldest"] as const;
+export const SORT_OPTIONS = ["stars", "latest", "oldest", "name_asc", "name_desc", "forks"] as const;
 export type SortOption = (typeof SORT_OPTIONS)[number];
+export const DEFAULT_SORT_OPTION: SortOption = "stars";
 
-export const resourcesParamsCache = createSearchParamsCache({
+export const resourcesFilterParamsSchema = {
   type: parseAsStringEnum<ToolType | "all">(["all", ToolType.Template, ToolType.Component, ToolType.Asset]).withDefault("all"),
   sort: parseAsStringEnum<SortOption>([...SORT_OPTIONS]),
   stack: parseAsString.withDefault(""),
-  platform: parseAsString.withDefault("")
-});
+  platform: parseAsString.withDefault(""),
+};
+
+export const resourcesParamsCache = createSearchParamsCache(resourcesFilterParamsSchema);
 
 // schema.ts
 export type ResourcesParams = Awaited<ReturnType<typeof resourcesParamsCache.parse>>;

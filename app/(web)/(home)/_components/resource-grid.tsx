@@ -1,11 +1,11 @@
 "use client";
 import { useMemo, useState, useEffect, useRef, useCallback, useTransition } from "react";
-import { useSearchParams } from "next/navigation";
+import { ToolType } from "@prisma/client";
 import type { ToolList } from "@/server/web/tools/payloads";
-import type { ResourcesParams } from "@/server/web/shared/schema";
 import { ResourceCard, ResourceCardSkeleton } from "@/components/web/tools/resources/resources-card";
 import { AdCard } from "@/components/web/tools/resources/ad-card";
 import { loadMoreResources } from "@/server/web/tools/actions";
+import { useFilters } from "@/contexts/filter-context";
 type AdItem = {
   id: string;
   name: string;
@@ -56,13 +56,12 @@ type ResourceGridProps = {
   initialHasMore: boolean;
   totalCount: number;
   toolPageAds: AdItem[];
-  searchParams: ResourcesParams;
   title: string;
   description: string;
 };
 const SKELETON_COUNT = 6;
-export function ResourceGrid({ initialResources, initialNextCursor, initialHasMore, totalCount, toolPageAds, searchParams, title, description }: ResourceGridProps) {
-  const urlSearchParams = useSearchParams();
+export function ResourceGrid({ initialResources, initialNextCursor, initialHasMore, totalCount, toolPageAds, title, description }: ResourceGridProps) {
+  const { filters } = useFilters();
   const [search, setSearch] = useState("");
   const [resources, setResources] = useState<ToolList[]>(initialResources);
   const [nextCursor, setNextCursor] = useState<string | undefined>(initialNextCursor);
@@ -75,10 +74,7 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
     setNextCursor(initialNextCursor);
     setHasMore(initialHasMore);
   }, [initialResources, initialNextCursor, initialHasMore]);
-  const activeStackSlugs = useMemo(() => {
-    const stackParam = urlSearchParams.get("stack");
-    return stackParam?.split(",").filter(Boolean) ?? [];
-  }, [urlSearchParams]);
+  const activeStackSlugs = useMemo(() => filters.stack?.split(",").filter(Boolean) ?? [], [filters.stack]);
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return resources.filter((tool) => {
@@ -92,7 +88,7 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
     loadingRef.current = true;
     startTransition(async () => {
       try {
-        const result = await loadMoreResources(searchParams, nextCursor);
+        const result = await loadMoreResources({ ...filters, type: ToolType.Template }, nextCursor);
         setResources((prev) => [...prev, ...result.items]);
         setNextCursor(result.nextCursor);
         setHasMore(result.hasMore);
@@ -100,7 +96,7 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
         loadingRef.current = false;
       }
     });
-  }, [nextCursor, hasMore, searchParams]);
+  }, [filters, nextCursor, hasMore]);
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
