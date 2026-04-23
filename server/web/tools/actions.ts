@@ -35,8 +35,8 @@ export async function getResources(searchParams: ResourcesParams) {
   return await findResources(searchParams);
 }
 
-export async function getResourcesCount(type: Parameters<typeof countResources>[0]) {
-  return await countResources(type);
+export async function getResourcesCount(params: ResourcesParams) {
+  return await countResources(params);
 }
 
 export async function getTemplateGroups() {

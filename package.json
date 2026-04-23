@@ -18,7 +18,8 @@
     "postinstall": "pnpm run db:generate",
     "fetch-templates": "tsx lib/github/fetch-templates.ts",
     "fetch-templates:bulk": "FETCH_MAX_PAGES=3 tsx lib/github/fetch-templates.ts",
-    "template-type:audit": "node --import tsx scripts/template-type-audit.ts"
+    "template-type:audit": "node --import tsx scripts/template-type-audit.ts",
+    "template-type:backfill": "node --import tsx scripts/backfill-template-type.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.844.0",

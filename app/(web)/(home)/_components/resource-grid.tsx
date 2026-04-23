@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState, useEffect, useRef, useCallback, useTransition } from "react";
-import { ToolType } from "@prisma/client";
+import { ToolType, TemplateType } from "@prisma/client";
 import type { ToolList } from "@/server/web/tools/payloads";
 import { ResourceCard, ResourceCardSkeleton } from "@/components/web/tools/resources/resources-card";
 import { AdCard } from "@/components/web/tools/resources/ad-card";
@@ -61,7 +61,7 @@ type ResourceGridProps = {
 };
 const SKELETON_COUNT = 6;
 export function ResourceGrid({ initialResources, initialNextCursor, initialHasMore, totalCount, toolPageAds, title, description }: ResourceGridProps) {
-  const { filters } = useFilters();
+  const { filters, updateFilters, isLoading } = useFilters();
   const [search, setSearch] = useState("");
   const [resources, setResources] = useState<ToolList[]>(initialResources);
   const [nextCursor, setNextCursor] = useState<string | undefined>(initialNextCursor);
@@ -124,6 +124,17 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
               <p className="text-muted-foreground mt-0.5 text-sm">{description}</p>
             </div>
             <div className="flex items-center gap-3">
+              <select
+                className="border-border bg-background focus:border-primary/40 focus:ring-primary/20 h-9 rounded-lg border px-3 text-sm outline-none focus:ring-1"
+                value={filters.templateType ?? "all"}
+                disabled={isLoading}
+                onChange={(e) => updateFilters({ templateType: e.target.value as TemplateType | "all" })}
+              >
+                <option value="all">All</option>
+                <option value={TemplateType.Website}>Website</option>
+                <option value={TemplateType.Mobile}>Mobile</option>
+                <option value={TemplateType.Dashboard}>Dashboard</option>
+              </select>
               <div className="relative">
                 <div className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground">

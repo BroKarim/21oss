@@ -1,4 +1,4 @@
-import { ReportType, ToolType } from "@prisma/client";
+import { ReportType, ToolType, TemplateType } from "@prisma/client";
 import { createSearchParamsCache, parseAsArrayOf, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
 import { z } from "zod";
 import { config } from "@/config";
@@ -67,6 +67,7 @@ export const DEFAULT_SORT_OPTION: SortOption = "stars";
 
 export const resourcesFilterParamsSchema = {
   type: parseAsStringEnum<ToolType | "all">(["all", ToolType.Template, ToolType.Component, ToolType.Asset]).withDefault("all"),
+  templateType: parseAsStringEnum<TemplateType | "all">(["all", TemplateType.Website, TemplateType.Mobile, TemplateType.Dashboard]).withDefault("all"),
   sort: parseAsStringEnum<SortOption>([...SORT_OPTIONS]),
   stack: parseAsString.withDefault(""),
   platform: parseAsString.withDefault(""),

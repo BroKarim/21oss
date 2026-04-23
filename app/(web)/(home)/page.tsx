@@ -17,7 +17,7 @@ export default async function Page({ searchParams }: HomePageProps) {
     getStackFilters(),
     getResources({ ...params, type: ToolType.Template }),
     getActiveAds(),
-    getResourcesCount(ToolType.Template),
+    getResourcesCount({ ...params, type: ToolType.Template }),
     getActiveAdsByType(AdType.ToolPage),
   ]);
 

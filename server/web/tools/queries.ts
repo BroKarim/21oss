@@ -231,18 +231,53 @@ export const findPlatformFilters = async () => {
 };
 
 
-export const countResources = async (type: ResourcesParams["type"]): Promise<number> => {
+function buildResourcesWhere({ type, stack, platform, templateType }: Pick<ResourcesParams, "type" | "stack" | "platform" | "templateType">): Prisma.ToolWhereInput {
+  const stackSlugs = stack?.split(",").filter(Boolean) ?? [];
+
+  return {
+    status: ToolStatus.Published,
+
+    ...(type === "all"
+      ? {
+          type: {
+            in: [ToolType.Template, ToolType.Component, ToolType.Asset],
+          },
+        }
+      : { type }),
+
+    ...(type === ToolType.Template && templateType && templateType !== "all" ? { templateType } : {}),
+
+    ...(platform
+      ? {
+          platforms: {
+            some: {
+              slug: platform,
+            },
+          },
+        }
+      : {}),
+
+    ...(stackSlugs.length
+      ? {
+          stacks: {
+            some: {
+              slug: {
+                in: stackSlugs,
+              },
+            },
+          },
+        }
+      : {}),
+  };
+}
+
+export const countResources = async (params: ResourcesParams): Promise<number> => {
   "use cache";
   cacheTag("resources");
   cacheLife("max");
 
   return db.tool.count({
-    where: {
-      status: ToolStatus.Published,
-      ...(type === "all"
-        ? { type: { in: [ToolType.Template, ToolType.Component, ToolType.Asset] } }
-        : { type }),
-    },
+    where: buildResourcesWhere(params),
   });
 };
 
@@ -272,50 +307,17 @@ export const groupPublishedTemplatesByTemplateType = async (): Promise<
 export const RESOURCES_PER_PAGE = 24;
 
 
-export const findResources = async ({ type, sort, stack, platform }: ResourcesParams, { take = RESOURCES_PER_PAGE, cursor }: { take?: number; cursor?: string } = {}) => {
+export const findResources = async ({ type, sort, stack, platform, templateType }: ResourcesParams, { take = RESOURCES_PER_PAGE, cursor }: { take?: number; cursor?: string } = {}) => {
   "use cache";
 
   cacheTag("resources");
   cacheLife("max");
 
-  const stackSlugs = stack?.split(",").filter(Boolean) ?? [];
-
   // =====================
   // WHERE (HARD FILTER)
   // =====================
-  const where: Prisma.ToolWhereInput = {
-    status: ToolStatus.Published,
-
-    ...(type === "all"
-      ? {
-          type: {
-            in: [ToolType.Template, ToolType.Component, ToolType.Asset],
-          },
-        }
-      : { type }),
-
-    ...(platform
-      ? {
-          platforms: {
-            some: {
-              slug: platform,
-            },
-          },
-        }
-      : {}),
-
-    ...(stackSlugs.length
-      ? {
-          stacks: {
-            some: {
-              slug: {
-                in: stackSlugs,
-              },
-            },
-          },
-        }
-      : {}),
-  };
+  const where = buildResourcesWhere({ type, stack, platform, templateType });
+  const stackSlugs = stack?.split(",").filter(Boolean) ?? [];
 
   // =====================
   // ORDER BY (DB LEVEL)
