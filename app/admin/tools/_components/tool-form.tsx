@@ -2,10 +2,10 @@
 
 import { isValidUrl, slugify } from "@primoui/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { type Tool, ToolStatus, ToolType } from "@prisma/client";
+import { type Tool, ToolStatus, ToolType, TemplateType } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
-import { use, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useForm, useFieldArray, Control } from "react-hook-form";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
@@ -77,6 +77,7 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       categories: tool?.categories.map((c) => c.id) ?? [],
       platforms: tool?.platforms.map((p) => p.id) ?? [],
       type: tool?.type ?? "Tool",
+      templateType: tool?.templateType ?? null,
       stacks: (tool?.stacks || []).map((s) => (typeof s === "string" ? { id: "", name: s, slug: s } : s)),
       screenshots:
         tool?.screenshots?.map((img) => ({
@@ -151,6 +152,14 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
 
   // Keep track of the form values
   const [websiteUrl, type, repoUrl] = form.watch(["websiteUrl", "type", "repositoryUrl"]);
+
+  // `templateType` hanya valid untuk `type=Template`
+  useEffect(() => {
+    if (type !== ToolType.Template && form.getValues("templateType")) {
+      form.setValue("templateType", null, { shouldDirty: true, shouldValidate: false });
+    }
+  }, [type, form]);
+
   computeFaviconUrl({
     form,
     sourceFields: ["websiteUrl", "repositoryUrl", "type"],
@@ -349,6 +358,31 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
             </FormItem>
           )}
         />
+
+        {type === ToolType.Template && (
+          <FormField
+            control={form.control}
+            name="templateType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Template Category</FormLabel>
+                <FormControl>
+                  <select
+                    className="border rounded-md px-3 py-2 bg-background w-full"
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(e.target.value ? (e.target.value as TemplateType) : null)}
+                  >
+                    <option value="">(Unspecified)</option>
+                    <option value={TemplateType.Website}>Website</option>
+                    <option value={TemplateType.Mobile}>Mobile</option>
+                    <option value={TemplateType.Dashboard}>Dashboard</option>
+                  </select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         {/* Stacks Field (Dynamic Input with useFieldArray) */}
         <FormItem>

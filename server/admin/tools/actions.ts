@@ -67,6 +67,7 @@ export const upsertTool = adminProcedure
     const { id, categories, platforms, stacks, ...rest } = input;
     const toolType: ToolType = rest.type ?? ToolType.Tool;
     const slug = rest.slug || slugify(rest.name);
+    const templateType = toolType === ToolType.Template ? (rest.templateType ?? null) : null;
 
     const categoryIds = categories?.map((id) => ({ id }));
     const platformIds = platforms?.map((id) => ({ id }));
@@ -109,6 +110,7 @@ export const upsertTool = adminProcedure
             ...rest,
             slug,
             type: toolType,
+            templateType,
             categories: { set: categoryIds },
             platforms: { set: platformIds },
             stacks: { set: stackIds },
@@ -128,6 +130,7 @@ export const upsertTool = adminProcedure
             ...rest,
             slug,
             type: toolType,
+            templateType,
             categories: { connect: categoryIds },
             platforms: { connect: platformIds },
             stacks: { connect: stackIds },

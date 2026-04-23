@@ -1,4 +1,4 @@
-import { type Tool, ToolStatus, ToolType } from "@prisma/client";
+import { type Tool, ToolStatus, ToolType, TemplateType } from "@prisma/client";
 import { createSearchParamsCache, parseAsArrayOf, parseAsInteger, parseAsString, parseAsStringEnum } from "nuqs/server";
 import { z } from "zod";
 import { getSortingStateParser } from "@/lib/parsers";
@@ -35,6 +35,7 @@ export const toolSchema = z.object({
   categories: z.array(z.string()).optional(),
   platforms: z.array(z.string()).optional(),
   type: z.nativeEnum(ToolType).default(ToolType.Tool),
+  templateType: z.nativeEnum(TemplateType).optional().nullable(),
   stacks: z
     .array(
       z.object({

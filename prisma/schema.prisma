@@ -133,6 +133,11 @@ enum ToolType {
   Asset      
 }
 
+enum TemplateType {
+  Website
+  Mobile
+  Dashboard
+}
 
 model Tool {
     id              String    @id @default(cuid())
@@ -173,6 +178,8 @@ model Tool {
     stacks     Stack[]     @relation("ToolStacks")
     curatedLists CuratedList[] @relation("CuratedListTools")
     type        ToolType @default(Tool)
+    /// Subtype khusus saat `type = Template`
+    templateType TemplateType?
     likes      Like[]
     reports    Report[]
     analyticsEvents AnalyticsEvent[]
@@ -181,6 +188,7 @@ model Tool {
   @@index([slug])
   @@index([licenseId])
   @@index([inspiredById])
+  @@index([type, templateType])
 }
 
 model AnalyticsEvent {

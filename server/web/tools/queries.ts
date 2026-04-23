@@ -1,4 +1,4 @@
-import { type Prisma, ToolStatus, ToolType } from "@prisma/client";
+import { type Prisma, ToolStatus, ToolType, TemplateType } from "@prisma/client";
 import { unstable_cacheLife as cacheLife, unstable_cacheTag as cacheTag } from "next/cache";
 import { db } from "@/services/db";
 import { ToolManyPayload, toolOnePayload, ToolListPayload } from "./payloads";
@@ -246,6 +246,29 @@ export const countResources = async (type: ResourcesParams["type"]): Promise<num
   });
 };
 
+export const groupPublishedTemplatesByTemplateType = async (): Promise<
+  { templateType: TemplateType | null; count: number }[]
+> => {
+  "use cache";
+  cacheTag("resources");
+  cacheLife("max");
+
+  const rows = await db.tool.groupBy({
+    by: ["templateType"],
+    where: {
+      status: ToolStatus.Published,
+      type: ToolType.Template,
+    },
+    _count: { _all: true },
+    orderBy: { templateType: "asc" },
+  });
+
+  return rows.map((r) => ({
+    templateType: r.templateType ?? null,
+    count: r._count._all,
+  }));
+};
+
 export const RESOURCES_PER_PAGE = 24;
 
 
@@ -297,20 +320,29 @@ export const findResources = async ({ type, sort, stack, platform }: ResourcesPa
   // =====================
   // ORDER BY (DB LEVEL)
   // =====================
-  let orderBy: Prisma.ToolOrderByWithRelationInput;
+  let orderBy: Prisma.ToolOrderByWithRelationInput[];
 
   switch (sort) {
     case "latest":
-      orderBy = { lastCommitDate: "desc" };
+      orderBy = [{ lastCommitDate: { sort: "desc", nulls: "last" } }, { createdAt: "desc" }, { id: "desc" }];
       break;
     case "oldest":
-      orderBy = { firstCommitDate: "asc" };
+      orderBy = [{ firstCommitDate: { sort: "asc", nulls: "last" } }, { createdAt: "desc" }, { id: "desc" }];
+      break;
+    case "name_asc":
+      orderBy = [{ name: "asc" }, { createdAt: "desc" }, { id: "desc" }];
+      break;
+    case "name_desc":
+      orderBy = [{ name: "desc" }, { createdAt: "desc" }, { id: "desc" }];
+      break;
+    case "forks":
+      orderBy = [{ forks: "desc" }, { createdAt: "desc" }, { id: "desc" }];
       break;
     case "stars":
-      orderBy = { stars: "desc" };
+      orderBy = [{ stars: "desc" }, { createdAt: "desc" }, { id: "desc" }];
       break;
     default:
-      orderBy = { createdAt: "desc" };
+      orderBy = [{ createdAt: "desc" }, { id: "desc" }];
   }
 
   // =====================
