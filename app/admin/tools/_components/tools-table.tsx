@@ -1,9 +1,8 @@
 "use client";
 
-import { type Tool, ToolStatus } from "@prisma/client";
+import { type Tool, ToolStatus, TemplateType } from "@prisma/client";
 import { useQueryStates } from "nuqs";
 import { use, useMemo } from "react";
-import { DateRangePicker } from "@/components/admin/date-range-picker";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/components/ui/link";
 import { DataTable } from "@/components/data-table/data-table";
@@ -17,10 +16,8 @@ import type { DataTableFilterField } from "@/types";
 import { getColumns } from "./tools-table-columns";
 import { ToolsTableToolbarActions } from "./tools-table-toolbar-actions";
 import { Circle, CircleDashed, Plus } from "lucide-react";
-import { FetchButton } from "@/components/admin/fetch-button";
-import { fetchAllToolRepositoryData } from "@/server/admin/tools/actions";
 import { AIDraftFillButton } from "./ai-draft-fill-button";
-import { ManualFetchTemplatesButton } from "./manual-fetch-templates-button";
+import { ToolsMaintenanceMenu } from "./tools-maintenance-menu";
 
 // ---------------------------------------------------------------------------
 // Main Table
@@ -63,6 +60,16 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
         },
       ],
     },
+    {
+      id: "templateType",
+      label: "Template Category",
+      options: [
+        { label: "Unset", value: "unset", withCount: true },
+        { label: "Website", value: TemplateType.Website, withCount: true },
+        { label: "Mobile", value: TemplateType.Mobile, withCount: true },
+        { label: "Dashboard", value: TemplateType.Dashboard, withCount: true },
+      ],
+    },
   ];
 
   const { table } = useDataTable({
@@ -98,9 +105,7 @@ export function ToolsTable({ toolsPromise }: ToolsTableProps) {
         <DataTableToolbar table={table} filterFields={filterFields}>
           <ToolsTableToolbarActions table={table} />
           <AIDraftFillButton draftCount={draftCount} />
-          <ManualFetchTemplatesButton />
-          <FetchButton action={fetchAllToolRepositoryData} buttonText="Fetch Tool Repository Data" successMessage="✅ All tool repositories data fetched successfully." className="w-fit" />
-          <DateRangePicker align="end" />
+          <ToolsMaintenanceMenu />
           <DataTableViewOptions table={table} />
         </DataTableToolbar>
       </DataTableHeader>

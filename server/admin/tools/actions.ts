@@ -4,7 +4,7 @@ import { slugify, getRandomString } from "@primoui/utils";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
-import { ToolStatus, ToolType, type Prisma } from "@prisma/client";
+import { ToolStatus, ToolType, TemplateType, type Prisma } from "@prisma/client";
 import { removeS3Directories, uploadToS3Storage, optimizeImage } from "@/lib/media";
 import { getToolRepositoryData } from "@/lib/repositories";
 import { adminProcedure } from "@/lib/safe-actions";
@@ -215,6 +215,41 @@ export const deleteTools = adminProcedure
 
     console.log("🎉 Tools deletion completed successfully");
     return result;
+  });
+
+export const bulkSetTemplateType = adminProcedure
+  .createServerAction()
+  .input(
+    z.object({
+      ids: z.array(z.string()).min(1),
+      templateType: z.nativeEnum(TemplateType).nullable(),
+    }),
+  )
+  .handler(async ({ input }) => {
+    const { ids, templateType } = input;
+
+    const tools = await db.tool.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, type: true, slug: true },
+    });
+
+    const templateTools = tools.filter((t) => t.type === ToolType.Template);
+    const templateIds = templateTools.map((t) => t.id);
+
+    if (templateIds.length === 0) {
+      return { updated: 0, skipped: ids.length };
+    }
+
+    const res = await db.tool.updateMany({
+      where: { id: { in: templateIds } },
+      data: { templateType },
+    });
+
+    revalidatePath("/admin/tools");
+    revalidateTag("tools");
+    for (const tool of templateTools) revalidateTag(`tool-${tool.slug}`);
+
+    return { updated: res.count, skipped: ids.length - templateIds.length };
   });
 
 const validateFileNotEmpty = (file: File): boolean => {

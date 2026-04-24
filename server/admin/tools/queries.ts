@@ -1,13 +1,13 @@
 "use server";
 
 import { isTruthy } from "@primoui/utils";
-import { type Prisma } from "@prisma/client";
+import { TemplateType, type Prisma } from "@prisma/client";
 import { endOfDay, startOfDay } from "date-fns";
 import { db } from "@/services/db";
 import type { ToolsTableSchema } from "./schema";
 
 export const findTools = async (search: ToolsTableSchema, where?: Prisma.ToolWhereInput) => {
-  const { name, sort, page, perPage, from, to, operator, status } = search;
+  const { name, sort, page, perPage, from, to, operator, status, templateType } = search;
 
   const offset = (page - 1) * perPage;
 
@@ -21,6 +21,20 @@ export const findTools = async (search: ToolsTableSchema, where?: Prisma.ToolWhe
     fromDate || toDate ? { createdAt: { gte: fromDate, lte: toDate } } : undefined,
 
     status.length > 0 ? { status: { in: status } } : undefined,
+
+    templateType.length
+      ? (() => {
+          const includeUnset = templateType.includes("unset");
+          const enumValues = templateType.filter((v): v is TemplateType => Object.values(TemplateType).includes(v as TemplateType));
+
+          if (includeUnset && enumValues.length) {
+            return { OR: [{ templateType: { in: enumValues } }, { templateType: null }] };
+          }
+          if (includeUnset) return { templateType: null };
+          if (enumValues.length) return { templateType: { in: enumValues } };
+          return undefined;
+        })()
+      : undefined,
   ];
 
   const whereQuery: Prisma.ToolWhereInput = {

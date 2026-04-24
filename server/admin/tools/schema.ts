@@ -13,6 +13,7 @@ export const toolsTableParamsSchema = {
   to: parseAsString.withDefault(""),
   operator: parseAsStringEnum(["and", "or"]).withDefault("and"),
   status: parseAsArrayOf(z.nativeEnum(ToolStatus)).withDefault([]),
+  templateType: parseAsArrayOf(parseAsString).withDefault([]),
 };
 
 export const toolsTableParamsCache = createSearchParamsCache(toolsTableParamsSchema);
