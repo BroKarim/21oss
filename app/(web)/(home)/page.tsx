@@ -7,6 +7,11 @@ import { getActiveAds, getActiveAdsByType } from "@/server/web/ads/queries";
 
 export const dynamic = "force-dynamic";
 
+export const metadata = {
+  title: "Opensource Starter Templates",
+  description: "Discover Open-source templates, starters, or boilerplate to jumpstart your application or website build.",
+};
+
 type HomePageProps = {
   searchParams: Promise<SearchParams>;
 };

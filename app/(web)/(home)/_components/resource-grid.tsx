@@ -6,6 +6,7 @@ import { ResourceCard, ResourceCardSkeleton } from "@/components/web/tools/resou
 import { AdCard } from "@/components/web/tools/resources/ad-card";
 import { loadMoreResources } from "@/server/web/tools/actions";
 import { useFilters } from "@/contexts/filter-context";
+import { AnimatedTabs } from "@/components/web/animated-tabs";
 type AdItem = {
   id: string;
   name: string;
@@ -63,40 +64,54 @@ const SKELETON_COUNT = 6;
 export function ResourceGrid({ initialResources, initialNextCursor, initialHasMore, totalCount, toolPageAds, title, description }: ResourceGridProps) {
   const { filters, updateFilters, isLoading } = useFilters();
   const [search, setSearch] = useState("");
-  const [resources, setResources] = useState<ToolList[]>(initialResources);
-  const [nextCursor, setNextCursor] = useState<string | undefined>(initialNextCursor);
-  const [hasMore, setHasMore] = useState(initialHasMore);
+  const baseFeed = useMemo(
+    () => ({
+      resources: initialResources,
+      nextCursor: initialNextCursor,
+      hasMore: initialHasMore,
+    }),
+    [initialResources, initialNextCursor, initialHasMore]
+  );
+
+  const [feed, setFeed] = useState<{
+    resources: ToolList[];
+    nextCursor: string | undefined;
+    hasMore: boolean;
+  } | null>(null);
+
+  const effectiveFeed = feed ?? baseFeed;
   const [isPending, startTransition] = useTransition();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(false);
-  useEffect(() => {
-    setResources(initialResources);
-    setNextCursor(initialNextCursor);
-    setHasMore(initialHasMore);
-  }, [initialResources, initialNextCursor, initialHasMore]);
   const activeStackSlugs = useMemo(() => filters.stack?.split(",").filter(Boolean) ?? [], [filters.stack]);
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-    return resources.filter((tool) => {
+    return effectiveFeed.resources.filter((tool) => {
       const matchSearch = !query || tool.name.toLowerCase().includes(query) || tool.slug.toLowerCase().includes(query) || (tool.tagline ?? "").toLowerCase().includes(query);
       const matchStack = !activeStackSlugs.length || tool.stacks.some((stack) => activeStackSlugs.includes(stack.slug));
       return matchSearch && matchStack;
     });
-  }, [resources, search, activeStackSlugs]);
+  }, [effectiveFeed.resources, search, activeStackSlugs]);
   const loadMore = useCallback(async () => {
-    if (!nextCursor || !hasMore || loadingRef.current) return;
+    if (!effectiveFeed.nextCursor || !effectiveFeed.hasMore || loadingRef.current) return;
     loadingRef.current = true;
     startTransition(async () => {
       try {
-        const result = await loadMoreResources({ ...filters, type: ToolType.Template }, nextCursor);
-        setResources((prev) => [...prev, ...result.items]);
-        setNextCursor(result.nextCursor);
-        setHasMore(result.hasMore);
+        const cursor = effectiveFeed.nextCursor!;
+        const result = await loadMoreResources({ ...filters, type: ToolType.Template }, cursor);
+        setFeed((prev) => {
+          const current = prev ?? baseFeed;
+          return {
+            resources: [...current.resources, ...result.items],
+            nextCursor: result.nextCursor,
+            hasMore: result.hasMore,
+          };
+        });
       } finally {
         loadingRef.current = false;
       }
     });
-  }, [filters, nextCursor, hasMore]);
+  }, [filters, effectiveFeed.nextCursor, effectiveFeed.hasMore, baseFeed]);
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
@@ -124,17 +139,6 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
               <p className="text-muted-foreground mt-0.5 text-sm">{description}</p>
             </div>
             <div className="flex items-center gap-3">
-              <select
-                className="border-border bg-background focus:border-primary/40 focus:ring-primary/20 h-9 rounded-lg border px-3 text-sm outline-none focus:ring-1"
-                value={filters.templateType ?? "all"}
-                disabled={isLoading}
-                onChange={(e) => updateFilters({ templateType: e.target.value as TemplateType | "all" })}
-              >
-                <option value="all">All</option>
-                <option value={TemplateType.Website}>Website</option>
-                <option value={TemplateType.Mobile}>Mobile</option>
-                <option value={TemplateType.Dashboard}>Dashboard</option>
-              </select>
               <div className="relative">
                 <div className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-muted-foreground">
@@ -154,13 +158,23 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
               <span className="text-muted-foreground text-xs tabular-nums">{search ? `${filtered.length} results` : `${totalCount} templates`}</span>
             </div>
           </div>
-          <div className="mt-3">
-            <div className="h-2" />
-          </div>
+          <div className="mt-4 flex items-center justify-start"></div>
         </div>
       </header>
       {}
-      <div className="p-8">
+      <div className="px-6 py-4 flex flex-col gap-6">
+        <AnimatedTabs
+          tabs={[
+            { label: "All", value: "all" },
+            { label: "Website", value: TemplateType.Website },
+            { label: "Mobile", value: TemplateType.Mobile },
+            { label: "Dashboard", value: TemplateType.Dashboard },
+          ]}
+          value={(filters.templateType ?? "all") as TemplateType | "all"}
+          disabled={isLoading}
+          onValueChange={(next) => updateFilters({ templateType: next as TemplateType | "all" })}
+          className="justify-self-start"
+        />
         {filtered.length === 0 && !isPending ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <span className="text-4xl">🔍</span>
@@ -174,9 +188,11 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
               {isPending && Array.from({ length: SKELETON_COUNT }).map((_, i) => <ResourceCardSkeleton key={`skeleton-${i}`} />)}
             </div>
             {}
-            {hasMore && !search && <div ref={sentinelRef} className="h-1 w-full" aria-hidden="true" />}
+            {effectiveFeed.hasMore && !search && <div ref={sentinelRef} className="h-1 w-full" aria-hidden="true" />}
             {}
-            {!hasMore && resources.length > 0 && !search && <p className="text-muted-foreground mt-12 text-center text-sm">All {resources.length} templates loaded</p>}
+            {!effectiveFeed.hasMore && effectiveFeed.resources.length > 0 && !search && (
+              <p className="text-muted-foreground mt-12 text-center text-sm">All {effectiveFeed.resources.length} templates loaded</p>
+            )}
           </>
         )}
       </div>

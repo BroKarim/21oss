@@ -21,6 +21,7 @@ export function HomeContent({ stacks, initialResources, initialNextCursor, initi
     <WebShell stacks={stacks}>
       <div className="min-h-screen">
         <ResourceGrid
+          key={`${totalCount}:${initialResources[0]?.id ?? "empty"}:${initialNextCursor ?? "end"}:${initialHasMore ? 1 : 0}`}
           initialResources={initialResources}
           initialNextCursor={initialNextCursor}
           initialHasMore={initialHasMore}
