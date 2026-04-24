@@ -64,13 +64,11 @@ export const upsertTool = adminProcedure
   .input(toolSchema)
   .handler(async ({ input }) => {
     console.log("✅ upsertTool called", input);
-    const { id, categories, platforms, stacks, ...rest } = input;
+    const { id, stacks, ...rest } = input;
     const toolType: ToolType = rest.type ?? ToolType.Tool;
     const slug = rest.slug || slugify(rest.name);
     const templateType = toolType === ToolType.Template ? (rest.templateType ?? null) : null;
 
-    const categoryIds = categories?.map((id) => ({ id }));
-    const platformIds = platforms?.map((id) => ({ id }));
     const stackIds = stacks
       ? await Promise.all(
           stacks.map(async (stack) => {
@@ -111,8 +109,6 @@ export const upsertTool = adminProcedure
             slug,
             type: toolType,
             templateType,
-            categories: { set: categoryIds },
-            platforms: { set: platformIds },
             stacks: { set: stackIds },
             screenshots: {
               deleteMany: {},
@@ -131,8 +127,6 @@ export const upsertTool = adminProcedure
             slug,
             type: toolType,
             templateType,
-            categories: { connect: categoryIds },
-            platforms: { connect: platformIds },
             stacks: { connect: stackIds },
             screenshots: {
               create:
@@ -195,8 +189,6 @@ export const deleteTools = adminProcedure
         await tx.tool.update({
           where: { id: toolId },
           data: {
-            categories: { set: [] },
-            platforms: { set: [] },
             stacks: { set: [] },
           },
         });
@@ -541,7 +533,6 @@ interface BatchAutoFillResponse {
   description: string;
   websiteUrl: string;
   stacks: string[];
-  platforms: string[];
 }
 
 const batchAutoFillSchema = z.object({
@@ -571,14 +562,7 @@ export const batchAutoFillDraftTools = adminProcedure
       return { processed: 0, success: 0, errors: 0 };
     }
 
-    // 2. Fetch all platform options from DB (to inject into AI prompt)
-    const allPlatforms = await db.platform.findMany({
-      select: { id: true, name: true, slug: true },
-    });
-    const platformNames = allPlatforms.map((p) => p.name);
-
     console.log(`🤖 batchAutoFillDraftTools: ${tools.length} Draft tools`);
-    console.log(`📋 Available platforms: ${platformNames.join(", ")}`);
     console.log(`🧠 Model: ${model}`);
     console.log("─".repeat(50));
 
@@ -607,23 +591,21 @@ export const batchAutoFillDraftTools = adminProcedure
       // Build prompt with platform options
       const prompt = `You are a senior technical writer. Analyze this GitHub repository: ${owner}/${cleanRepo}
 
-Provide:
+      Provide:
 - name: Clean project name (no prefixes like "awesome-" or suffixes like "-js")
 - tagline: One short marketing sentence (max 8 words)
 - description: Clear explanation of what it does (max 80 words)
-- websiteUrl: Official website/docs URL (empty string if none)
-- stacks: Main technologies used (lowercase, e.g. "react", "typescript")
-- platforms: Select ALL that apply from ONLY these options: ${JSON.stringify(platformNames)}. You MUST pick at least one. Match names exactly.
+      - websiteUrl: Official website/docs URL (empty string if none)
+      - stacks: Main technologies used (lowercase, e.g. "react", "typescript")
 
-Respond ONLY with valid JSON:
-{
-  "name": "...",
-  "tagline": "...",
-  "description": "...",
-  "websiteUrl": "",
-  "stacks": ["tech1", "tech2"],
-  "platforms": ["Website", "CLI"]
-}`;
+      Respond ONLY with valid JSON:
+      {
+        "name": "...",
+        "tagline": "...",
+        "description": "...",
+        "websiteUrl": "",
+        "stacks": ["tech1", "tech2"]
+      }`;
 
       // --- AI Request ---
       const { data: res, error: fetchError } = await tryCatch(
@@ -695,20 +677,6 @@ Respond ONLY with valid JSON:
         }),
       );
 
-      // --- Resolve platforms (match AI response to DB records) ---
-      const aiPlatformNames: string[] = Array.isArray(parsed.platforms)
-        ? parsed.platforms.filter(Boolean).map((p) => String(p).trim())
-        : [];
-
-      const platformIds = aiPlatformNames
-        .map((name) => {
-          const match = allPlatforms.find(
-            (p) => p.name.toLowerCase() === name.toLowerCase(),
-          );
-          return match ? { id: match.id } : null;
-        })
-        .filter(Boolean) as { id: string }[];
-
       // --- Update DB: fill data + publish ---
       const aiWebsiteUrl = typeof parsed.websiteUrl === "string" ? parsed.websiteUrl.trim() : "";
 
@@ -721,7 +689,6 @@ Respond ONLY with valid JSON:
             description: parsed.description || null,
             websiteUrl: aiWebsiteUrl || tool.repositoryUrl,
             stacks: { set: stackIds },
-            platforms: { set: platformIds },
             status: ToolStatus.Published,
             publishedAt: new Date(),
           },
@@ -735,7 +702,7 @@ Respond ONLY with valid JSON:
       }
 
       success++;
-      console.log(`  ✅ [${i + 1}/${tools.length}] ${tool.name} → Published (${stackNames.length} stacks, ${platformIds.length} platforms)`);
+      console.log(`  ✅ [${i + 1}/${tools.length}] ${tool.name} → Published (${stackNames.length} stacks)`);
 
       // Progress summary every 10 items
       if ((i + 1) % 10 === 0) {

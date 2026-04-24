@@ -10,8 +10,6 @@ import { useForm, useFieldArray, Control } from "react-hook-form";
 import { toast } from "sonner";
 import { useServerAction } from "zsa-react";
 import { generateFavicon } from "@/actions/media";
-import { MultiSelectCheckbox } from "@/components/admin/multi-select-checkbox";
-import { RelationSelector } from "@/components/admin/relation-selector";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ToolPublishActions } from "./tool-publish-actions";
@@ -24,10 +22,8 @@ import { Stack } from "@/components/ui/stack";
 import { Textarea } from "@/components/ui/textarea";
 import { ExternalLink } from "@/components/web/external-link";
 import { useComputedField } from "@/hooks/use-computed-field";
-import type { findCategoryList } from "@/server/admin/categories/queries";
 import { upsertTool, autoFillFromRepo, uploadToolMedia } from "@/server/admin/tools/actions";
 import type { findToolBySlug } from "@/server/admin/tools/queries";
-import type { findPlatformList } from "@/server/admin/platforms/queries";
 import { StackCombobox } from "./stack-combobox";
 import type { findStackList } from "@/server/admin/stacks/queries";
 import { toolSchema, type ToolSchema } from "@/server/admin/tools/schema";
@@ -48,15 +44,11 @@ const ToolStatusChange = ({ tool }: { tool: Tool }) => {
 
 type ToolFormProps = ComponentProps<"form"> & {
   tool?: NonNullable<Awaited<ReturnType<typeof findToolBySlug>>>;
-  categoriesPromise: ReturnType<typeof findCategoryList>;
-  platformsPromise: ReturnType<typeof findPlatformList>;
   stacksPromise: ReturnType<typeof findStackList>;
 };
 
-export function ToolForm({ className, title, tool, categoriesPromise, platformsPromise, stacksPromise, ...props }: ToolFormProps) {
+export function ToolForm({ className, title, tool, stacksPromise, ...props }: ToolFormProps) {
   const router = useRouter();
-  const categories = use(categoriesPromise);
-  const platformOptions = use(platformsPromise);
   const stackOptions = use(stacksPromise);
   const [isStatusPending, setIsStatusPending] = useState(false);
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft);
@@ -74,8 +66,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
       faviconUrl: tool?.faviconUrl ?? "",
       status: tool?.status ?? ToolStatus.Draft,
       publishedAt: tool?.publishedAt ?? null,
-      categories: tool?.categories.map((c) => c.id) ?? [],
-      platforms: tool?.platforms.map((p) => p.id) ?? [],
       type: tool?.type ?? "Tool",
       templateType: tool?.templateType ?? null,
       stacks: (tool?.stacks || []).map((s) => (typeof s === "string" ? { id: "", name: s, slug: s } : s)),
@@ -321,20 +311,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
               <FormLabel>Tagline</FormLabel>
               <FormControl>
                 <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/* Platforms Field (Multi-Select) */}
-        <FormField
-          control={form.control}
-          name="platforms"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Platforms</FormLabel>
-              <FormControl>
-                <MultiSelectCheckbox options={platformOptions} value={field.value ?? []} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -587,35 +563,6 @@ export function ToolForm({ className, title, tool, categoriesPromise, platformsP
                 </Stack>
 
                 <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="categories"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Categories</FormLabel>
-                <RelationSelector
-                  relations={categories}
-                  selectedIds={field.value ?? []}
-                  setSelectedIds={field.onChange}
-                  mapFunction={({ id, name, fullPath }) => {
-                    const depth = fullPath.split("/").length - 1;
-                    const prefix = "- ".repeat(depth);
-                    return { id, name: `${prefix}${name}` };
-                  }}
-                  sortFunction={(a, b) => {
-                    const aSegments = a.fullPath.split("/");
-                    const bSegments = b.fullPath.split("/");
-                    for (let i = 0; i < Math.min(aSegments.length, bSegments.length); i++) {
-                      if (aSegments[i] !== bSegments[i]) {
-                        return aSegments[i].localeCompare(bSegments[i]);
-                      }
-                    }
-                    return aSegments.length - bSegments.length;
-                  }}
-                />
               </FormItem>
             )}
           />

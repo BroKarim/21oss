@@ -43,14 +43,6 @@ enum AnalyticsEventType {
   AD_CLICK
 }
 
-enum CuratedListType {
-  gallery
-  favicon
-  slider
-  carousel
-}
-
-
 enum ToolStatus {
   Draft
   Published
@@ -173,10 +165,7 @@ model Tool {
     // Relations
 
     license    License?    @relation(fields: [licenseId], references: [id], onDelete: SetNull)
-    categories Category[]  @relation("ToolCategories")
-    platforms  Platform[]  @relation("ToolPlatforms")
     stacks     Stack[]     @relation("ToolStacks")
-    curatedLists CuratedList[] @relation("CuratedListTools")
     type        ToolType @default(Tool)
     /// Subtype khusus saat `type = Template`
     templateType TemplateType?
@@ -220,18 +209,6 @@ model AnalyticsEvent {
   @@index([country])
 }
 
-model CuratedList {
-  id          String   @id @default(cuid())
-  title       String
-  url         String  @unique
-  description String?
-  type        CuratedListType @default(gallery)
-  tools       Tool[]   @relation("CuratedListTools")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-
 model ToolScreenshot {
   id         String   @id @default(cuid())
   tool       Tool     @relation(fields: [toolId], references: [id])
@@ -241,43 +218,6 @@ model ToolScreenshot {
   caption    String?   
 
   order      Int
-}
-
-
-model Category {
-  id          String   @id @default(cuid())
-  name        String   @db.Citext
-  slug        String   @unique
-  fullPath    String   @unique @default("")
-  label       String?
-  description String?  @db.Text
-  parentId    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  tools         Tool[]     @relation("ToolCategories")
-  parent        Category?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
-  subcategories Category[] @relation("CategoryHierarchy")
-
-  // Indexes
-  @@index([slug])
-  @@index([parentId])
-}
-
-model Platform {
-  id        String   @id @default(cuid())
-  name      String   @db.Citext
-  slug      String   @unique
-  iconUrl   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  tools Tool[] @relation("ToolPlatforms")
-
-  // Indexes
-  @@index([slug])
 }
 
 

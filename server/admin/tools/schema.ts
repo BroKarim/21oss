@@ -32,8 +32,6 @@ export const toolSchema = z.object({
   screenshotUrl: z.string().optional().or(z.literal("")),
   publishedAt: z.coerce.date().nullish(),
   status: z.nativeEnum(ToolStatus).default("Draft"),
-  categories: z.array(z.string()).optional(),
-  platforms: z.array(z.string()).optional(),
   type: z.nativeEnum(ToolType).default(ToolType.Tool),
   templateType: z.nativeEnum(TemplateType).optional().nullable(),
   stacks: z

@@ -1,11 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { categoryManyPayload } from "../categories/payloads";
 import { stackManyPayload } from "../stacks/payloads";
-
-export const toolCategoriesPayload = Prisma.validator<Prisma.Tool$categoriesArgs>()({
-  select: categoryManyPayload,
-  orderBy: { name: "asc" },
-});
 
 export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   id: true,
@@ -27,7 +21,6 @@ export const toolOnePayload = Prisma.validator<Prisma.ToolSelect>()({
   stacks: {
     select: stackManyPayload,
   },
-  categories: toolCategoriesPayload,
   screenshots: {
     select: {
       id: true,
@@ -55,7 +48,6 @@ export const ToolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
   publishedAt: true,
   license: true,
   updatedAt: true,
-  categories: toolCategoriesPayload,
   stacks: {
     select: stackManyPayload,
   },
@@ -65,12 +57,6 @@ export const ToolManyPayload = Prisma.validator<Prisma.ToolSelect>()({
       imageUrl: true,
       order: true,
       caption: true,
-    },
-  },
-  platforms: {
-    select: {
-      id: true,
-      name: true,
     },
   },
 });
@@ -87,7 +73,6 @@ export const toolManyExtendedPayload = Prisma.validator<Prisma.ToolSelect>()({
   publishedAt: true,
   createdAt: true,
   updatedAt: true,
-  categories: toolCategoriesPayload,
 });
 
 export const ToolListPayload = Prisma.validator<Prisma.ToolSelect>()({
@@ -108,12 +93,6 @@ export const ToolListPayload = Prisma.validator<Prisma.ToolSelect>()({
       slug: true,
     },
     orderBy: { name: "asc" },
-  },
-  platforms: {
-    select: {
-      id: true,
-      name: true,
-    },
   },
   screenshots: {
     select: {

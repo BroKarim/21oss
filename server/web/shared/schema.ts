@@ -10,10 +10,8 @@ export const filterParamsSchema = {
   page: parseAsInteger.withDefault(1),
   perPage: parseAsInteger.withDefault(35),
   alternative: parseAsArrayOf(parseAsString).withDefault([]),
-  category: parseAsArrayOf(parseAsString).withDefault([]),
   stack: parseAsArrayOf(parseAsString).withDefault([]),
   license: parseAsArrayOf(parseAsString).withDefault([]),
-  platform: parseAsArrayOf(parseAsString).withDefault([]),
 };
 
 export const filterParamsCache = createSearchParamsCache(filterParamsSchema);
@@ -70,7 +68,6 @@ export const resourcesFilterParamsSchema = {
   templateType: parseAsStringEnum<TemplateType | "all">(["all", TemplateType.Website, TemplateType.Mobile, TemplateType.Dashboard]).withDefault("all"),
   sort: parseAsStringEnum<SortOption>([...SORT_OPTIONS]),
   stack: parseAsString.withDefault(""),
-  platform: parseAsString.withDefault(""),
 };
 
 export const resourcesParamsCache = createSearchParamsCache(resourcesFilterParamsSchema);

@@ -12,7 +12,7 @@ export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhere
   cacheTag("tools");
   cacheLife("max");
 
-  const { q, page, sort, perPage, alternative, category, stack, license } = search;
+  const { q, page, sort, perPage, alternative, stack, license } = search;
   const start = performance.now();
   const skip = (page - 1) * perPage;
   const take = perPage;
@@ -27,7 +27,6 @@ export const searchTools = async (search: FilterSchema, where?: Prisma.ToolWhere
   const whereQuery: Prisma.ToolWhereInput = {
     status: ToolStatus.Published,
     ...(!!alternative.length && { alternatives: { some: { slug: { in: alternative } } } }),
-    ...(!!category.length && { categories: { some: { slug: { in: category } } } }),
     ...(!!stack.length && { stacks: { some: { slug: { in: stack } } } }),
     ...(!!license.length && { license: { slug: { in: license } } }),
   };
@@ -132,40 +131,6 @@ export const findToolsWithCategories = async ({ where, ...args }: Prisma.ToolFin
   });
 };
 
-type FilterOptions = {
-  subcategory: string;
-  stack?: string[];
-  q?: string;
-  license?: string[];
-  platform?: string[];
-};
-
-export const filterToolsBySubcategory = async ({ subcategory, stack, license, platform, q }: FilterOptions) => {
-  "use cache";
-  cacheTag("tools", `tools-subcat-${subcategory}`);
-  cacheLife("max");
-
-  const whereQuery: Prisma.ToolWhereInput = {
-    status: ToolStatus.Published,
-    categories: { some: { slug: subcategory } },
-
-    ...(stack?.length ? { stacks: { some: { slug: { in: stack } } } } : {}),
-    ...(license?.length ? { license: { slug: { in: license } } } : {}),
-    ...(platform?.length ? { platforms: { some: { slug: { in: platform } } } } : {}),
-  };
-
-  if (q) {
-    whereQuery.OR = [{ name: { contains: q, mode: "insensitive" } }, { tagline: { contains: q, mode: "insensitive" } }, { description: { contains: q, mode: "insensitive" } }];
-  }
-
-  return db.tool.findMany({
-    where: whereQuery,
-    select: ToolManyPayload,
-    orderBy: { publishedAt: "desc" },
-    take: 20,
-  });
-};
-
 export const findRecentTools = async ({ take = 12 }: { take?: number } = {}) => {
   return findTools({
     orderBy: { createdAt: "desc" },
@@ -212,26 +177,7 @@ export const findStackFilters = async () => {
   return featuredStacks;
 };
 
-// server/web/tools/queries.ts
-export const findPlatformFilters = async () => {
-  "use cache";
-
-  cacheTag("platform-filters");
-  cacheLife("max");
-
-  return db.platform.findMany({
-    orderBy: { name: "asc" },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      iconUrl: true,
-    },
-  });
-};
-
-
-function buildResourcesWhere({ type, stack, platform, templateType }: Pick<ResourcesParams, "type" | "stack" | "platform" | "templateType">): Prisma.ToolWhereInput {
+function buildResourcesWhere({ type, stack, templateType }: Pick<ResourcesParams, "type" | "stack" | "templateType">): Prisma.ToolWhereInput {
   const stackSlugs = stack?.split(",").filter(Boolean) ?? [];
 
   return {
@@ -246,16 +192,6 @@ function buildResourcesWhere({ type, stack, platform, templateType }: Pick<Resou
       : { type }),
 
     ...(type === ToolType.Template && templateType && templateType !== "all" ? { templateType } : {}),
-
-    ...(platform
-      ? {
-          platforms: {
-            some: {
-              slug: platform,
-            },
-          },
-        }
-      : {}),
 
     ...(stackSlugs.length
       ? {
@@ -307,7 +243,7 @@ export const groupPublishedTemplatesByTemplateType = async (): Promise<
 export const RESOURCES_PER_PAGE = 24;
 
 
-export const findResources = async ({ type, sort, stack, platform, templateType }: ResourcesParams, { take = RESOURCES_PER_PAGE, cursor }: { take?: number; cursor?: string } = {}) => {
+export const findResources = async ({ type, sort, stack, templateType }: ResourcesParams, { take = RESOURCES_PER_PAGE, cursor }: { take?: number; cursor?: string } = {}) => {
   "use cache";
 
   cacheTag("resources");
@@ -316,7 +252,7 @@ export const findResources = async ({ type, sort, stack, platform, templateType 
   // =====================
   // WHERE (HARD FILTER)
   // =====================
-  const where = buildResourcesWhere({ type, stack, platform, templateType });
+  const where = buildResourcesWhere({ type, stack, templateType });
   const stackSlugs = stack?.split(",").filter(Boolean) ?? [];
 
   // =====================

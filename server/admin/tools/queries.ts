@@ -56,8 +56,6 @@ export const findToolBySlug = async (slug: string) => {
   return db.tool.findUnique({
     where: { slug },
     include: {
-      categories: true,
-      platforms: true,
       stacks: true,
       screenshots: true,
     },
