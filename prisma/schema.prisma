@@ -49,25 +49,6 @@ enum ToolStatus {
 }
 
 
-enum StackType {
-  Tool
-  SaaS
-  Cloud
-  ETL
-  Analytics
-  Language
-  DB
-  CI
-  Framework
-  Hosting
-  API
-  Storage
-  Monitoring
-  Messaging
-  App
-  Network
-}
-
 model User {
   id            String    @id @default(cuid())
   name          String
@@ -225,7 +206,6 @@ model Stack {
   id          String    @id @default(cuid())
   name        String    @db.Citext
   slug        String    @unique
-  type        StackType @default(Tool)
   description String?
   website     String?
   faviconUrl  String?

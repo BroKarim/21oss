@@ -14,11 +14,15 @@ export const createStack = adminProcedure
     const normalized = normalizeStackInput(name);
     const slug = normalized.slug;
 
-    const existing = await db.stack.findUnique({ where: { slug } });
+    const existing = await db.stack.findUnique({
+      where: { slug },
+      select: { id: true, name: true, slug: true },
+    });
     if (existing) return existing;
 
     const stack = await db.stack.create({
       data: { name: normalized.name, slug },
+      select: { id: true, name: true, slug: true },
     });
 
     revalidateTag("stacks");
