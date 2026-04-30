@@ -35,6 +35,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -46,12 +49,13 @@ jobs:
           tags: ${{ steps.set_tag.outputs.image_tag }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64
+          # Build multi-arch manifest: Bitznet lama = amd64, Dokploy baru = arm64
+          platforms: linux/amd64,linux/arm64
           build-args: |
-            NEXT_PUBLIC_SITE_URL=https://www.21oss.com
-            NEXT_PUBLIC_SITE_EMAIL=brokariim@gmail.com
-            NEXT_PUBLIC_POSTHOG_HOST=https://us.i.posthog.com
-            NEXT_PUBLIC_POSTHOG_API_KEY=phc_82lC
+            NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL || 'https://www.21oss.com' }}
+            NEXT_PUBLIC_SITE_EMAIL=${{ vars.NEXT_PUBLIC_SITE_EMAIL || 'brokariim@gmail.com' }}
+            NEXT_PUBLIC_POSTHOG_HOST=${{ vars.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com' }}
+            NEXT_PUBLIC_POSTHOG_API_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_API_KEY || 'phc_82lC' }}
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest

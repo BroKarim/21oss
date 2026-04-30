@@ -1,4 +1,7 @@
-FROM node:22-alpine AS base
+# syntax=docker/dockerfile:1
+
+# Pakai target platform agar image final ikut arsitektur host saat buildx multi-arch.
+FROM --platform=$TARGETPLATFORM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat openssl
 # Aktifkan corepack untuk pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
