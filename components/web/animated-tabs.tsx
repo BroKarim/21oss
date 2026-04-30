@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 
 export interface AnimatedTabsProps {
   tabs: { label: string; value: string }[];
@@ -19,24 +19,40 @@ export function AnimatedTabs({ tabs, value, defaultValue, onValueChange, disable
 
   const containerRef = useRef<HTMLDivElement>(null);
   const activeTabRef = useRef<HTMLButtonElement>(null);
+  const isInitializedRef = useRef(false);
+  const [clipPath, setClipPath] = useState("inset(0 100% 0 0 round 14px)");
 
-  useEffect(() => {
+  const syncIndicator = useCallback(() => {
+    const container = containerRef.current;
+    const activeTabElement = activeTabRef.current;
+
+    if (!container || !activeTabElement || !activeValue) return;
+
+    const { offsetLeft, offsetWidth } = activeTabElement;
+    const clipLeft = offsetLeft + 8;
+    const clipRight = offsetLeft + offsetWidth + 8;
+
+    setClipPath(`inset(0 ${Number(100 - (clipRight / container.offsetWidth) * 100).toFixed()}% 0 ${Number((clipLeft / container.offsetWidth) * 100).toFixed()}% round 14px)`);
+  }, [activeValue]);
+
+  useLayoutEffect(() => {
+    syncIndicator();
+    isInitializedRef.current = true;
+  }, [syncIndicator]);
+
+  useLayoutEffect(() => {
     const container = containerRef.current;
 
-    if (container && activeValue) {
-      const activeTabElement = activeTabRef.current;
+    if (!container || typeof ResizeObserver === "undefined") return;
 
-      if (activeTabElement) {
-        const { offsetLeft, offsetWidth } = activeTabElement;
+    const observer = new ResizeObserver(() => syncIndicator());
+    observer.observe(container);
 
-        // Must match horizontal padding on root container (`px-2` => 8px)
-        const clipLeft = offsetLeft + 8;
-        const clipRight = offsetLeft + offsetWidth + 8;
+    const activeTabElement = activeTabRef.current;
+    if (activeTabElement) observer.observe(activeTabElement);
 
-        container.style.clipPath = `inset(0 ${Number(100 - (clipRight / container.offsetWidth) * 100).toFixed()}% 0 ${Number((clipLeft / container.offsetWidth) * 100).toFixed()}% round 14px)`;
-      }
-    }
-  }, [activeValue]);
+    return () => observer.disconnect();
+  }, [syncIndicator, activeValue]);
 
   const setValue = (next: string) => {
     if (disabled) return;
@@ -46,7 +62,14 @@ export function AnimatedTabs({ tabs, value, defaultValue, onValueChange, disable
 
   return (
     <div className={["relative bg-secondary/50 border border-primary/10 flex w-fit flex-col items-center rounded-full py-1 px-2", className].filter(Boolean).join(" ")}>
-      <div ref={containerRef} className="absolute z-10 w-full overflow-hidden [clip-path:inset(0px_75%_0px_0%_round_17px)] [transition:clip-path_0.25s_ease]">
+      <div
+        ref={containerRef}
+        style={{
+          clipPath,
+          transition: isInitializedRef.current ? "clip-path 0.25s ease" : "none",
+        }}
+        className="absolute z-10 w-full overflow-hidden"
+      >
         <div className="relative flex w-full justify-center bg-primary">
           {tabs.map((tab, index) => (
             <button

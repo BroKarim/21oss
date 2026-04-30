@@ -12,7 +12,7 @@ type ClassifyInput = {
 
 type Match = { kind: "stack" | "text"; keyword: string };
 
-export const MOBILE_STACK_KEYWORDS = [
+const MOBILE_STACK_KEYWORDS = [
   "react-native",
   "expo",
   "flutter",
@@ -24,7 +24,7 @@ export const MOBILE_STACK_KEYWORDS = [
   "ionic",
 ] as const;
 
-export const MOBILE_TEXT_KEYWORDS = [
+const MOBILE_TEXT_KEYWORDS = [
   "react native",
   "react-native",
   "mobile",
@@ -37,7 +37,7 @@ export const MOBILE_TEXT_KEYWORDS = [
   "mobile app",
 ] as const;
 
-export const DASHBOARD_TEXT_KEYWORDS = [
+const DASHBOARD_TEXT_KEYWORDS = [
   "dashboard",
   "admin",
   "admin panel",

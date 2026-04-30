@@ -13,15 +13,3 @@ export const adManyPayload: Prisma.AdSelect = {
   startsAt: true,
   endsAt: true,
 };
-
-export const adOnePayload = Prisma.validator<Prisma.AdSelect>()({
-  name: true,
-  description: true,
-  websiteUrl: true,
-  imageUrl: true,
-  buttonLabel: true,
-  faviconUrl: true,
-  type: true,
-});
-
-export type AdOne = Prisma.AdGetPayload<{ select: typeof adOnePayload }>;

@@ -59,13 +59,6 @@ export const findTools = async (search: ToolsTableSchema, where?: Prisma.ToolWhe
   return { tools, toolsTotal, pageCount };
 };
 
-export const findToolList = async () => {
-  return db.tool.findMany({
-    select: { id: true, name: true },
-    orderBy: { name: "asc" },
-  });
-};
-
 export const findToolBySlug = async (slug: string) => {
   return db.tool.findUnique({
     where: { slug },

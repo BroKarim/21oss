@@ -1,11 +1,7 @@
 "use server";
 
-import { findRecentTools, findResources, findStackFilters, countResources, groupPublishedTemplatesByTemplateType } from "@/server/web/tools/queries";
+import { findResources, findStackFilters, countResources } from "@/server/web/tools/queries";
 import { ResourcesParams } from "../shared/schema";
-
-export async function getRecentTools() {
-  return await findRecentTools({ take: 6 });
-}
 
 export async function getResources(searchParams: ResourcesParams) {
   return await findResources(searchParams);
@@ -13,10 +9,6 @@ export async function getResources(searchParams: ResourcesParams) {
 
 export async function getResourcesCount(params: ResourcesParams) {
   return await countResources(params);
-}
-
-export async function getTemplateGroups() {
-  return await groupPublishedTemplatesByTemplateType();
 }
 
 export async function loadMoreResources(searchParams: ResourcesParams, cursor: string) {

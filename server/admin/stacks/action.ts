@@ -25,23 +25,3 @@ export const createStack = adminProcedure
 
     return stack;
   });
-
-export const deleteStack = adminProcedure
-  .createServerAction()
-  .input(
-    z.object({
-      slug: z.string().min(1, "Slug is required"),
-    })
-  )
-  .handler(async ({ input: { slug } }) => {
-    const stack = await db.stack.findUnique({ where: { slug } });
-    if (!stack) {
-      throw new Error(`Stack with slug "${slug}" not found`);
-    }
-
-    await db.stack.delete({ where: { slug } });
-
-    revalidateTag("stacks");
-
-    return { success: true, message: `Stack "${stack.name}" deleted successfully` };
-  });

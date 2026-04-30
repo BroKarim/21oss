@@ -77,13 +77,25 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
     resources: ToolList[];
     nextCursor: string | undefined;
     hasMore: boolean;
+    sourceKey: string;
   } | null>(null);
 
-  const effectiveFeed = feed ?? baseFeed;
+  const baseFeedKey = useMemo(
+    () => `${initialResources[0]?.id ?? "empty"}:${initialResources.length}:${initialNextCursor ?? "end"}:${initialHasMore ? 1 : 0}:${totalCount}`,
+    [initialResources, initialNextCursor, initialHasMore, totalCount],
+  );
+
+  const effectiveFeed = feed?.sourceKey === baseFeedKey ? feed : baseFeed;
   const [isPending, startTransition] = useTransition();
   const sentinelRef = useRef<HTMLDivElement>(null);
   const loadingRef = useRef(false);
   const activeStackSlugs = useMemo(() => filters.stack?.split(",").filter(Boolean) ?? [], [filters.stack]);
+
+  useEffect(() => {
+    loadingRef.current = false;
+    setFeed(null);
+  }, [baseFeedKey]);
+
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
     return effectiveFeed.resources.filter((tool) => {
@@ -100,9 +112,18 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
         const cursor = effectiveFeed.nextCursor!;
         const result = await loadMoreResources({ ...filters, type: ToolType.Template }, cursor);
         setFeed((prev) => {
-          const current = prev ?? baseFeed;
+          const current = prev?.sourceKey === baseFeedKey ? prev : null;
+          const currentResources = current?.resources ?? baseFeed.resources;
+          const currentNextCursor = current?.nextCursor ?? baseFeed.nextCursor;
+          const currentHasMore = current?.hasMore ?? baseFeed.hasMore;
+
+          if (!currentNextCursor || !currentHasMore) {
+            return current;
+          }
+
           return {
-            resources: [...current.resources, ...result.items],
+            sourceKey: baseFeedKey,
+            resources: [...currentResources, ...result.items],
             nextCursor: result.nextCursor,
             hasMore: result.hasMore,
           };
@@ -111,7 +132,7 @@ export function ResourceGrid({ initialResources, initialNextCursor, initialHasMo
         loadingRef.current = false;
       }
     });
-  }, [filters, effectiveFeed.nextCursor, effectiveFeed.hasMore, baseFeed]);
+  }, [filters, effectiveFeed.nextCursor, effectiveFeed.hasMore, baseFeed, baseFeedKey]);
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;

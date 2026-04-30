@@ -30,16 +30,3 @@ export const findFreeStuffPerks = cache(
     revalidate: 3600,
   }
 );
-
-export const findPerkBySlug = cache(
-  async (slug: string) => {
-    return db.devPerk.findUnique({
-      where: { slug },
-    });
-  },
-  ["perk-detail"],
-  {
-    tags: ["free-stuff"],
-    revalidate: 3600,
-  }
-);

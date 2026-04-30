@@ -40,5 +40,3 @@ export const FEATURED_STACK = [
   "React Native",
   // Motion / 3D / Email
 ];
-
-export const FEATURED_PLATFORM = ["api--sdk", "plugin--extension", "mobile-app", "desktop-app", "website", "library", "package", "cli", "other", "e-commerce", "docs", "blog"];
