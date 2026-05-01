@@ -16,11 +16,20 @@ import { env } from "@/env";
 
 export const metadata: Metadata = {
   title: {
-    default: siteConfig.name,
+    default: "21OSS: Curated Open-Source Templates, Components, Tools & Assets",
     template: `%s · ${siteConfig.name}`,
   },
+  applicationName: siteConfig.name,
   description: siteConfig.description,
   metadataBase: new URL("https://21oss.com"),
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: [{ url: "/favicon.ico", type: "image/x-icon" }],
+    shortcut: ["/favicon.ico"],
+  },
+  category: "technology",
   keywords: ["open source templates", "ui components library", "frontend resources", "developer tools", "icons library", "ship faster", "nextjs ui components", "tailwind templates"],
 
   authors: [
@@ -34,7 +43,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteConfig.url,
-    title: siteConfig.name,
+    title: "21OSS: Curated Open-Source Templates, Components, Tools & Assets",
     description: siteConfig.description,
     siteName: siteConfig.name,
     images: [
@@ -45,6 +54,13 @@ export const metadata: Metadata = {
         alt: siteConfig.name,
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    creator: "@brokariim",
+    title: "21OSS: Curated Open-Source Templates, Components, Tools & Assets",
+    description: siteConfig.description,
+    images: [siteConfig.ogImage],
   },
   robots: {
     index: true,

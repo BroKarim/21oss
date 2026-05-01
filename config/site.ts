@@ -3,8 +3,9 @@ import { env } from "@/env";
 export const siteConfig = {
   name: "21OSS",
   slug: "21oss",
-  tagline: "Open-source resources to ship projects faster",
-  description: "A curated open-source library of templates, icons, and UI components to help developers ship projects faster.",
+  tagline: "Curated open-source templates, components, tools, and assets for developers who want to ship faster",
+  description:
+    "Discover curated open-source templates, UI components, developer tools, icons, and assets that help developers and makers ship products faster.",
   alphabet: "abcdefghijklmnopqrstuvwxyz",
   url: env.NEXT_PUBLIC_SITE_URL,
   email: env.NEXT_PUBLIC_SITE_EMAIL,

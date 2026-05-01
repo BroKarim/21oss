@@ -1,15 +1,41 @@
 import type { SearchParams } from "nuqs/server";
 import { ToolType, AdType } from "@prisma/client";
+import type { Metadata } from "next";
 import { HomeClient } from "./_components/home-client";
 import { resourcesParamsCache } from "@/server/web/shared/schema";
 import { getResources, getStackFilters, getResourcesCount } from "@/server/web/tools/actions";
 import { getActiveAds, getActiveAdsByType } from "@/server/web/ads/queries";
+import { siteConfig } from "@/config/site";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = {
-  title: "Opensource Starter Templates",
-  description: "Discover Open-source templates, starters, or boilerplate to jumpstart your application or website build.",
+const homeTitle = "Open-Source Templates, Components, Tools & Assets";
+const homeDescription =
+  "Explore curated open-source templates, UI components, icons, tools, and assets for developers and makers who want to build and ship faster.";
+
+export const metadata: Metadata = {
+  title: homeTitle,
+  description: homeDescription,
+  openGraph: {
+    title: `${homeTitle} · ${siteConfig.name}`,
+    description: homeDescription,
+    url: siteConfig.url,
+    siteName: siteConfig.name,
+    images: [
+      {
+        url: siteConfig.ogImage,
+        width: 1200,
+        height: 630,
+        alt: "21OSS curated open-source resources",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${homeTitle} · ${siteConfig.name}`,
+    description: homeDescription,
+    images: [siteConfig.ogImage],
+  },
 };
 
 type HomePageProps = {
@@ -35,8 +61,8 @@ export default async function Page({ searchParams }: HomePageProps) {
       totalCount={totalCount}
       toolPageAds={toolPageAds}
       ads={ads}
-      title="Opensource Starter Templates"
-      description="Discover Open-source templates, starters, or boilerplate to jumpstart your application or website build."
+      title={homeTitle}
+      description={homeDescription}
     />
   );
 }

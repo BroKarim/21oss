@@ -7,10 +7,11 @@ export const metadataConfig: Metadata = {
     siteName: siteConfig.name,
     locale: "en_US",
     type: "website",
-    images: { url: `${siteConfig.url}/opengraph.png`, width: 1200, height: 630 },
+    images: { url: siteConfig.ogImage, width: 1200, height: 630 },
   },
   twitter: {
     creator: "@brokariim",
     card: "summary_large_image",
+    images: [siteConfig.ogImage],
   },
 };
