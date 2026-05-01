@@ -1,4 +1,4 @@
-name: Build and Deploy 21oss to VPS
+name: Build and Push 21oss to GHCR
 
 on:
   push:
@@ -12,12 +12,11 @@ env:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    # Native arm64 runner — match Dokploy VPS arch, no QEMU needed
+    runs-on: ubuntu-24.04-arm
     permissions:
       contents: read
       packages: write
-    outputs:
-      image_tag: ${{ steps.set_tag.outputs.image_tag }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -35,7 +34,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -47,59 +45,10 @@ jobs:
           tags: ${{ steps.set_tag.outputs.image_tag }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # VPS Dokploy = amd64, runner ubuntu-latest = amd64, no QEMU needed
-          platforms: linux/amd64
+          # arm64 native runner — Dokploy VPS = arm64
+          platforms: linux/arm64
           build-args: |
             NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL || 'https://www.21oss.com' }}
             NEXT_PUBLIC_SITE_EMAIL=${{ vars.NEXT_PUBLIC_SITE_EMAIL || 'brokariim@gmail.com' }}
             NEXT_PUBLIC_POSTHOG_HOST=${{ vars.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com' }}
             NEXT_PUBLIC_POSTHOG_API_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_API_KEY || 'phc_82lC' }}
-  deploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to VPS via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USERNAME }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            IMAGE_TAG="${{ needs.build-and-push.outputs.image_tag }}:latest"
-
-            # Login GHCR
-            if [ -z "${{ secrets.GHCR_TOKEN }}" ]; then
-              echo "❌ GHCR_TOKEN belum di-set di GitHub Secrets"
-              exit 1
-            fi
-            GHCR_USERNAME="${{ secrets.GHCR_USERNAME }}"
-            if [ -z "$GHCR_USERNAME" ]; then
-              GHCR_USERNAME="${{ secrets.VPS_USERNAME }}"
-            fi
-            if [ -z "$GHCR_USERNAME" ]; then
-              echo "❌ GHCR_USERNAME/VPS_USERNAME kosong"
-              exit 1
-            fi
-            echo "${{ secrets.GHCR_TOKEN }}" | sudo docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
-
-            # Pull dulu — kalau gagal STOP, jangan sentuh container lama
-            sudo docker pull $IMAGE_TAG || { echo "❌ Pull failed, aborting deploy"; exit 1; }
-
-            # Baru stop dan replace container lama
-            sudo docker stop dzenn-app || true
-            sudo docker rm dzenn-app || true
-
-            # Pastikan network tersedia
-            sudo docker network inspect dzenn_default >/dev/null 2>&1 || sudo docker network create dzenn_default
-
-            sudo docker run -d \
-              --name dzenn-app \
-              --restart unless-stopped \
-              --network dzenn_default \
-              -p 3000:3000 \
-              --env-file /var/www/21oss/.env \
-              $IMAGE_TAG
-
-            # Bersihkan image lama yang tidak terpakai (biar SSD 60GB gak penuh)
-            sudo docker image prune -af
-            echo "✅ Deploy sukses: $IMAGE_TAG"
