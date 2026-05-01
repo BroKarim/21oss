@@ -49,8 +49,8 @@ jobs:
           tags: ${{ steps.set_tag.outputs.image_tag }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          # Build multi-arch manifest: Bitznet lama = amd64, Dokploy baru = arm64
-          platforms: linux/amd64,linux/arm64
+          # Dokploy VPS = arm64
+          platforms: linux/arm64
           build-args: |
             NEXT_PUBLIC_SITE_URL=${{ vars.NEXT_PUBLIC_SITE_URL || 'https://www.21oss.com' }}
             NEXT_PUBLIC_SITE_EMAIL=${{ vars.NEXT_PUBLIC_SITE_EMAIL || 'brokariim@gmail.com' }}
