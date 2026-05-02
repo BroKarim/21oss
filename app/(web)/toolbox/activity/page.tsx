@@ -1,8 +1,6 @@
 import { ActivityBuilder } from "@/components/web/toolbox/activity/builder";
 import { siteConfig } from "@/config/site";
-import { getStackFilters } from "@/server/web/tools/actions";
 import type { Metadata } from "next";
-import { WebShell } from "../../_components/web-shell";
 
 export const dynamic = "force-dynamic";
 
@@ -34,14 +32,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function ActivityPage() {
-  const stacks = await getStackFilters();
-
+export default function ActivityPage() {
   return (
-    <WebShell stacks={stacks}>
-      <div className="min-h-screen bg-background/50">
-        <ActivityBuilder />
-      </div>
-    </WebShell>
+    <div className="min-h-screen bg-background/50">
+      <ActivityBuilder />
+    </div>
   );
 }
