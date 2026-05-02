@@ -12,7 +12,7 @@ export type FiltersContextType = {
   updateFilters: (values: Partial<Values<typeof resourcesFilterParamsSchema>>) => void;
 };
 
-const FiltersContext = createContext<FiltersContextType>(null!);
+const FiltersContext = createContext<FiltersContextType | null>(null);
 
 export type FiltersProviderProps = {
   enableSort?: boolean;
@@ -38,7 +38,7 @@ const FiltersProvider = ({ children, enableSort = true, enableFilters = false }:
 const useFilters = () => {
   const context = use(FiltersContext);
 
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useFilters must be used within a FiltersProvider");
   }
 

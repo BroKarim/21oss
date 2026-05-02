@@ -1,0 +1,210 @@
+"use client";
+
+import { cn } from "@/lib/utils";
+import type { ActivityGraphPalette, ActivityGraphTheme, ActivityGraphVariant } from "@/lib/toolbox/activity/schema";
+import { addDays, eachDayOfInterval, endOfWeek, format, startOfWeek, subDays } from "date-fns";
+
+export interface ContributionDay {
+  date: string;
+  count: number;
+}
+
+type GitHubActivityGraphProps = {
+  data: ContributionDay[];
+  title?: string;
+  subtitle?: string;
+  totalContributions?: number;
+  palette?: ActivityGraphPalette;
+  theme?: ActivityGraphTheme;
+  variant?: ActivityGraphVariant;
+  className?: string;
+};
+
+const PALETTE_MAP: Record<ActivityGraphPalette, string[]> = {
+  github: ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"],
+  emerald: ["#ecfdf5", "#a7f3d0", "#6ee7b7", "#34d399", "#059669"],
+  ocean: ["#eff6ff", "#93c5fd", "#60a5fa", "#2563eb", "#1d4ed8"],
+  sunset: ["#fff7ed", "#fdba74", "#fb923c", "#f97316", "#c2410c"],
+};
+
+const THEME_MAP: Record<ActivityGraphTheme, { shell: string; panel: string; muted: string; label: string; strong: string; border: string }> = {
+  light: {
+    shell: "border-slate-200 bg-white text-slate-950 shadow-sm",
+    panel: "bg-slate-50/90",
+    muted: "text-slate-600",
+    label: "text-slate-500",
+    strong: "text-slate-950",
+    border: "border-slate-200",
+  },
+  dark: {
+    shell: "border-white/10 bg-[#0b1220] text-white shadow-[0_18px_80px_rgba(0,0,0,0.28)]",
+    panel: "bg-white/[0.04]",
+    muted: "text-slate-300",
+    label: "text-slate-400",
+    strong: "text-white",
+    border: "border-white/10",
+  },
+};
+
+const WEEKS = 53;
+const DAYS = 7;
+
+function getColor(count: number, colors: string[]) {
+  if (count <= 0) return colors[0];
+  if (count === 1) return colors[1];
+  if (count <= 3) return colors[2];
+  if (count <= 6) return colors[3];
+  return colors[4] ?? colors[colors.length - 1];
+}
+
+function getWeekMatrix() {
+  const today = new Date();
+  const startDate = subDays(today, 364);
+  const firstWeekStart = startOfWeek(startDate, { weekStartsOn: 0 });
+
+  return Array.from({ length: WEEKS }, (_, weekIndex) => {
+    const currentWeekStart = addDays(firstWeekStart, weekIndex * DAYS);
+
+    return eachDayOfInterval({
+      start: currentWeekStart,
+      end: endOfWeek(currentWeekStart, { weekStartsOn: 0 }),
+    });
+  });
+}
+
+function getVariantShell(variant: ActivityGraphVariant, theme: ActivityGraphTheme) {
+  if (variant === "minimal") {
+    return theme === "dark" ? "rounded-[28px] border border-white/10 bg-[#09111d] p-5" : "rounded-[28px] border border-slate-200 bg-white p-5";
+  }
+
+  if (variant === "spotlight") {
+    return theme === "dark"
+      ? "rounded-[32px] border border-cyan-400/20 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.18),_transparent_32%),linear-gradient(180deg,#0f172a_0%,#020617_100%)] p-5"
+      : "rounded-[32px] border border-sky-200 bg-[radial-gradient(circle_at_top_left,_rgba(125,211,252,0.35),_transparent_36%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] p-5";
+  }
+
+  return theme === "dark" ? "rounded-[30px] border border-white/10 bg-[#0b1220] p-5" : "rounded-[30px] border border-slate-200 bg-white p-5";
+}
+
+function getVariantGrid(variant: ActivityGraphVariant) {
+  if (variant === "minimal") return "gap-[5px]";
+  if (variant === "spotlight") return "gap-1.5";
+  return "gap-1";
+}
+
+function getMonthLabel(week: Date[]) {
+  const firstDay = week[0];
+
+  return firstDay.getDate() <= 7 ? format(firstDay, "MMM") : "";
+}
+
+export function GitHubActivityGraph({
+  data,
+  title = "brokariim",
+  subtitle = "Last 12 months of activity",
+  totalContributions,
+  palette = "github",
+  theme = "dark",
+  variant = "card",
+  className,
+}: GitHubActivityGraphProps) {
+  const colors = PALETTE_MAP[palette];
+  const themeStyles = THEME_MAP[theme];
+  const weeks = getWeekMatrix();
+  const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  const contributionMap = new Map(
+    data.map((item) => {
+      const key = format(new Date(item.date), "yyyy-MM-dd");
+      return [key, item.count] as const;
+    }),
+  );
+
+  const total = totalContributions ?? data.reduce((sum, item) => sum + item.count, 0);
+
+  return (
+    <section className={cn(themeStyles.shell, getVariantShell(variant, theme), className)}>
+      <div className="flex flex-col gap-5">
+        <div className={cn("flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between", variant === "minimal" && "gap-3")}>
+          <div className="space-y-1">
+            <p className={cn("text-xs font-medium uppercase tracking-[0.24em]", themeStyles.label)}>Preview</p>
+            <h3 className={cn("text-xl font-semibold tracking-tight", themeStyles.strong)}>{title}</h3>
+            <p className={cn("text-sm", themeStyles.muted)}>{subtitle}</p>
+          </div>
+
+          <div className={cn("grid grid-cols-2 gap-3 rounded-2xl border p-3 text-left sm:min-w-56", themeStyles.border, themeStyles.panel)}>
+            <div>
+              <p className={cn("text-[11px] uppercase tracking-[0.2em]", themeStyles.label)}>Variant</p>
+              <p className={cn("mt-1 text-sm font-medium capitalize", themeStyles.strong)}>{variant}</p>
+            </div>
+            <div>
+              <p className={cn("text-[11px] uppercase tracking-[0.2em]", themeStyles.label)}>Theme</p>
+              <p className={cn("mt-1 text-sm font-medium capitalize", themeStyles.strong)}>{theme}</p>
+            </div>
+            <div className="col-span-2">
+              <p className={cn("text-[11px] uppercase tracking-[0.2em]", themeStyles.label)}>Total activity</p>
+              <p className={cn("mt-1 text-lg font-semibold", themeStyles.strong)}>{total.toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className={cn("overflow-x-auto rounded-2xl border p-4", themeStyles.border, themeStyles.panel)}>
+          <div className="min-w-[760px]">
+            <div className="mb-3 grid grid-cols-[40px_repeat(53,minmax(0,1fr))] items-center gap-1">
+              <span />
+              {weeks.map((week, index) => (
+                <span key={`${week[0]?.toISOString() ?? index}-month`} className={cn("text-[10px] font-medium", themeStyles.label)}>
+                  {getMonthLabel(week)}
+                </span>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-[40px_1fr] gap-3">
+              <div className="grid grid-rows-7 gap-1 pt-0.5">
+                {dayLabels.map((day) => (
+                  <span key={day} className={cn("flex h-3 items-center text-[10px]", themeStyles.label)}>
+                    {day}
+                  </span>
+                ))}
+              </div>
+
+              <div className={cn("flex", getVariantGrid(variant))}>
+                {weeks.map((week, weekIndex) => (
+                  <div key={`${week[0]?.toISOString() ?? weekIndex}-week`} className={cn("flex flex-col", getVariantGrid(variant))}>
+                    {week.map((day) => {
+                      const key = format(day, "yyyy-MM-dd");
+                      const count = contributionMap.get(key) ?? 0;
+
+                      return (
+                        <div
+                          key={key}
+                          className={cn(
+                            "size-3 rounded-[4px] border border-black/5 transition-transform duration-150 hover:scale-110",
+                            variant === "minimal" && "size-[11px] rounded-[3px]",
+                            variant === "spotlight" && "size-[13px] rounded-[5px]",
+                          )}
+                          style={{ backgroundColor: getColor(count, colors) }}
+                          title={`${format(day, "PPP")}: ${count} contributions`}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 text-xs">
+          <span className={themeStyles.label}>Less</span>
+          {colors.map((color) => (
+            <div key={color} className="size-3 rounded-[4px] border border-black/5" style={{ backgroundColor: color }} />
+          ))}
+          <span className={themeStyles.label}>More</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export const GitHubActivity = GitHubActivityGraph;
