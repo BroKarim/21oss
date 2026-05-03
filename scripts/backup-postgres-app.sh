@@ -22,23 +22,64 @@ S3_PREFIX="${S3_PREFIX:-backups}"
 TIMEZONE="${TIMEZONE:-Asia/Jakarta}"
 DISCORD_WEBHOOK_URL="${DISCORD_WEBHOOK_URL:-}"
 RCLONE_REMOTE_NAME="${RCLONE_REMOTE_NAME:-OPENLAYOUTBACKUP}"
+DISCORD_USERNAME="${DISCORD_USERNAME:-OpenLayout Backup Bot}"
+DISCORD_AVATAR_URL="${DISCORD_AVATAR_URL:-}"
+APP_NAME="${APP_NAME:-21oss}"
 
 TIMESTAMP="$(TZ="$TIMEZONE" date +%Y%m%d_%H%M%S)"
+HUMAN_TIME="$(TZ="$TIMEZONE" date '+%Y-%m-%d %H:%M:%S %Z')"
 FILE_NAME="postgres_${TIMESTAMP}.sql.gz"
 FILE_PATH="${BACKUP_DIR}/${FILE_NAME}"
 S3_OBJECT="$(printf '%s:%s/%s/%s' "$RCLONE_REMOTE_NAME" "$S3_BUCKET" "${S3_PREFIX%/}" "$FILE_NAME")"
 
+json_escape() {
+  printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
 notify_discord() {
   status="$1"
-  message="$2"
+  title="$2"
+  color="$3"
+  details="$4"
 
   if [ -z "$DISCORD_WEBHOOK_URL" ]; then
     return 0
   fi
 
+  ESCAPED_TITLE="$(json_escape "$title")"
+  ESCAPED_DETAILS="$(json_escape "$details")"
+  ESCAPED_APP_NAME="$(json_escape "$APP_NAME")"
+  ESCAPED_HOSTNAME="$(json_escape "$(hostname)")"
+  ESCAPED_FILE_NAME="$(json_escape "$FILE_NAME")"
+  ESCAPED_HUMAN_TIME="$(json_escape "$HUMAN_TIME")"
+  ESCAPED_S3_PATH="$(json_escape "s3://${S3_BUCKET}/${S3_PREFIX%/}/")"
+
+  AVATAR_FRAGMENT=""
+  if [ -n "$DISCORD_AVATAR_URL" ]; then
+    ESCAPED_AVATAR_URL="$(json_escape "$DISCORD_AVATAR_URL")"
+    AVATAR_FRAGMENT=", \"avatar_url\": \"${ESCAPED_AVATAR_URL}\""
+  fi
+
   curl -fsSL -X POST "$DISCORD_WEBHOOK_URL" \
     -H "Content-Type: application/json" \
-    -d "$(printf '{"content":"[%s] %s"}' "$status" "$message")" >/dev/null || true
+    -d "{
+      \"username\": \"${DISCORD_USERNAME}\"${AVATAR_FRAGMENT},
+      \"embeds\": [
+        {
+          \"title\": \"${ESCAPED_TITLE}\",
+          \"description\": \"${ESCAPED_DETAILS}\",
+          \"color\": ${color},
+          \"fields\": [
+            { \"name\": \"App\", \"value\": \"${ESCAPED_APP_NAME}\", \"inline\": true },
+            { \"name\": \"Host\", \"value\": \"${ESCAPED_HOSTNAME}\", \"inline\": true },
+            { \"name\": \"Status\", \"value\": \"${status}\", \"inline\": true },
+            { \"name\": \"File\", \"value\": \"${ESCAPED_FILE_NAME}\", \"inline\": false },
+            { \"name\": \"Target\", \"value\": \"${ESCAPED_S3_PATH}\", \"inline\": false },
+            { \"name\": \"Time\", \"value\": \"${ESCAPED_HUMAN_TIME}\", \"inline\": false }
+          ]
+        }
+      ]
+    }" >/dev/null || true
 }
 
 cleanup() {
@@ -46,7 +87,7 @@ cleanup() {
 }
 
 on_error() {
-  notify_discord "FAILURE" "Backup gagal: ${FILE_NAME} on $(hostname)"
+  notify_discord "FAILURE" "Backup Failed" "15158332" "Database backup gagal. Cek log schedule task Dokploy untuk detail error."
 }
 
 trap cleanup EXIT INT TERM HUP
@@ -74,6 +115,6 @@ rclone copyto "$FILE_PATH" "$S3_OBJECT" \
   --checkers 1 \
   --stats-one-line
 
-notify_discord "SUCCESS" "Backup sukses: ${FILE_NAME} (${FILE_SIZE}) -> s3://${S3_BUCKET}/${S3_PREFIX%/}/"
+notify_discord "SUCCESS" "Backup Success" "3066993" "Backup PostgreSQL selesai dan berhasil di-upload. Size: ${FILE_SIZE}"
 
 echo "Backup uploaded: ${S3_OBJECT}"
