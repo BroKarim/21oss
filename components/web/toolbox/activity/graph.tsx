@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  ContributionGraph,
+  ContributionGraphBlock,
+  ContributionGraphCalendar,
+  ContributionGraphFooter,
+  ContributionGraphLegend,
+  ContributionGraphTotalCount,
+  type Activity,
+} from "@/components/web/toolbox/activity/template/by-chandai/contribution-graph";
 import { cn } from "@/lib/utils";
 import type { ActivityGraphPalette, ActivityGraphTheme, ActivityGraphVariant } from "@/lib/toolbox/activity/schema";
 import { addDays, eachDayOfInterval, endOfWeek, format, startOfWeek, subDays } from "date-fns";
@@ -98,16 +107,37 @@ function getMonthLabel(week: Date[]) {
   return firstDay.getDate() <= 7 ? format(firstDay, "MMM") : "";
 }
 
-export function GitHubActivityGraph({
-  data,
-  title = "brokariim",
-  subtitle = "Last 12 months of activity",
-  totalContributions,
-  palette = "github",
-  theme = "dark",
-  variant = "card",
-  className,
-}: GitHubActivityGraphProps) {
+function getContributionLevel(count: number) {
+  if (count <= 0) return 0;
+  if (count === 1) return 1;
+  if (count <= 3) return 2;
+  if (count <= 6) return 3;
+  return 4;
+}
+
+export function GitHubActivityGraph({ data, totalContributions, palette = "github", theme = "dark", variant = "card", className }: GitHubActivityGraphProps) {
+  if (variant === "chandai") {
+    const activityData: Activity[] = data.map((item) => ({
+      date: format(new Date(item.date), "yyyy-MM-dd"),
+      count: item.count,
+      level: getContributionLevel(item.count),
+    }));
+
+    const total = totalContributions ?? data.reduce((sum, item) => sum + item.count, 0);
+
+    return (
+      <section className={cn("overflow-hidden rounded-[30px] border border-border/70 bg-background p-5 md:p-6", className)}>
+        <ContributionGraph className="mx-auto py-2" data={activityData} blockSize={11} blockMargin={3} blockRadius={2} totalCount={total}>
+          <ContributionGraphCalendar className="no-scrollbar px-2">{({ activity, dayIndex, weekIndex }) => <ContributionGraphBlock activity={activity} dayIndex={dayIndex} weekIndex={weekIndex} />}</ContributionGraphCalendar>
+          <ContributionGraphFooter className="px-2">
+            <ContributionGraphTotalCount />
+            <ContributionGraphLegend />
+          </ContributionGraphFooter>
+        </ContributionGraph>
+      </section>
+    );
+  }
+
   const colors = PALETTE_MAP[palette];
   const themeStyles = THEME_MAP[theme];
   const weeks = getWeekMatrix();
@@ -120,35 +150,10 @@ export function GitHubActivityGraph({
     }),
   );
 
-  const total = totalContributions ?? data.reduce((sum, item) => sum + item.count, 0);
-
   return (
     <section className={cn(themeStyles.shell, getVariantShell(variant, theme), className)}>
       <div className="flex flex-col gap-5">
-        <div className={cn("flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between", variant === "minimal" && "gap-3")}>
-          <div className="space-y-1">
-            <p className={cn("text-xs font-medium uppercase tracking-[0.24em]", themeStyles.label)}>Preview</p>
-            <h3 className={cn("text-xl font-semibold tracking-tight", themeStyles.strong)}>{title}</h3>
-            <p className={cn("text-sm", themeStyles.muted)}>{subtitle}</p>
-          </div>
-
-          <div className={cn("grid grid-cols-2 gap-3 rounded-2xl border p-3 text-left sm:min-w-56", themeStyles.border, themeStyles.panel)}>
-            <div>
-              <p className={cn("text-[11px] uppercase tracking-[0.2em]", themeStyles.label)}>Variant</p>
-              <p className={cn("mt-1 text-sm font-medium capitalize", themeStyles.strong)}>{variant}</p>
-            </div>
-            <div>
-              <p className={cn("text-[11px] uppercase tracking-[0.2em]", themeStyles.label)}>Theme</p>
-              <p className={cn("mt-1 text-sm font-medium capitalize", themeStyles.strong)}>{theme}</p>
-            </div>
-            <div className="col-span-2">
-              <p className={cn("text-[11px] uppercase tracking-[0.2em]", themeStyles.label)}>Total activity</p>
-              <p className={cn("mt-1 text-lg font-semibold", themeStyles.strong)}>{total.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className={cn("overflow-x-auto rounded-2xl border p-4", themeStyles.border, themeStyles.panel)}>
+        <div className={cn("overflow-x-auto ")}>
           <div className="min-w-[760px]">
             <div className="mb-3 grid grid-cols-[40px_repeat(53,minmax(0,1fr))] items-center gap-1">
               <span />

@@ -3,7 +3,7 @@ import { parseGitHubUrl } from "./parse-github-url";
 
 export const ACTIVITY_GRAPH_THEMES = ["light", "dark"] as const;
 export const ACTIVITY_GRAPH_PALETTES = ["github", "emerald", "ocean", "sunset"] as const;
-export const ACTIVITY_GRAPH_VARIANTS = ["card", "minimal", "spotlight"] as const;
+export const ACTIVITY_GRAPH_VARIANTS = ["card", "minimal", "spotlight", "chandai"] as const;
 
 const githubUrlMessage = "Please enter a valid GitHub profile or repository URL";
 const githubProfileUrlMessage = "Please enter a valid GitHub profile URL";
