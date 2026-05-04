@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 export default function ActivityPage() {
   return (
-    <div className="min-h-screen bg-background/50">
+    <div className="min-h-screen overflow-x-hidden bg-background/50 [scrollbar-gutter:stable_both-edges]">
       <ActivityBuilder />
     </div>
   );

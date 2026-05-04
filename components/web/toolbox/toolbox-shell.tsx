@@ -19,7 +19,7 @@ const TOOLBOX_NAV_ITEMS = [
 
 export function ToolboxShell({ children }: ToolboxShellProps) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen overflow-x-hidden bg-background [scrollbar-gutter:stable_both-edges]">
       <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-4 md:px-8">
           <Logo className="shrink-0" />
@@ -34,7 +34,7 @@ export function ToolboxShell({ children }: ToolboxShellProps) {
         </div>
       </header>
 
-      <main>{children}</main>
+      <main className="overflow-x-hidden">{children}</main>
     </div>
   );
 }
