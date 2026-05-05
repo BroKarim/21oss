@@ -42,7 +42,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.set_tag.outputs.image_tag }}:latest
+          tags: |
+            ${{ steps.set_tag.outputs.image_tag }}:latest
+            ${{ steps.set_tag.outputs.image_tag }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           # arm64 native runner — Dokploy VPS = arm64
@@ -52,3 +54,14 @@ jobs:
             NEXT_PUBLIC_SITE_EMAIL=${{ vars.NEXT_PUBLIC_SITE_EMAIL || 'brokariim@gmail.com' }}
             NEXT_PUBLIC_POSTHOG_HOST=${{ vars.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com' }}
             NEXT_PUBLIC_POSTHOG_API_KEY=${{ vars.NEXT_PUBLIC_POSTHOG_API_KEY || 'phc_82lC' }}
+
+      - name: Trigger Dokploy deployment webhook
+        env:
+          DOKPLOY_DEPLOY_WEBHOOK_URL: ${{ secrets.DOKPLOY_DEPLOY_WEBHOOK_URL }}
+        run: |
+          if [ -z "$DOKPLOY_DEPLOY_WEBHOOK_URL" ]; then
+            echo "DOKPLOY_DEPLOY_WEBHOOK_URL not set, skip deploy webhook"
+            exit 0
+          fi
+
+          curl -fsS -X POST "$DOKPLOY_DEPLOY_WEBHOOK_URL"
