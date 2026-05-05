@@ -25,9 +25,14 @@ export type TemplateSearchDocument = {
   searchStyleTags: string[];
   searchSynonyms: string[];
   searchLocales: string[];
+  allText: string;
+  searchableText: string;
+  searchEmbeddingRef: string | null;
   embedding?: number[];
-  popularityScore?: number;
-  freshnessScore?: number;
+  popularityScore: number;
+  freshnessScore: number;
+  searchScore: number;
+  searchManualBoost: number;
 };
 
 export type TemplateSearchMetadataSource = {
@@ -39,6 +44,9 @@ export type TemplateSearchMetadataSource = {
   searchStyleTags?: string[];
   searchSynonyms?: string[];
   searchLocales?: string[];
+  searchEmbeddingRef?: string | null;
+  searchScore?: number | null;
+  searchManualBoost?: number;
   embedding?: number[];
 };
 

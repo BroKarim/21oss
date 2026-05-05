@@ -10,6 +10,7 @@ export const ToolListPayload = Prisma.validator<Prisma.ToolSelect>()({
   tagline: true,
   stars: true,
   forks: true,
+  pageviews: true,
   lastCommitDate: true,
   faviconUrl: true,
   searchMetadata: {
