@@ -24,6 +24,10 @@ export const env = createEnv({
     S3_SECRET_ACCESS_KEY: z.string().min(1),
     S3_PUBLIC_URL: z.string().optional(),
     OPENROUTER_API_KEY: z.string().min(1),
+    MEILI_HOST: z.string().min(1).url(),
+    MEILI_MASTER_KEY: z.string().min(1),
+    MEILI_INDEX_TEMPLATES: z.string().min(1).default("templates"),
+    MEILI_SEARCH_KEY: z.string().min(1).optional(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.string().url().min(1),

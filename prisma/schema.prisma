@@ -26,8 +26,6 @@ enum PerkType {
   Other
 }
 
-
-
 enum AdType {
   Banner
   ToolPage
@@ -48,16 +46,15 @@ enum ToolStatus {
   Published
 }
 
-
 model User {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
   name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
+  email         String   @unique
+  emailVerified Boolean  @default(false)
   image         String?
-  role          String    @default("user")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  role          String   @default("user")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // Relations
   accounts Account[]
@@ -100,10 +97,10 @@ model Ad {
 }
 
 enum ToolType {
-  Tool        
-  Template    
-  Component  
-  Asset      
+  Tool
+  Template
+  Component
+  Asset
 }
 
 enum TemplateType {
@@ -113,46 +110,47 @@ enum TemplateType {
 }
 
 model Tool {
-    id              String    @id @default(cuid())
-    name            String    @db.Citext
-    slug            String    @unique
-    websiteUrl      String?   @unique 
-    repositoryUrl   String   @unique
-    demoUrl         String?
-    affiliateUrl    String?
-    tagline         String?
-    description     String?
-    content         String?
-    stars           Int       @default(0)
-    forks           Int       @default(0)
-    faviconUrl      String?
-    screenshotUrl   String?
-    screenshots     ToolScreenshot[]
-    discountCode    String?
-    discountAmount  String?
-    firstCommitDate DateTime?
-    lastCommitDate  DateTime?
-    pageviews       Int?       @default(0)
-    status          ToolStatus @default(Draft)
-    publishedAt     DateTime?
-    isTweeted       Boolean    @default(false)
-    createdAt       DateTime  @default(now())
-    updatedAt       DateTime  @updatedAt
+  id              String           @id @default(cuid())
+  name            String           @db.Citext
+  slug            String           @unique
+  websiteUrl      String?          @unique
+  repositoryUrl   String           @unique
+  demoUrl         String?
+  affiliateUrl    String?
+  tagline         String?
+  description     String?
+  content         String?
+  stars           Int              @default(0)
+  forks           Int              @default(0)
+  faviconUrl      String?
+  screenshotUrl   String?
+  screenshots     ToolScreenshot[]
+  discountCode    String?
+  discountAmount  String?
+  firstCommitDate DateTime?
+  lastCommitDate  DateTime?
+  pageviews       Int?             @default(0)
+  status          ToolStatus       @default(Draft)
+  publishedAt     DateTime?
+  isTweeted       Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
-    // Foreign Keys
-    licenseId    String?
-    inspiredById String?
+  // Foreign Keys
+  licenseId    String?
+  inspiredById String?
 
-    // Relations
+  // Relations
 
-    license    License?    @relation(fields: [licenseId], references: [id], onDelete: SetNull)
-    stacks     Stack[]     @relation("ToolStacks")
-    type        ToolType @default(Tool)
-    /// Subtype khusus saat `type = Template`
-    templateType TemplateType?
-    likes      Like[]
-    reports    Report[]
-    analyticsEvents AnalyticsEvent[]
+  license         License?            @relation(fields: [licenseId], references: [id], onDelete: SetNull)
+  stacks          Stack[]             @relation("ToolStacks")
+  type            ToolType            @default(Tool)
+  /// Subtype khusus saat `type = Template`
+  templateType    TemplateType?
+  searchMetadata  ToolSearchMetadata?
+  likes           Like[]
+  reports         Report[]
+  analyticsEvents AnalyticsEvent[]
 
   // Indexes
   @@index([slug])
@@ -161,14 +159,40 @@ model Tool {
   @@index([type, templateType])
 }
 
+model ToolSearchMetadata {
+  id                 String    @id @default(cuid())
+  toolId             String    @unique
+  searchSummary      String?
+  searchKeywords     String[]  @default([])
+  searchUseCases     String[]  @default([])
+  searchAudiences    String[]  @default([])
+  searchFeatures     String[]  @default([])
+  searchStyleTags    String[]  @default([])
+  searchSynonyms     String[]  @default([])
+  searchLocales      String[]  @default([])
+  searchEmbeddingRef String?
+  searchScore        Float?
+  searchManualBoost  Int       @default(0)
+  searchEnrichedAt   DateTime?
+  searchVersion      Int       @default(1)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  tool Tool @relation(fields: [toolId], references: [id], onDelete: Cascade)
+
+  @@index([toolId])
+  @@index([searchEnrichedAt])
+  @@index([searchVersion])
+}
+
 model AnalyticsEvent {
-  id        String             @id @default(cuid())
-  type      AnalyticsEventType
-  url       String
+  id   String             @id @default(cuid())
+  type AnalyticsEventType
+  url  String
 
   // Optional references
-  toolId    String?
-  adId      String?
+  toolId String?
+  adId   String?
 
   // User origin metadata
   referrer  String?
@@ -176,11 +200,11 @@ model AnalyticsEvent {
   userAgent String?
 
   // Timestamp
-  createdAt DateTime           @default(now())
+  createdAt DateTime @default(now())
 
   // Relations
-  tool      Tool?              @relation(fields: [toolId], references: [id], onDelete: SetNull)
-  ad        Ad?                @relation(fields: [adId], references: [id], onDelete: SetNull)
+  tool Tool? @relation(fields: [toolId], references: [id], onDelete: SetNull)
+  ad   Ad?   @relation(fields: [adId], references: [id], onDelete: SetNull)
 
   // Indexes
   @@index([type])
@@ -191,26 +215,25 @@ model AnalyticsEvent {
 }
 
 model ToolScreenshot {
-  id         String   @id @default(cuid())
-  tool       Tool     @relation(fields: [toolId], references: [id])
-  toolId     String
+  id     String @id @default(cuid())
+  tool   Tool   @relation(fields: [toolId], references: [id])
+  toolId String
 
-  imageUrl   String
-  caption    String?   
+  imageUrl String
+  caption  String?
 
-  order      Int
+  order Int
 }
 
-
 model Stack {
-  id          String    @id @default(cuid())
-  name        String    @db.Citext
-  slug        String    @unique
+  id          String   @id @default(cuid())
+  name        String   @db.Citext
+  slug        String   @unique
   description String?
   website     String?
   faviconUrl  String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relations  
   tools Tool[] @relation("ToolStacks")
@@ -234,22 +257,22 @@ model License {
 }
 
 model DevPerk {
-  id          String      @id @default(cuid())
-  name        String      @db.Citext
-  slug        String      @unique
+  id          String  @id @default(cuid())
+  name        String  @db.Citext
+  slug        String  @unique
   logoUrl     String?
-  value       String?     
+  value       String?
   description String?
   claimUrl    String?
 
-  type        PerkType   
-  tags        String[]    
-  isFree      Boolean     @default(false)    
-  isHot       Boolean     @default(false)
-  isNew       Boolean     @default(false)
+  type   PerkType
+  tags   String[]
+  isFree Boolean  @default(false)
+  isHot  Boolean  @default(false)
+  isNew  Boolean  @default(false)
 
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Index
   @@index([slug])
@@ -258,13 +281,12 @@ model DevPerk {
   @@index([isHot])
 }
 
-
 model ToolSubmission {
-  id         String   @id @default(cuid())
+  id         String           @id @default(cuid())
   websiteUrl String
   githubUrl  String
   status     SubmissionStatus @default(Pending)
-  createdAt  DateTime @default(now())
+  createdAt  DateTime         @default(now())
 
   @@index([status])
   @@index([createdAt])
@@ -316,7 +338,6 @@ model Account {
   @@index([userId])
 }
 
-
 model Report {
   id        String     @id @default(cuid())
   type      ReportType
@@ -327,8 +348,8 @@ model Report {
   updatedAt DateTime   @updatedAt
 
   // Relations
-  user    User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  tool    Tool?    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  tool Tool? @relation(fields: [toolId], references: [id], onDelete: Cascade)
 
   // Indexes
   @@index([toolId])
@@ -342,8 +363,8 @@ model Like {
   createdAt DateTime @default(now())
 
   // Relations
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tool    Tool    @relation(fields: [toolId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tool Tool @relation(fields: [toolId], references: [id], onDelete: Cascade)
 
   // Indexes
   @@unique([userId, toolId])

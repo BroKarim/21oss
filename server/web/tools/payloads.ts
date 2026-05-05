@@ -12,6 +12,23 @@ export const ToolListPayload = Prisma.validator<Prisma.ToolSelect>()({
   forks: true,
   lastCommitDate: true,
   faviconUrl: true,
+  searchMetadata: {
+    select: {
+      searchSummary: true,
+      searchKeywords: true,
+      searchUseCases: true,
+      searchAudiences: true,
+      searchFeatures: true,
+      searchStyleTags: true,
+      searchSynonyms: true,
+      searchLocales: true,
+      searchEmbeddingRef: true,
+      searchScore: true,
+      searchManualBoost: true,
+      searchEnrichedAt: true,
+      searchVersion: true,
+    },
+  },
   stacks: {
     select: {
       id: true,

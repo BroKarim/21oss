@@ -48,6 +48,9 @@ export const findTools = async (search: ToolsTableSchema, where?: Prisma.ToolWhe
       orderBy,
       take: perPage,
       skip: offset,
+      include: {
+        searchMetadata: true,
+      },
     }),
 
     db.tool.count({
@@ -63,6 +66,7 @@ export const findToolBySlug = async (slug: string) => {
   return db.tool.findUnique({
     where: { slug },
     include: {
+      searchMetadata: true,
       stacks: true,
       screenshots: true,
     },
