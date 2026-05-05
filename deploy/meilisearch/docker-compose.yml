@@ -4,7 +4,6 @@ services:
     container_name: openlayout-meilisearch
     restart: unless-stopped
     environment:
-      # Pastikan variabel ini ada di environment variables Dokploy
       MEILI_MASTER_KEY: ${MEILI_MASTER_KEY}
       MEILI_ENV: production
       MEILI_NO_ANALYTICS: "true"
