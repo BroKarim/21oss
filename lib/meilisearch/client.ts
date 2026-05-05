@@ -1,5 +1,3 @@
-import "server-only";
-
 import { Meilisearch } from "meilisearch";
 import { env } from "@/env";
 

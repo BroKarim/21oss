@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { Settings } from "meilisearch";
 
 export const templateIndexSettings: Settings = {

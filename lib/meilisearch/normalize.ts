@@ -1,5 +1,3 @@
-import "server-only";
-
 type SearchQueryNormalization = {
   raw: string;
   normalized: string;

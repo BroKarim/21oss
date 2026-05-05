@@ -1,5 +1,3 @@
-import "server-only";
-
 import type { TemplateSearchDocument, TemplateSearchMetadataSource } from "@/lib/meilisearch/types";
 
 type TemplateDocumentSource = {

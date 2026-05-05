@@ -1,5 +1,3 @@
-import "server-only";
-
 import { getTemplatesIndex } from "@/lib/meilisearch/indexes";
 import { buildSearchQuery, normalizeSearchQuery } from "@/lib/meilisearch/normalize";
 import type { TemplateSearchParams } from "@/lib/meilisearch/types";

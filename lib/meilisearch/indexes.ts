@@ -1,5 +1,3 @@
-import "server-only";
-
 import { env } from "@/env";
 import { meiliClient } from "@/lib/meilisearch/client";
 import { templateIndexSettings } from "@/lib/meilisearch/settings";
