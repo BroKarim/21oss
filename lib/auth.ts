@@ -6,10 +6,38 @@ import { cache } from "react";
 import { env } from "@/env";
 import { db } from "@/services/db";
 
+function buildTrustedOrigins() {
+  const origins = new Set<string>();
+
+  const addOriginVariants = (value: string) => {
+    const url = new URL(value);
+
+    origins.add(url.origin);
+
+    if (url.hostname === "localhost" || url.hostname.endsWith(".localhost")) {
+      return;
+    }
+
+    if (url.hostname.startsWith("www.")) {
+      origins.add(`${url.protocol}//${url.hostname.slice(4)}${url.port ? `:${url.port}` : ""}`);
+      return;
+    }
+
+    origins.add(`${url.protocol}//www.${url.hostname}${url.port ? `:${url.port}` : ""}`);
+  };
+
+  addOriginVariants(env.BETTER_AUTH_URL);
+  addOriginVariants(env.NEXT_PUBLIC_SITE_URL);
+
+  return Array.from(origins);
+}
+
 export const auth = betterAuth({
+  baseURL: env.BETTER_AUTH_URL,
   database: prismaAdapter(db, {
     provider: "postgresql",
   }),
+  trustedOrigins: buildTrustedOrigins(),
 
   emailVerification: {
     enabled: false,
