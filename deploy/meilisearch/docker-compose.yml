@@ -11,6 +11,12 @@ services:
       - meili_data:/meili_data
     ports:
       - "7700:7700"
+    networks:
+      - dokploy-network
 
 volumes:
   meili_data:
+
+networks:
+  dokploy-network:
+    external: true
