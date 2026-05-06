@@ -19,6 +19,8 @@
     "fetch-templates": "tsx lib/github/fetch-templates.ts",
     "fetch-templates:bulk": "FETCH_MAX_PAGES=3 tsx lib/github/fetch-templates.ts",
     "meili:init": "node --import tsx scripts/meili-init.ts",
+    "meili:reindex": "node --import tsx scripts/meili-reindex.ts",
+    "search-enrich:backfill": "node --import tsx scripts/search-enrich-backfill.ts",
     "template-type:audit": "node --import tsx scripts/template-type-audit.ts",
     "template-type:backfill": "node --import tsx scripts/backfill-template-type.ts",
     "tool-search-metadata:backfill": "node --import tsx scripts/backfill-tool-search-metadata.ts"

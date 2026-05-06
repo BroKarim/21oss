@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { sendOpenRouterChatJson } from "@/lib/ai/openrouter";
 
+export const SEARCH_ENRICHMENT_VERSION = 1;
+
 export const searchEnrichmentSchema = z.object({
   summary: z.string().min(1).max(220),
   keywords: z.array(z.string().min(1).max(50)).max(12),
