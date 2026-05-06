@@ -7,6 +7,7 @@ import { Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { fetchAllToolRepositoryData } from "@/server/admin/tools/actions";
+import { SearchOpsMenu } from "./search-ops-menu";
 
 export function ToolsMaintenanceMenu() {
   const [isFetchingTemplates, setIsFetchingTemplates] = useState(false);
@@ -41,25 +42,28 @@ export function ToolsMaintenanceMenu() {
   const disabled = isFetchingTemplates || fetchRepos.isPending;
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="secondary" size="sm" prefix={<Wrench />} disabled={disabled}>
-          Maintenance
-        </Button>
-      </DropdownMenuTrigger>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="secondary" size="sm" prefix={<Wrench />} disabled={disabled}>
+            Maintenance
+          </Button>
+        </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem disabled={disabled} onSelect={() => void runFetchTemplates()}>
-          Fetch Templates
-        </DropdownMenuItem>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem disabled={disabled} onSelect={() => void runFetchTemplates()}>
+            Fetch Templates
+          </DropdownMenuItem>
 
-        <DropdownMenuSeparator />
+          <DropdownMenuSeparator />
 
-        <DropdownMenuItem disabled={disabled} onSelect={() => fetchRepos.execute({})}>
-          Fetch Repo Data (All)
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+          <DropdownMenuItem disabled={disabled} onSelect={() => fetchRepos.execute({})}>
+            Fetch Repo Data (All)
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <SearchOpsMenu />
+    </>
   );
 }
-
