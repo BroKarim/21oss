@@ -24,7 +24,9 @@ export function SearchOpsMenu() {
 
   const enrichBackfill = useServerAction(backfillTemplateSearchMetadata, {
     onSuccess: ({ data }) => {
-      toast.success(`Enrich done. total=${data.total}, refreshed=${data.refreshed}`);
+      toast.success(
+        `Enrich done. total=${data.total}, refreshed=${data.refreshed}, verified=${data.verified}, rows=${data.beforeCount}->${data.afterCount}`,
+      );
       setIsBusy(false);
     },
     onError: ({ err }) => {

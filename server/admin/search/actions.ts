@@ -65,6 +65,8 @@ export const backfillTemplateSearchMetadata = adminProcedure
   .createServerAction()
   .input(backfillSearchMetadataSchema)
   .handler(async ({ input }) => {
+    const beforeCount = await db.toolSearchMetadata.count();
+
     const templates = await db.tool.findMany({
       where: {
         type: ToolType.Template,
@@ -82,10 +84,27 @@ export const backfillTemplateSearchMetadata = adminProcedure
     });
 
     let refreshed = 0;
+    const processedIds: string[] = [];
 
     for (const template of templates) {
       await ensureTemplateSearchMetadata(template.id, { force: false });
       refreshed += 1;
+      processedIds.push(template.id);
+    }
+
+    const afterCount = await db.toolSearchMetadata.count();
+    const verified = processedIds.length
+      ? await db.toolSearchMetadata.count({
+          where: {
+            toolId: {
+              in: processedIds,
+            },
+          },
+        })
+      : 0;
+
+    if (processedIds.length > 0 && verified === 0) {
+      throw new Error("Search enrichment finished but no ToolSearchMetadata rows were persisted");
     }
 
     revalidateTag("tools");
@@ -93,5 +112,9 @@ export const backfillTemplateSearchMetadata = adminProcedure
     return {
       total: templates.length,
       refreshed,
+      beforeCount,
+      afterCount,
+      verified,
+      processedIds,
     };
   });
