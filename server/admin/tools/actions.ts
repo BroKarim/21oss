@@ -8,6 +8,7 @@ import { ToolStatus, ToolType, TemplateType, type Prisma } from "@prisma/client"
 import { removeS3Directories, uploadToS3Storage, optimizeImage } from "@/lib/media";
 import { getToolRepositoryData } from "@/lib/repositories";
 import { adminProcedure } from "@/lib/safe-actions";
+import { deleteTemplateDocument, syncTemplateDocument } from "@/lib/meilisearch/sync";
 import { toolSchema } from "@/server/admin/tools/schema";
 import { db } from "@/services/db";
 import { tryCatch } from "@/utils/helpers";
@@ -28,6 +29,18 @@ const autoFillSchema = z.object({
 
 const VALID_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const VALID_VIDEO_TYPES = ["video/mp4"];
+
+function scheduleTemplateSearchSync(toolIds: string[], options?: { force?: boolean }) {
+  after(async () => {
+    await Promise.allSettled(toolIds.map((toolId) => syncTemplateDocument(toolId, options)));
+  });
+}
+
+function scheduleTemplateSearchDelete(toolIds: string[]) {
+  after(async () => {
+    await Promise.allSettled(toolIds.map((toolId) => deleteTemplateDocument(toolId)));
+  });
+}
 
 const resolveLicenseUpdate = async (data: Prisma.ToolUpdateInput) => {
   const licenseRel = data.license as Prisma.ToolUpdateInput["license"] & {
@@ -145,6 +158,7 @@ export const upsertTool = adminProcedure
 
     revalidateTag("tools");
     revalidateTag(`tool-${tool.slug}`);
+    scheduleTemplateSearchSync([tool.id], { force: false });
 
     return tool;
   });
@@ -212,6 +226,7 @@ export const deleteTools = adminProcedure
       console.log("🗑️ Cleaning up S3 directories...");
       await removeS3Directories(tools.map((tool) => `tools/${tool.slug}`));
     });
+    scheduleTemplateSearchDelete(ids);
 
     console.log("🎉 Tools deletion completed successfully");
     return result;
@@ -248,6 +263,7 @@ export const bulkSetTemplateType = adminProcedure
     revalidatePath("/admin/tools");
     revalidateTag("tools");
     for (const tool of templateTools) revalidateTag(`tool-${tool.slug}`);
+    scheduleTemplateSearchSync(templateIds, { force: false });
 
     return { updated: res.count, skipped: ids.length - templateIds.length };
   });
@@ -459,6 +475,7 @@ export const fetchToolRepositoryData = adminProcedure
 
     revalidateTag("tools");
     revalidateTag(`tool-${tool.slug}`);
+    scheduleTemplateSearchSync([tool.id], { force: false });
   });
 
 export const fetchAllToolRepositoryData = adminProcedure
@@ -482,6 +499,7 @@ export const fetchAllToolRepositoryData = adminProcedure
     let successCount = 0;
     let errorCount = 0;
     let processedCount = 0;
+    const syncToolIds: string[] = [];
 
     for (const tool of tools) {
       processedCount++;
@@ -516,6 +534,7 @@ export const fetchAllToolRepositoryData = adminProcedure
       successCount++;
       console.log(`  ✅ SUCCESS (${toolDuration}ms)`);
       console.log(`  📈 Updated data: stars=${result.data.stars || "N/A"}, forks=${result.data.forks || "N/A"}`);
+      syncToolIds.push(tool.id);
 
       revalidateTag("tools");
       revalidateTag(`tool-${tool.slug}`);
@@ -549,6 +568,7 @@ export const fetchAllToolRepositoryData = adminProcedure
     console.log(`  🔄 Cache Revalidated: tools + ${successCount} individual tool tags`);
     console.log("🎯 fetchAllToolRepositoryData completed!");
     console.log("=".repeat(50));
+    if (syncToolIds.length) scheduleTemplateSearchSync(syncToolIds, { force: false });
 
     return {
       updated: successCount,
@@ -603,6 +623,7 @@ export const batchAutoFillDraftTools = adminProcedure
 
     let success = 0;
     let errors = 0;
+    const syncToolIds: string[] = [];
 
     for (let i = 0; i < tools.length; i++) {
       const tool = tools[i];
@@ -738,6 +759,7 @@ export const batchAutoFillDraftTools = adminProcedure
 
       success++;
       console.log(`  ✅ [${i + 1}/${tools.length}] ${tool.name} → Published (${stackNames.length} stacks)`);
+      syncToolIds.push(tool.id);
 
       // Progress summary every 10 items
       if ((i + 1) % 10 === 0) {
@@ -753,6 +775,7 @@ export const batchAutoFillDraftTools = adminProcedure
 
     // Revalidate once at the end (not per-item)
     revalidateTag("tools");
+    if (syncToolIds.length) scheduleTemplateSearchSync(syncToolIds, { force: false });
 
     const totalDuration = Math.round((Date.now() - startTime) / 1000);
     console.log("─".repeat(50));
