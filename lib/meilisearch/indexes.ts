@@ -1,15 +1,17 @@
 import { env } from "@/env";
-import { meiliClient } from "@/lib/meilisearch/client";
+import { getMeiliClient } from "@/lib/meilisearch/client";
 import { templateIndexSettings } from "@/lib/meilisearch/settings";
 import type { TemplateSearchDocument } from "@/lib/meilisearch/types";
 
 export const templatesIndexUid = env.MEILI_INDEX_TEMPLATES;
 
 export function getTemplatesIndex() {
-  return meiliClient.index<TemplateSearchDocument>(templatesIndexUid);
+  return getMeiliClient().index<TemplateSearchDocument>(templatesIndexUid);
 }
 
 export async function ensureTemplatesIndex() {
+  const meiliClient = getMeiliClient();
+
   try {
     await meiliClient.getRawIndex(templatesIndexUid);
   } catch {

@@ -5,6 +5,10 @@ const globalForMeili = globalThis as typeof globalThis & {
   meiliClient?: Meilisearch;
 };
 
+export function hasMeiliConfig() {
+  return Boolean(env.MEILI_HOST && env.MEILI_MASTER_KEY);
+}
+
 function getMeiliConfig() {
   if (!env.MEILI_HOST) {
     throw new Error("Missing required env: MEILI_HOST");
@@ -20,10 +24,16 @@ function getMeiliConfig() {
   };
 }
 
-export const meiliClient =
-  globalForMeili.meiliClient ??
-  new Meilisearch(getMeiliConfig());
+export function getMeiliClient() {
+  if (globalForMeili.meiliClient) {
+    return globalForMeili.meiliClient;
+  }
 
-if (process.env.NODE_ENV !== "production") {
-  globalForMeili.meiliClient = meiliClient;
+  const client = new Meilisearch(getMeiliConfig());
+
+  if (process.env.NODE_ENV !== "production") {
+    globalForMeili.meiliClient = client;
+  }
+
+  return client;
 }

@@ -1,3 +1,5 @@
+import type { TemplateType } from "@prisma/client";
+
 export type TemplateSearchDocument = {
   id: string;
   name: string;
@@ -51,13 +53,20 @@ export type TemplateSearchMetadataSource = {
 };
 
 export type TemplateSearchFilters = {
-  templateType?: string | null;
+  templateType?: TemplateType | null;
   stackSlugs?: string[];
 };
+
+export const templateSearchSortValues = ["relevance", "stars", "latest", "oldest", "name_asc", "name_desc", "forks"] as const;
+
+export type TemplateSearchSort = (typeof templateSearchSortValues)[number];
 
 export type TemplateSearchParams = {
   query: string;
   page?: number;
   limit?: number;
+  sort?: TemplateSearchSort | null;
   filters?: TemplateSearchFilters;
 };
+
+export type TemplateSearchSuggestion = Pick<TemplateSearchDocument, "id" | "name" | "slug" | "tagline" | "templateType">;

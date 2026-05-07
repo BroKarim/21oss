@@ -16,7 +16,7 @@ export const templateIndexSettings: Settings = {
     "allText",
   ],
   filterableAttributes: ["type", "templateType", "stackSlugs", "searchUseCases", "searchAudiences", "searchStyleTags", "searchLocales"],
-  sortableAttributes: ["stars", "publishedAt", "updatedAt", "lastCommitDate", "popularityScore", "freshnessScore", "searchScore"],
+  sortableAttributes: ["name", "stars", "forks", "publishedAt", "updatedAt", "lastCommitDate", "popularityScore", "freshnessScore", "searchScore"],
   displayedAttributes: [
     "id",
     "name",
