@@ -8,17 +8,22 @@ async function main() {
   const take = Number(process.env.TAKE ?? 50);
   const force = process.env.FORCE === "1";
 
+  const enriched = await db.toolSearchMetadata.findMany({
+    where: { tool: { type: ToolType.Template } },
+    select: { toolId: true },
+  });
+  const enrichedIds = new Set(enriched.map((e) => e.toolId));
+
   const templates = await db.tool.findMany({
     where: {
       type: ToolType.Template,
+      id: { notIn: [...enrichedIds] },
     },
     select: {
       id: true,
       slug: true,
     },
-    orderBy: {
-      updatedAt: "desc",
-    },
+    orderBy: { updatedAt: "desc" },
     take,
   });
 

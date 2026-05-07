@@ -90,6 +90,8 @@ export async function sendOpenRouterChatJson({
   };
 }
 
+const MAX_RETRIES = 3;
+
 export async function createOpenRouterEmbedding({
   input,
   title,
@@ -99,30 +101,42 @@ export async function createOpenRouterEmbedding({
   title: string;
   model?: string;
 }) {
-  const { data, error } = await tryCatch(
-    fetch("https://openrouter.ai/api/v1/embeddings", {
-      method: "POST",
-      headers: buildHeaders(title),
-      body: JSON.stringify({
-        model,
-        input,
-        encoding_format: "float",
-        input_type: "search_document",
-      }),
-    }).then((response) => parseJsonResponse<OpenRouterEmbeddingResponse>(response)),
-  );
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const { data, error } = await tryCatch(
+        fetch("https://openrouter.ai/api/v1/embeddings", {
+          method: "POST",
+          headers: buildHeaders(title),
+          body: JSON.stringify({
+            model,
+            input,
+            encoding_format: "float",
+            input_type: "search_document",
+          }),
+        }).then((response) =>
+          parseJsonResponse<OpenRouterEmbeddingResponse>(response),
+        ),
+      );
 
-  if (error || !data) {
-    throw error ?? new Error("OpenRouter embedding request failed");
+      if (error || !data) {
+        throw error ?? new Error("OpenRouter embedding request failed");
+      }
+
+      const embedding = data.data?.[0]?.embedding;
+      if (!embedding?.length) {
+        throw new Error("OpenRouter returned empty embedding");
+      }
+
+      return {
+        model: data.model ?? model,
+        embedding,
+      };
+    } catch (err) {
+      const isLastAttempt = attempt === MAX_RETRIES;
+      if (isLastAttempt) throw err;
+      console.warn(`[embedding] retry ${attempt}/${MAX_RETRIES} after:`, err);
+      await new Promise((r) => setTimeout(r, 1000 * attempt));
+    }
   }
-
-  const embedding = data.data?.[0]?.embedding;
-  if (!embedding?.length) {
-    throw new Error("OpenRouter returned empty embedding");
-  }
-
-  return {
-    model: data.model ?? model,
-    embedding,
-  };
+  throw new Error("Embedding retries exhausted");
 }

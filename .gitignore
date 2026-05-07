@@ -51,3 +51,6 @@ TOOLBOX.md
 dump_21oss.sql
 
 catatan/
+
+docker-compose.local.yml
+.docker/

@@ -40,6 +40,29 @@ function dedupe(values: string[]) {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
 
+function toStringArray(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === "string");
+}
+
+function extractJsonObject(text: string) {
+  const trimmed = text.trim();
+
+  if (trimmed.startsWith("{") && trimmed.endsWith("}")) {
+    return trimmed;
+  }
+
+  const withoutCodeFence = trimmed.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "");
+  const firstBrace = withoutCodeFence.indexOf("{");
+  const lastBrace = withoutCodeFence.lastIndexOf("}");
+
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    return withoutCodeFence.slice(firstBrace, lastBrace + 1);
+  }
+
+  return trimmed;
+}
+
 function buildPrompt(input: SearchEnrichmentInput) {
   const stackNames = input.stacks?.map((stack) => stack.name).join(", ") || "";
 
@@ -76,22 +99,42 @@ Guidance:
 }
 
 export async function generateSearchEnrichment(input: SearchEnrichmentInput): Promise<SearchEnrichment> {
-  const response = await sendOpenRouterChatJson({
-    title: "Template Search Enrichment",
-    system: SYSTEM_PROMPT,
-    prompt: buildPrompt(input),
-  });
+  const fallbackModels = ["openai/gpt-4o-mini", "anthropic/claude-sonnet-4.5"] as const;
 
-  const parsed = searchEnrichmentSchema.parse(JSON.parse(response.content));
+  for (let attempt = 0; attempt <= fallbackModels.length; attempt++) {
+    const model = attempt === 0
+      ? "deepseek/deepseek-v4-flash"
+      : fallbackModels[attempt - 1];
 
-  return {
-    summary: parsed.summary.trim(),
-    keywords: dedupe(parsed.keywords),
-    useCases: dedupe(parsed.useCases),
-    audiences: dedupe(parsed.audiences),
-    features: dedupe(parsed.features),
-    styleTags: dedupe(parsed.styleTags),
-    synonyms: dedupe(parsed.synonyms),
-    locales: dedupe(parsed.locales),
-  };
+    try {
+      const response = await sendOpenRouterChatJson({
+        title: "Template Search Enrichment",
+        system: SYSTEM_PROMPT,
+        prompt: buildPrompt(input),
+        primaryModel: model,
+      });
+
+      const parsed = JSON.parse(extractJsonObject(response.content)) as Record<string, unknown>;
+
+      return searchEnrichmentSchema.parse({
+        summary: String(parsed.summary ?? "").trim().slice(0, 220),
+        keywords: dedupe(toStringArray(parsed.keywords)).slice(0, 12),
+        useCases: dedupe(toStringArray(parsed.useCases)).slice(0, 10),
+        audiences: dedupe(toStringArray(parsed.audiences)).slice(0, 8),
+        features: dedupe(toStringArray(parsed.features)).slice(0, 12),
+        styleTags: dedupe(toStringArray(parsed.styleTags)).slice(0, 8),
+        synonyms: dedupe(toStringArray(parsed.synonyms)).slice(0, 12),
+        locales: dedupe(toStringArray(parsed.locales)).slice(0, 6),
+      });
+    } catch (error) {
+      const isLastAttempt = attempt === fallbackModels.length;
+      if (isLastAttempt) {
+        throw error;
+      }
+      const nextModel = fallbackModels[attempt];
+      console.warn(`[search-enrich] ${model} failed, retry with ${nextModel}:`, error);
+    }
+  }
+
+  throw new Error("All models exhausted");
 }
