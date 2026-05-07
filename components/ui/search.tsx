@@ -42,7 +42,7 @@ const SearchResults = ({ name, items, onItemSelect, getHref, onHover }: SearchRe
 };
 
 export const Search = () => {
-  const router = useRouter();
+  const { push } = useRouter();
   const search = useSearch();
   const [results, setResults] = useState<SearchResultData | undefined>();
   const [defaultTools, setDefaultTools] = useState<ToolSearchItem[]>([]);
@@ -123,7 +123,7 @@ export const Search = () => {
   };
 
   const navigateTo = (path: string) => {
-    router.push(path);
+    push(path);
     handleOpenChange(false);
   };
 

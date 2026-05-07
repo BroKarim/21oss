@@ -106,18 +106,25 @@ const normalizeStackKey = (value: string) => value.toLowerCase().replace(/[^a-z0
 
 export function Sidebar({ stacks }: { stacks: StackItem[] }) {
   const pathname = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { push } = useRouter();
+  const { get } = useSearchParams();
   const { filters, updateFilters } = useFilters();
-  const currentFilter = searchParams.get("filter");
+  const currentFilter = get("filter");
   const activeStacks = useMemo(() => filters.stack?.split(",").filter(Boolean) ?? [], [filters.stack]);
+  const activeStackSet = useMemo(() => new Set(activeStacks), [activeStacks]);
 
   const groupedStacks = useMemo(() => {
-    const groups = STACK_GROUPS.map((group) => ({
-      ...group,
-      normalizedKeywords: group.keywords.map(normalizeStackKey),
-      items: [] as StackItem[],
-    }));
+    const groups = STACK_GROUPS.map((group) => {
+      const normalizedKeywords = group.keywords.map(normalizeStackKey);
+
+      return {
+        ...group,
+        normalizedKeywords,
+        normalizedKeywordSet: new Set(normalizedKeywords),
+        normalizedKeywordPattern: normalizedKeywords.length ? new RegExp(normalizedKeywords.join("|")) : null,
+        items: [] as StackItem[],
+      };
+    });
 
     const otherGroup = groups.find((group) => group.key === "other");
 
@@ -127,7 +134,7 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
 
       for (const group of groups) {
         if (!group.normalizedKeywords.length) continue;
-        if (group.normalizedKeywords.some((keyword) => key === keyword || key.includes(keyword))) {
+        if (group.normalizedKeywordSet.has(key) || group.normalizedKeywordPattern?.test(key)) {
           group.items.push(stack);
           placed = true;
           break;
@@ -143,14 +150,14 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
   }, [stacks]);
 
   const toggleStack = (slug: string) => {
-    const next = activeStacks.includes(slug) ? activeStacks.filter((stack) => stack !== slug) : [...activeStacks, slug];
+    const next = activeStackSet.has(slug) ? activeStacks.filter((stack) => stack !== slug) : [...activeStacks, slug];
     if (pathname.startsWith("/student")) {
       const params = new URLSearchParams();
       if (next.length) {
         params.set("stack", next.join(","));
       }
       const query = params.toString();
-      router.push(query ? `/?${query}` : "/");
+      push(query ? `/?${query}` : "/");
       return;
     }
     updateFilters({ stack: next.join(",") });
@@ -209,7 +216,7 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
               <CollapsibleContent className="mt-1 space-y-0.5">
                 {group.items.length ? (
                   group.items.map((stack) => {
-                    const isActive = activeStacks.includes(stack.slug);
+                    const isActive = activeStackSet.has(stack.slug);
                     return (
                       <button
                         key={stack.id}

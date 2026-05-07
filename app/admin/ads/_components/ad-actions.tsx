@@ -17,7 +17,7 @@ type AdActionsProps = ComponentProps<typeof Button> & {
 
 export const AdActions = ({ className, ad, ...props }: AdActionsProps) => {
   const pathname = usePathname();
-  const router = useRouter();
+  const { push } = useRouter();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   return (
@@ -48,7 +48,7 @@ export const AdActions = ({ className, ad, ...props }: AdActionsProps) => {
         </DropdownMenuItem>
       </DropdownMenuContent>
 
-      <AdsDeleteDialog open={isDeleteOpen} onOpenChange={() => setIsDeleteOpen(false)} ads={[ad]} showTrigger={false} onSuccess={() => router.push("/admin/ads")} />
+      <AdsDeleteDialog open={isDeleteOpen} onOpenChange={() => setIsDeleteOpen(false)} ads={[ad]} showTrigger={false} onSuccess={() => push("/admin/ads")} />
     </DropdownMenu>
   );
 };

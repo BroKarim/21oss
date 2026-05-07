@@ -8,6 +8,7 @@ type HomeClientProps = {
   stacks: StackItem[];
   initialResources: ToolList[];
   initialNextCursor: string | undefined;
+  initialNextPage: number | null;
   initialHasMore: boolean;
   totalCount: number;
   toolPageAds: any[];
@@ -20,6 +21,7 @@ export function HomeClient({
   stacks,
   initialResources,
   initialNextCursor,
+  initialNextPage,
   initialHasMore,
   totalCount,
   toolPageAds,
@@ -40,6 +42,7 @@ export function HomeClient({
           stacks={stacks}
           initialResources={initialResources}
           initialNextCursor={initialNextCursor}
+          initialNextPage={initialNextPage}
           initialHasMore={initialHasMore}
           totalCount={totalCount}
           toolPageAds={toolPageAds}

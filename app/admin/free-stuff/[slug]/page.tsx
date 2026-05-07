@@ -11,12 +11,14 @@ type PageProps = {
 
 const UpdateFreeStuffPage = async ({ params }: PageProps) => {
   const { slug } = await params;
-  const allTags = await getAllUniqueTags();
+  const allTagsPromise = getAllUniqueTags();
   const freeStuff = await findFreeStuffBySlug(slug);
 
   if (!freeStuff) {
     return notFound();
   }
+
+  const allTags = await allTagsPromise;
 
   return (
     <Wrapper size="md">

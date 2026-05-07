@@ -48,7 +48,7 @@ type ToolFormProps = ComponentProps<"form"> & {
 };
 
 export function ToolForm({ className, title, tool, stacksPromise, ...props }: ToolFormProps) {
-  const router = useRouter();
+  const { push } = useRouter();
   const stackOptions = use(stacksPromise);
   const [isStatusPending, setIsStatusPending] = useState(false);
   const [originalStatus, setOriginalStatus] = useState(tool?.status ?? ToolStatus.Draft);
@@ -173,7 +173,7 @@ export function ToolForm({ className, title, tool, stacksPromise, ...props }: To
       }
 
       if (!tool || data.slug !== tool?.slug) {
-        router.push(`/admin/tools/${data.slug}`);
+        push(`/admin/tools/${data.slug}`);
       }
     },
 

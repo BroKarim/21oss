@@ -6,6 +6,8 @@ import { resourcesParamsCache } from "@/server/web/shared/schema";
 import { getResources, getStackFilters, getResourcesCount } from "@/server/web/tools/actions";
 import { getActiveAds, getActiveAdsByType } from "@/server/web/ads/queries";
 import { siteConfig } from "@/config/site";
+import { searchTemplates } from "@/lib/meilisearch/search";
+import { buildTemplateSearchParams, hasTemplateSearchQuery } from "@/server/web/tools/search";
 
 export const dynamic = "force-dynamic";
 
@@ -44,19 +46,36 @@ type HomePageProps = {
 
 export default async function Page({ searchParams }: HomePageProps) {
   const params = resourcesParamsCache.parse(await searchParams);
-  const [stacks, result, ads, totalCount, toolPageAds] = await Promise.all([
-    getStackFilters(),
-    getResources({ ...params, type: ToolType.Template }),
-    getActiveAds(),
-    getResourcesCount({ ...params, type: ToolType.Template }),
-    getActiveAdsByType(AdType.ToolPage),
-  ]);
+  const [stacks, ads, toolPageAds] = await Promise.all([getStackFilters(), getActiveAds(), getActiveAdsByType(AdType.ToolPage)]);
+  const isSearchMode = hasTemplateSearchQuery(params);
+
+  if (isSearchMode) {
+    const result = await searchTemplates(buildTemplateSearchParams(params));
+
+    return (
+      <HomeClient
+        stacks={stacks}
+        initialResources={result.items}
+        initialNextCursor={undefined}
+        initialNextPage={result.nextPage}
+        initialHasMore={result.nextPage !== null}
+        totalCount={result.total}
+        toolPageAds={toolPageAds}
+        ads={ads}
+        title={homeTitle}
+        description={homeDescription}
+      />
+    );
+  }
+
+  const [result, totalCount] = await Promise.all([getResources({ ...params, type: ToolType.Template }), getResourcesCount({ ...params, type: ToolType.Template })]);
 
   return (
     <HomeClient
       stacks={stacks}
       initialResources={result.items}
       initialNextCursor={result.nextCursor}
+      initialNextPage={null}
       initialHasMore={result.hasMore}
       totalCount={totalCount}
       toolPageAds={toolPageAds}

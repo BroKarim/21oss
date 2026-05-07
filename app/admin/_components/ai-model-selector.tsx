@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion, AnimatePresence, MotionConfig, Variants } from "framer-motion";
+import { AnimatePresence, LazyMotion, MotionConfig, domAnimation, m, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/button-shadcn";
 import { cn } from "@/lib/utils";
 import { ChevronDown, Brain, Zap, Sparkles } from "lucide-react";
@@ -23,14 +23,14 @@ interface AIModelSelectorProps {
 }
 
 const IconWrapper = ({ icon: Icon, isHovered, color }: { icon: React.ElementType; isHovered: boolean; color: string }) => (
-  <motion.div className="w-4 h-4 mr-2 relative" initial={false} animate={isHovered ? { scale: 1.2 } : { scale: 1 }}>
+  <m.div className="w-4 h-4 mr-2 relative" initial={false} animate={isHovered ? { scale: 1.2 } : { scale: 1 }}>
     <Icon className="w-4 h-4" />
     {isHovered && (
-      <motion.div className="absolute inset-0" style={{ color }} initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 0.5, ease: "easeInOut" }}>
+      <m.div className="absolute inset-0" style={{ color }} initial={{ pathLength: 0, opacity: 0 }} animate={{ pathLength: 1, opacity: 1 }} transition={{ duration: 0.5, ease: "easeInOut" }}>
         <Icon className="w-4 h-4" strokeWidth={2} />
-      </motion.div>
+      </m.div>
     )}
-  </motion.div>
+  </m.div>
 );
 
 const containerVariants: Variants = {
@@ -71,118 +71,120 @@ export function AIModelSelector({ models, selectedModel, onModelChange, onAutoFi
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="inline-flex -space-x-px divide-x divide-primary-foreground/30 rounded-lg shadow-sm shadow-black/5 rtl:space-x-reverse">
-        <Button type="button" variant="secondary" size="sm" disabled={isLoading} onClick={onAutoFill} className="rounded-r-none border-r-0 focus:z-10">
-          {isLoading ? "Filling..." : "Auto Fill"}{" "}
-        </Button>
-
-        <div className="relative" ref={dropdownRef}>
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            onClick={() => setIsOpen(!isOpen)}
-            className={cn("rounded-l-none px-2 focus:z-10 transition-all duration-200", isOpen && "bg-secondary/80")}
-            aria-expanded={isOpen}
-            aria-haspopup="true"
-          >
-            <motion.div
-              animate={{ rotate: isOpen ? 180 : 0 }}
-              transition={{ duration: 0.2 }}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                width: "16px",
-                height: "16px",
-              }}
-            >
-              <ChevronDown className="h-4 w-4" aria-hidden="true" />
-            </motion.div>
+      <LazyMotion features={domAnimation}>
+        <div className="inline-flex -space-x-px divide-x divide-primary-foreground/30 rounded-lg shadow-sm shadow-black/5 rtl:space-x-reverse">
+          <Button type="button" variant="secondary" size="sm" disabled={isLoading} onClick={onAutoFill} className="rounded-r-none border-r-0 focus:z-10">
+            {isLoading ? "Filling..." : "Auto Fill"}{" "}
           </Button>
 
-          <AnimatePresence>
-            {isOpen && (
-              <motion.div
-                initial={{ opacity: 1, y: 0, height: 0 }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  height: "auto",
-                  transition: {
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 30,
-                    mass: 1,
-                  },
+          <div className="relative" ref={dropdownRef}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsOpen(!isOpen)}
+              className={cn("rounded-l-none px-2 focus:z-10 transition-all duration-200", isOpen && "bg-secondary/80")}
+              aria-expanded={isOpen}
+              aria-haspopup="true"
+            >
+              <m.div
+                animate={{ rotate: isOpen ? 180 : 0 }}
+                transition={{ duration: 0.2 }}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "16px",
+                  height: "16px",
                 }}
-                exit={{
-                  opacity: 0,
-                  y: 0,
-                  height: 0,
-                  transition: {
-                    type: "spring",
-                    stiffness: 500,
-                    damping: 30,
-                    mass: 1,
-                  },
-                }}
-                className="absolute right-0 top-full mt-2 z-50"
-                onKeyDown={handleKeyDown}
-                style={{ minWidth: "220px" }}
               >
-                <motion.div
-                  className={cn("rounded-lg border border-border bg-popover p-1 shadow-lg")}
-                  initial={{ borderRadius: 8 }}
+                <ChevronDown className="h-4 w-4" aria-hidden="true" />
+              </m.div>
+            </Button>
+
+            <AnimatePresence>
+              {isOpen && (
+                <m.div
+                  initial={{ opacity: 1, y: 0, height: 0 }}
                   animate={{
-                    borderRadius: 12,
-                    transition: { duration: 0.2 },
+                    opacity: 1,
+                    y: 0,
+                    height: "auto",
+                    transition: {
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30,
+                      mass: 1,
+                    },
                   }}
-                  style={{ transformOrigin: "top" }}
+                  exit={{
+                    opacity: 0,
+                    y: 0,
+                    height: 0,
+                    transition: {
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 30,
+                      mass: 1,
+                    },
+                  }}
+                  className="absolute right-0 top-full mt-2 z-50"
+                  onKeyDown={handleKeyDown}
+                  style={{ minWidth: "220px" }}
                 >
-                  <motion.div className="py-2 relative" variants={containerVariants} initial="hidden" animate="visible">
-                    <motion.div
-                      layoutId="hover-highlight"
-                      className="absolute inset-x-1 bg-accent rounded-md"
-                      animate={{
-                        y: models.findIndex((m) => (hoveredModel || selectedModel) === m.value) * 40,
-                        height: 40,
-                      }}
-                      transition={{
-                        type: "spring",
-                        bounce: 0.15,
-                        duration: 0.5,
-                      }}
-                    />
-                    {models.map((model) => (
-                      <motion.button
-                        key={model.value}
-                        onClick={() => {
-                          onModelChange(model.value);
-                          setIsOpen(false);
+                  <m.div
+                    className={cn("rounded-lg border border-border bg-popover p-1 shadow-lg")}
+                    initial={{ borderRadius: 8 }}
+                    animate={{
+                      borderRadius: 12,
+                      transition: { duration: 0.2 },
+                    }}
+                    style={{ transformOrigin: "top" }}
+                  >
+                    <m.div className="py-2 relative" variants={containerVariants} initial="hidden" animate="visible">
+                      <m.div
+                        layoutId="hover-highlight"
+                        className="absolute inset-x-1 bg-accent rounded-md"
+                        animate={{
+                          y: models.findIndex((model) => (hoveredModel || selectedModel) === model.value) * 40,
+                          height: 40,
                         }}
-                        onHoverStart={() => setHoveredModel(model.value)}
-                        onHoverEnd={() => setHoveredModel(null)}
-                        className={cn(
-                          "relative flex w-full items-center px-4 py-2.5 text-sm rounded-md",
-                          "transition-colors duration-150",
-                          "focus:outline-none",
-                          selectedModel === model.value || hoveredModel === model.value ? "text-foreground" : "text-muted-foreground"
-                        )}
-                        whileTap={{ scale: 0.98 }}
-                        variants={itemVariants}
-                      >
-                        <IconWrapper icon={model.icon} isHovered={hoveredModel === model.value} color={model.color} />
-                        {model.label}
-                      </motion.button>
-                    ))}
-                  </motion.div>
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                        transition={{
+                          type: "spring",
+                          bounce: 0.15,
+                          duration: 0.5,
+                        }}
+                      />
+                      {models.map((model) => (
+                        <m.button
+                          key={model.value}
+                          onClick={() => {
+                            onModelChange(model.value);
+                            setIsOpen(false);
+                          }}
+                          onHoverStart={() => setHoveredModel(model.value)}
+                          onHoverEnd={() => setHoveredModel(null)}
+                          className={cn(
+                            "relative flex w-full items-center px-4 py-2.5 text-sm rounded-md",
+                            "transition-colors duration-150",
+                            "focus:outline-none",
+                            selectedModel === model.value || hoveredModel === model.value ? "text-foreground" : "text-muted-foreground"
+                          )}
+                          whileTap={{ scale: 0.98 }}
+                          variants={itemVariants}
+                        >
+                          <IconWrapper icon={model.icon} isHovered={hoveredModel === model.value} color={model.color} />
+                          {model.label}
+                        </m.button>
+                      ))}
+                    </m.div>
+                  </m.div>
+                </m.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
-      </div>
+      </LazyMotion>
     </MotionConfig>
   );
 }

@@ -16,7 +16,7 @@ type FreeStuffActionsProps = ComponentProps<typeof Button> & {
 
 export const FreeStuffActions = ({ className, perk, ...props }: FreeStuffActionsProps) => {
   const pathname = usePathname();
-  const router = useRouter();
+  const { push } = useRouter();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   return (
@@ -61,7 +61,7 @@ export const FreeStuffActions = ({ className, perk, ...props }: FreeStuffActions
         items={[perk]}
         showTrigger={false}
         onSuccess={() => {
-          router.push("/admin/free-stuff");
+          push("/admin/free-stuff");
         }}
       />
     </DropdownMenu>

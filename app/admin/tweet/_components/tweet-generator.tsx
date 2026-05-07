@@ -23,7 +23,7 @@ export type TweetSuggestion = {
 };
 
 export function TweetGenerator() {
-  const router = useRouter();
+  const { refresh } = useRouter();
   const [suggestions, setSuggestions] = useState<TweetSuggestion[]>([]);
   const [model, setModel] = useState("anthropic/claude-sonnet-4.5");
   const [isModelOpen, setIsModelOpen] = useState(false);
@@ -31,7 +31,7 @@ export function TweetGenerator() {
   const { execute, isPending } = useServerAction(generateTweetSuggestions, {
     onSuccess: ({ data }) => {
       setSuggestions(data.suggestions ?? []);
-      router.refresh();
+      refresh();
     },
     onError: ({ err }) => toast.error(`Failed to generate tweets: ${err.message}`),
   });

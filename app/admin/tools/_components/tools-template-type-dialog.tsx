@@ -20,7 +20,7 @@ type ToolsTemplateTypeDialogProps = ComponentProps<typeof Dialog> & {
 type TabValue = "unspecified" | TemplateType;
 
 export function ToolsTemplateTypeDialog({ tools, showTrigger = true, onSuccess, ...props }: ToolsTemplateTypeDialogProps) {
-  const router = useRouter();
+  const { refresh } = useRouter();
   const [value, setValue] = useState<TabValue>(TemplateType.Website);
 
   const templateTools = useMemo(() => tools.filter((t) => t.type === ToolType.Template), [tools]);
@@ -31,7 +31,7 @@ export function ToolsTemplateTypeDialog({ tools, showTrigger = true, onSuccess, 
       props.onOpenChange?.(false);
       toast.success(`Updated ${data.updated} tools${data.skipped ? `, skipped ${data.skipped}` : ""}`);
       onSuccess?.();
-      router.refresh();
+      refresh();
     },
     onError: ({ err }) => toast.error(err.message),
   });
@@ -100,4 +100,3 @@ export function ToolsTemplateTypeDialog({ tools, showTrigger = true, onSuccess, 
     </Dialog>
   );
 }
-

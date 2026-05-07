@@ -20,14 +20,14 @@ type TweetedTool = {
 };
 
 export function TweetedToolsTable({ tools }: { tools: TweetedTool[] }) {
-  const router = useRouter();
+  const { refresh } = useRouter();
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const { execute, isPending } = useServerAction(resetTweetedTools, {
     onSuccess: ({ data }) => {
       toast.success(`Removed ${data.updated} tools from tweeted list`);
       setSelectedIds([]);
-      router.refresh();
+      refresh();
     },
     onError: ({ err }) => toast.error(err.message),
   });

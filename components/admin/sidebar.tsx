@@ -10,14 +10,14 @@ import { signOut } from "@/lib/auth-client";
 
 export const AdminSidebar = () => {
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const router = useRouter();
+  const { push } = useRouter();
 
   const handleSignOut = async () => {
     signOut({
       fetchOptions: {
         onSuccess: () => {
           toast.success("You've been signed out successfully");
-          router.push("/");
+          push("/");
         },
       },
     });

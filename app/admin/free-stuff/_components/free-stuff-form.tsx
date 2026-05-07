@@ -30,7 +30,7 @@ type FreeStuffFormProps = React.ComponentProps<"form"> & {
 };
 
 export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }: FreeStuffFormProps) {
-  const router = useRouter();
+  const { push } = useRouter();
   const [selectedModel, setSelectedModel] = useState("deepseek/deepseek-chat");
 
   const form = useForm({
@@ -107,7 +107,7 @@ export function FreeStuffForm({ className, title, allTags, freeStuff, ...props }
   const upsertAction = useServerAction(upsertFreeStuff, {
     onSuccess: ({ data }) => {
       toast.success(`Free stuff ${freeStuff ? "updated" : "created"}`);
-      router.push(`/admin/free-stuff/${data.slug}`);
+      push(`/admin/free-stuff/${data.slug}`);
     },
     onError: ({ err }) => toast.error(err.message),
   });

@@ -9,13 +9,13 @@ import { signOut } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 
 export const UserLogout = ({ className, ...props }: ComponentProps<"button">) => {
-  const router = useRouter();
+  const { refresh } = useRouter();
 
   const handleSignOut = async () => {
     signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.refresh();
+          refresh();
           toast.success("You've been signed out successfully");
         },
       },

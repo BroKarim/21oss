@@ -14,6 +14,7 @@ export const resourcesFilterParamsSchema = {
   templateType: parseAsStringEnum<TemplateType | "all">(["all", TemplateType.Website, TemplateType.Mobile, TemplateType.Dashboard]).withDefault("all"),
   sort: parseAsStringEnum<SortOption>([...SORT_OPTIONS]),
   stack: parseAsString.withDefault(""),
+  q: parseAsString.withDefault(""),
 };
 
 export const resourcesParamsCache = createSearchParamsCache(resourcesFilterParamsSchema);

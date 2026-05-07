@@ -20,7 +20,7 @@ type ToolActionsProps = ComponentProps<typeof Button> & {
 
 export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => {
   const pathname = usePathname();
-  const router = useRouter();
+  const { push } = useRouter();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   // ✅ Gunakan useServerAction secara langsung (bukan dalam .map)
@@ -82,7 +82,7 @@ export const ToolActions = ({ className, tool, ...props }: ToolActionsProps) => 
         tools={[tool]}
         showTrigger={false}
         onSuccess={() => {
-          router.push("/admin/tools");
+          push("/admin/tools");
         }}
       />
     </DropdownMenu>
