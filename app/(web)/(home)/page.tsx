@@ -2,7 +2,7 @@ import type { SearchParams } from "nuqs/server";
 import { ToolType, AdType } from "@prisma/client";
 import type { Metadata } from "next";
 import { HomeClient } from "./_components/home-client";
-import { resourcesParamsCache } from "@/server/web/shared/schema";
+import { parseResourcesSearchParams } from "@/server/web/shared/schema";
 import { getResources, getStackFilters, getResourcesCount } from "@/server/web/tools/actions";
 import { getActiveAds, getActiveAdsByType } from "@/server/web/ads/queries";
 import { siteConfig } from "@/config/site";
@@ -45,7 +45,7 @@ type HomePageProps = {
 };
 
 export default async function Page({ searchParams }: HomePageProps) {
-  const params = resourcesParamsCache.parse(await searchParams);
+  const params = parseResourcesSearchParams(await searchParams);
   const [stacks, ads, toolPageAds] = await Promise.all([getStackFilters(), getActiveAds(), getActiveAdsByType(AdType.ToolPage)]);
   const isSearchMode = hasTemplateSearchQuery(params);
 
