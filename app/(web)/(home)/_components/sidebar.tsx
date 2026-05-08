@@ -1,12 +1,12 @@
+
 "use client";
 
-import { useMemo } from "react";
+import { Suspense, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, ChevronDown } from "lucide-react";
 
-// import { ModeToggle } from "@/components/mode-toggle";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { useFilters } from "@/contexts/filter-context";
@@ -104,12 +104,11 @@ const STACK_GROUPS = [
 
 const normalizeStackKey = (value: string) => value.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-export function Sidebar({ stacks }: { stacks: StackItem[] }) {
-  const pathname = usePathname();
+function SidebarContent({ stacks, pathname }: { stacks: StackItem[]; pathname: string }) {
   const { push } = useRouter();
-  const { get } = useSearchParams();
+  const searchParams = useSearchParams();
   const { filters, updateFilters } = useFilters();
-  const currentFilter = get("filter");
+  const currentFilter = searchParams.get("filter") ?? null;
   const activeStacks = useMemo(() => filters.stack?.split(",").filter(Boolean) ?? [], [filters.stack]);
   const activeStackSet = useMemo(() => new Set(activeStacks), [activeStacks]);
 
@@ -172,7 +171,6 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
         </div>
         <div>
           <span className="md:text-3xl font-bold tracking-tight">21OSS</span>
-          {/* <span className="text-muted-foreground text-sm"> OSS</span> */}
         </div>
       </div>
 
@@ -252,5 +250,18 @@ export function Sidebar({ stacks }: { stacks: StackItem[] }) {
         <ModeSwitfher />
       </div>
     </aside>
+  );
+}
+
+export function Sidebar({ stacks }: { stacks: StackItem[] }) {
+  const pathname = usePathname();
+  return (
+    <Suspense
+      fallback={
+        <aside className="h-screen w-[260px] shrink-0 border-r border-border bg-background animate-pulse" />
+      }
+    >
+      <SidebarContent stacks={stacks} pathname={pathname} />
+    </Suspense>
   );
 }

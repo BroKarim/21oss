@@ -12,7 +12,11 @@ export function WebShell({ stacks, children }: WebShellProps) {
   return (
     <FiltersProvider enableFilters>
       <div className="bg-background flex min-h-screen">
-        <Suspense fallback={<aside className="h-screen w-[260px] shrink-0 border-r border-border bg-background" />}>
+        <Suspense
+          fallback={
+            <aside className="h-screen w-[260px] shrink-0 border-r border-border bg-background animate-pulse" />
+          }
+        >
           <Sidebar stacks={stacks} />
         </Suspense>
         <main className="ml-[260px] flex-1">{children}</main>
