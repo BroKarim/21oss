@@ -172,11 +172,21 @@ export async function buildTemplateSearchDocument(toolId: string, options?: { fo
 
 export async function buildPublishedTemplateSearchDocuments(options?: { take?: number; force?: boolean }) {
   const take = options?.take ?? 50;
+  const skipEnriched = options?.force !== true;
+
+  const enriched = skipEnriched
+    ? await db.toolSearchMetadata.findMany({
+        where: { tool: { type: ToolType.Template, status: ToolStatus.Published } },
+        select: { toolId: true },
+      })
+    : [];
+  const enrichedIds = new Set(enriched.map((e) => e.toolId));
 
   const templates = await db.tool.findMany({
     where: {
       type: ToolType.Template,
       status: ToolStatus.Published,
+      ...(skipEnriched ? { id: { notIn: [...enrichedIds] } } : {}),
     },
     orderBy: {
       updatedAt: "desc",

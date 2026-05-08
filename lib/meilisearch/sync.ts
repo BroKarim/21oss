@@ -15,12 +15,9 @@ export async function deleteTemplateDocument(documentId: string) {
 }
 
 export async function reindexTemplateDocuments(documents: TemplateSearchDocument[]) {
-  const index = getTemplatesIndex();
-
-  await index.deleteAllDocuments();
   if (documents.length === 0) return null;
 
-  return index.addDocuments(documents);
+  return getTemplatesIndex().addDocuments(documents);
 }
 
 export async function syncTemplateDocument(toolId: string, options?: { force?: boolean }) {
