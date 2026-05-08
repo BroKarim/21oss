@@ -61,23 +61,11 @@ export function SearchOpsMenu() {
           disabled={disabled}
           onSelect={() => {
             setIsBusy(true);
-            initMeili.execute({});
-          }}
-        >
-          Init Meili Index
-        </DropdownMenuItem>
-
-        <DropdownMenuSeparator />
-
-        <DropdownMenuItem
-          disabled={disabled}
-          onSelect={() => {
-            setIsBusy(true);
             enrichBackfill.execute({ take: 200 });
           }}
         >
           <Sparkles className="mr-2 size-4" />
-          Enrich Backfill (200)
+          Enrich Missing (200)
         </DropdownMenuItem>
 
         <DropdownMenuItem
@@ -87,17 +75,19 @@ export function SearchOpsMenu() {
             reindex.execute({ take: 200, force: false });
           }}
         >
-          Reindex Templates (200)
+          Sync to Meili (200)
         </DropdownMenuItem>
+
+        <DropdownMenuSeparator />
 
         <DropdownMenuItem
           disabled={disabled}
           onSelect={() => {
             setIsBusy(true);
-            reindex.execute({ take: 500, force: true });
+            initMeili.execute({});
           }}
         >
-          Force Reindex + Re-enrich (500)
+          Init Meili Index
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
